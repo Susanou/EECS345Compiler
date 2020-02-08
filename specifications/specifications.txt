@@ -1,0 +1,134 @@
+assignment: "Interpreter, Part 1"
+due: 2020-02-17 23:59
+
+group logistics:
+- work in groups: 1-3 students
+- names of all members appear at the top of "the file"
+  (TODO: which files must all names appear in?)
+- every member join the same "Interpreter, Part 1" group on Canvas
+- all members contribute
+- all members responsible for understanding code
+
+- create interpreter
+- Java/C-ish language
+- features include:
+  - variables
+  - assignment statements
+  - mathematical expressions
+  - comparison operators
+  - boolean operators
+  - if statements
+  - while statements
+  - return statements
+
+example:
+  var x;
+  x = 10;
+  var y = 3 * x + 5;
+  while (y % x != 3)
+    y = y + 1;
+  if (x > y)
+    return x;
+  else if (x * x > y)
+    return x * x;
+  else if (x * (x + x) > y)
+    return x * (x + x);
+  else
+    return y - 1;
+
+- braces { and } not implemented
+  (NOTE: investigation reveals that braced blocks
+   are supported by the parser, and represented with "begin")
+
+- math operators:
+  - +
+  - -
+  - *
+  - /
+  - %
+  - - (unary)
+
+- comparison operators:
+  - ==
+  - !=
+  - <
+  - >
+  - <=
+  - >=
+
+- boolean operators:
+  - &&
+  - ||
+  - !
+
+- variable types:
+  - int
+  - boolean
+
+- optional:
+  - incorrect type usage checking
+  - short-circuit evaluation (ie. of && or ||)
+  - assignment statements as expressions
+    example:
+      var x;
+      var y;
+      x = y = 10;
+      if ((x = x + 1) > y)
+        return x;
+      else
+        return y;
+
+- write in Scheme
+- functional programming style
+- should not use variables
+- clearly distinguish M_* functions each other
+  - naming convention
+    - optionally call them M_*
+    - consistent
+  - code organization
+- good style
+- indentation
+- proper commenting
+- easy to read and understand
+
+- parse tree:
+  - list
+  - each sublist corresponds to a statement:
+    - variable declaration:
+        (var variable)
+        (var variable value)
+    - assignment:
+        (= variable expression)
+    - return:
+        (return expression)
+    - if statement:
+        (if conditional then-statement optional-else-statement)
+    - while statement
+        (while conditional body-statement)
+
+- write a function called "interpret"
+- takes a filename
+- parses
+- evaluates
+- returns value
+- maintain state for variables
+- return error message:
+  - use variable before declared
+  - can use Scheme function "error" to "return the error"
+
+- state:
+  - store "binding pairs"
+   - implementation up to you
+  - not essential to be efficient
+  - efficient state is unneeded
+  - use abstraction: separate state from the rest of interpreter.
+
+- return value
+- how returned up to you
+  - can use special variable in state
+
+- save interpreter as a Scheme or Racket file
+- extension:
+  - scm
+  - ss
+  - rkt

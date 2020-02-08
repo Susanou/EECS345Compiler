@@ -1,0 +1,18 @@
+name: GitHub Workflow
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v2
+        
+      - name: Setup Racket environment
+        uses: Bogdanp/setup-racket@v0.6
+          
+      - name: Run racket tests
+        run: |
+          echo "TODO: implement test"
+          false

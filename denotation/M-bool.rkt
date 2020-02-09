@@ -4,5 +4,11 @@
 
 (require "mapping.rkt")
 
+(define constants
+  (hash 'true #t
+        'false #f))
+
 (define (M-bool expression state)
-  (mapping-value #f))
+  (if (hash-has-key? constants expression)
+      (mapping-value (hash-ref constants expression))
+      (mapping-error "unsupported")))

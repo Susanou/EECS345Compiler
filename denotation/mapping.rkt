@@ -3,6 +3,8 @@
 (provide (struct-out mapping-value)
          (struct-out mapping-error))
 
-(struct mapping-value (value))
+(struct mapping-value (value)
+  #:transparent)
 
-(struct mapping-error (message))
+(struct mapping-error (message)
+  #:transparent)

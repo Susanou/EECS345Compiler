@@ -4,13 +4,17 @@
 
 (provide parse)
 
+(require racket/runtime-path)
+
+(define-runtime-path PARSER-SCRIPT "parse.sh")
+
 (define (parse txt)
   (let-values
       ([(proc out in err)
         (subprocess #f
                     #f
                     (current-error-port)
-                    "parse.sh")])
+                    PARSER-SCRIPT)])
     (begin
       (write-string txt in)
       (close-output-port in)

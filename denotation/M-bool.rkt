@@ -12,9 +12,24 @@
   (hash-has-key? constants expression))
 
 (define (constant-mapping-value expression)
-      (mapping-value (hash-ref constants expression)))
+  (mapping-value (hash-ref constants expression)))
+
+(define operations
+  (hash
+   '! (lambda (expression state)
+        (mapping-value
+         (not (mapping-value-value
+               (M-bool (car expression) state)))))))
+
+(define (operation? expression)
+  (and (list? expression)
+       (hash-has-key? operations (car expression))))
+
+(define (operation-mapping-value expression state)
+  ((hash-ref operations (car expression)) (cdr expression) state))
 
 (define (M-bool expression state)
-  (if (constant? expression)
-      (constant-mapping-value expression)
-      (mapping-error "unsupported")))
+  (cond
+    [(constant?  expression) (constant-mapping-value  expression)]
+    [(operation? expression) (operation-mapping-value expression state)]
+    [else                    (mapping-error "unsupported")]))

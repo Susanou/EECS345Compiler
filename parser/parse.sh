@@ -11,7 +11,9 @@ filename="$first_argument"
 
 filename_given=$([ -n "$filename" ] && echo true || echo false)
 
-parser="./parse.rkt"
+script_directory=$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd -P)
+
+parser="$script_directory/parse.rkt"
 
 if [ "$filename_given" = true ]
 then

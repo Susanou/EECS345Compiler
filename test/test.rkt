@@ -2,10 +2,12 @@
 
 #lang racket
 
-(require rackunit)
+(require rackunit
+         "../parser/test.rkt")
 
 (define/provide-test-suite
-  test-all)
+  test-all
+  test-parser)
 
 (module+ main
   (require rackunit/text-ui)

@@ -8,12 +8,18 @@
 
 (define-runtime-path PARSER-SCRIPT "parse.sh")
 
+(define ERROR-PORT
+  (let ([current (current-error-port)])
+    (if (file-stream-port? current)
+        current
+        #f)))
+
 (define (parse txt)
   (let-values
       ([(proc out in err)
         (subprocess #f
                     #f
-                    (current-error-port)
+                    ERROR-PORT
                     PARSER-SCRIPT)])
     (begin
       (write-string txt in)

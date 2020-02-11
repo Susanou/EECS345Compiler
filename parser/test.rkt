@@ -6,7 +6,7 @@
          "parselib.rkt")
 
 (define/provide-test-suite
-  test-parselib
+  test-parser
   (check-equal? (parse "")
                 null
                 "empty parse")
@@ -29,4 +29,4 @@
 
 (module+ main
   (require rackunit/text-ui)
-  (exit (run-tests test-parselib)))
+  (exit (run-tests test-parser)))

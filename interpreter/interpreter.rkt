@@ -4,9 +4,11 @@
          (struct-out interpreter-value)
          (struct-out interpreter-error))
 
-(struct interpreter-value (value))
+(struct interpreter-value (value)
+  #:transparent)
 
-(struct interpreter-error (message))
+(struct interpreter-error (message)
+  #:transparent)
 
 (define (interpret filename)
-  null)
+  (interpreter-value 0))

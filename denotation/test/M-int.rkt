@@ -8,16 +8,9 @@
 
 (define/provide-test-suite 
   test-M-int
-  (test-case
-   "constants"
-   (check-equal?
-     (mapping-value-value (M-int 0 null))
-     0
-     "zero maps to zero")
-   (check-equal?
-     (mapping-value-value (M-int 1 null))
-     1
-     "one maps to one")))
+  (test-equal? "zero"
+               (M-int 0 null)
+               (mapping-value 0)))
 
 (module+ main
   (require rackunit/text-ui)

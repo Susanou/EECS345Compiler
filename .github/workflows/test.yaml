@@ -1,0 +1,16 @@
+name: Test
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v2
+        
+      - name: Setup Racket environment
+        uses: Bogdanp/setup-racket@v0.6
+          
+      - name: Run Racket Tests
+        run: ./test/test.rkt

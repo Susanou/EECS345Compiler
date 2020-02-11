@@ -3,11 +3,13 @@
 #lang racket
 
 (require rackunit
-         "../parser/test.rkt")
+         "../parser/test.rkt"
+         "../interpreter/test.rkt")
 
 (define/provide-test-suite
   test-all
-  test-parser)
+  test-parser
+  test-interpreter)
 
 (module+ main
   (require rackunit/text-ui)

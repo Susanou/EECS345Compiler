@@ -1,4 +1,4 @@
-name: GitHub Workflow
+name: Test
 
 on: [push]
 
@@ -12,5 +12,5 @@ jobs:
       - name: Setup Racket environment
         uses: Bogdanp/setup-racket@v0.6
           
-      - name: Run racket tests
+      - name: Run Racket Tests
         run: ./test/test.rkt

@@ -33,6 +33,16 @@
   (test-suite
    "consume"
    (test-suite
+    "null"
+    (let-values ([(result state)
+                  (machine-consume (machine-new) null)])
+      (test-equal? "result is void"
+                   result
+                   (result-void))
+      (test-equal? "state is unchanged"
+                   state
+                   (machine-new))))
+   (test-suite
     "(return 0)"
     (let-values ([(result state)
                   (machine-consume (machine-new) '((return 0)))])

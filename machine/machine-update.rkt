@@ -25,4 +25,6 @@
               state)))
 
 (define (machine-consume state statements)
-  (machine-update state (car statements)))
+  (if (null? statements)
+      (values (result-void) state)
+      (machine-update state (car statements))))

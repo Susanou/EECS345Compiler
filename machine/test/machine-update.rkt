@@ -41,7 +41,16 @@
                    (result-return 0))
       (test-equal? "state is unchanged"
                    state
-                   (machine-new))))))
+                   (machine-new))))
+   (test-suite
+    "(var x)"
+    (let-values ([(result state)
+                  (machine-consume (machine-new) '((var x)))])
+      (test-equal? "result is void"
+                   result
+                   (result-void))
+      (test-true "scope has x bound"
+                 (machine-scope-bound? state 'x))))))
 
 (module+ main
   (require rackunit/text-ui)

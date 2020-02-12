@@ -25,4 +25,4 @@
               state)))
 
 (define (machine-consume state statements)
-  (values (result-return 0) state))
+  (machine-update state (car statements)))

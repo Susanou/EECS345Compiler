@@ -36,14 +36,14 @@
 
    '== (lambda (args state)
             (mapping-value
-              (eq? (mapping-value-value
+              (= (mapping-value-value
                 (M-int (car args) state))
                   (mapping-value-value
                 (M-int (cdr args) state)))))
 
    '!= (lambda (args state)
             (mapping-value
-              (not (eq? (mapping-value-value
+              (not (= (mapping-value-value
                 (M-int (car args) state))
                   (mapping-value-value
                 (M-int (cdr args) state))))))

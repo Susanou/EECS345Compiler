@@ -52,20 +52,20 @@
     (test-case
     "1 == 0"
     (check-equal?
-      (M-bool '(== 1 1) null)
-      MAPPING-FALSE)  
+      (M-bool '(== 1 0) null)
+      MAPPING-FALSE))  
 
     (test-case
     "1 != 0"
     (check-equal?
-      (M-bool '(== 1 1) null)
-      MAPPING-TRUE) 
+      (M-bool '(!= 1 0) null)
+      MAPPING-TRUE)) 
 
     (test-case
     "0 != 0"
     (check-equal?
-      (M-bool '(== 1 1) null)
-      MAPPING-) 
+      (M-bool '(!= 0 0) null)
+      MAPPING-FALSE))) 
 
 
   (test-suite
@@ -84,7 +84,7 @@
      MAPPING-FALSE)))
   
   
-#|   (test-suite
+    (test-suite
    "conversion"
    
    (test-case
@@ -99,8 +99,9 @@
     (check-equal?
      (M-bool 1 null)
      MAPPING-TRUE
-     "one maps to #t")))) |#
+     "one maps to #t"))))
 
-(module+ main
+ 
+ (module+ main
   (require rackunit/text-ui)
   (exit (run-tests test-M-bool)))

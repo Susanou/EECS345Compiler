@@ -24,11 +24,19 @@
   (test-case "state has value after assignment"
              (let* ([state   (machine-scope-bind (machine-new) 'x null)]
                     [mapping (M-state '(= x 0) state)])
-                   (check-pred mapping-value?
-                               mapping)
-                   (check-equal? (machine-scope-ref (mapping-value-value mapping)
-                                 'x)
-                                 (binding 'INT 0)))))
+               (check-pred mapping-value?
+                           mapping)
+               (check-equal? (machine-scope-ref (mapping-value-value mapping)
+                                                'x)
+                             (binding 'INT 0))))
+  (test-case "assignment value can be expression"
+             (let* ([state   (machine-scope-bind (machine-new) 'x null)]
+                    [mapping (M-state '(= x (+ 1 2)) state)])
+               (check-pred mapping-value?
+                           mapping)
+               (check-equal? (machine-scope-ref (mapping-value-value mapping)
+                                                'x)
+                             (binding 'INT 3)))))
 
 (module+ main
   (require rackunit/text-ui)

@@ -4,7 +4,8 @@
 
 (require "mapping.rkt"
          "../machine/binding.rkt"
-         "../machine/machine-scope.rkt")
+         "../machine/machine-scope.rkt"
+         "M-int.rkt")
 
 (define DEFAULT-BINDING (binding null null))
 
@@ -17,8 +18,10 @@
         '=   (lambda (args state)
                (mapping-value 
                 (machine-scope-bind state
-                                    (car args)
-                                    (binding 'INT (second args)))))))
+                                    (first args)
+                                    (binding 'INT
+                                             (mapping-value-value
+                                              (M-int (second args) state))))))))
 
 (define (operation? expression)
   (and (pair? expression)

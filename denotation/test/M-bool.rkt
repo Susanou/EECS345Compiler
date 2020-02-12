@@ -65,7 +65,7 @@
     "0 != 0"
     (check-equal?
       (M-bool '(== 1 1) null)
-      MAPPING-TRUE) 
+      MAPPING-) 
 
 
   (test-suite
@@ -84,7 +84,7 @@
      MAPPING-FALSE)))
   
   
-  (test-suite
+#|   (test-suite
    "conversion"
    
    (test-case
@@ -99,7 +99,7 @@
     (check-equal?
      (M-bool 1 null)
      MAPPING-TRUE
-     "one maps to #t"))))
+     "one maps to #t")))) |#
 
 (module+ main
   (require rackunit/text-ui)

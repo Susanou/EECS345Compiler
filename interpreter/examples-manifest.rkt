@@ -6,9 +6,13 @@
 (struct example (name file expected)
   #:transparent)
 
-(require "interpreter.rkt")
+(require racket/runtime-path
+         "interpreter.rkt")
+
+(define-runtime-path EXAMPLES-DIR "examples/")
 
 (define examples-manifest
   (list (example "return zero"
-                 "return-zero.txt"
+                 (build-path EXAMPLES-DIR
+                             "return-zero.txt")
                  (interpreter-value 0))))

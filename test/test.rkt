@@ -5,13 +5,13 @@
 (require rackunit
          "../parser/test.rkt"
          "../interpreter/test.rkt"
-         "../machine/test.rkt")
+         "../machine/test/test.rkt")
 
 (define/provide-test-suite
   test-all
   test-parser
   test-interpreter
-  test-machine)
+  test-all-machine)
 
 (module+ main
   (require rackunit/text-ui)

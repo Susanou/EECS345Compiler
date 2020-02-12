@@ -5,7 +5,8 @@
 (require "mapping.rkt"
          "../machine/binding.rkt"
          "../machine/machine-scope.rkt"
-         "M-int.rkt")
+         "M-int.rkt"
+         "M-type.rkt")
 
 (define DEFAULT-BINDING (binding null null))
 
@@ -19,7 +20,8 @@
                (mapping-value 
                 (machine-scope-bind state
                                     (first args)
-                                    (binding 'INT
+                                    (binding (mapping-value-value
+                                              (M-type (second args) state))
                                              (mapping-value-value
                                               (M-int (second args) state))))))))
 

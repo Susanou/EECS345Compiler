@@ -5,6 +5,7 @@
 (require rackunit
          "../mapping.rkt"
          "../M-state.rkt"
+         "../../machine/binding.rkt"
          "../../machine/machine.rkt"
          "../../machine/machine-scope.rkt")
 
@@ -27,7 +28,7 @@
                                mapping)
                    (check-equal? (machine-scope-ref (mapping-value-value mapping)
                                  'x)
-                                 0))))
+                                 (binding 'INT 0)))))
 
 (module+ main
   (require rackunit/text-ui)

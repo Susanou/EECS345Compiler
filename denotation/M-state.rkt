@@ -3,6 +3,7 @@
 (provide M-state)
 
 (require "mapping.rkt"
+         "../machine/binding.rkt"
          "../machine/machine-scope.rkt")
 
 (define operations
@@ -15,7 +16,7 @@
                (mapping-value 
                 (machine-scope-bind state
                                     'x
-                                    0)))))
+                                    (binding 'INT 0))))))
 
 (define (operation? expression)
   (and (pair? expression)

@@ -17,12 +17,29 @@
 (struct result-error (message)
   #:transparent)
 
+(define operations
+  (hash 'return (lambda (args state)
+                  (values (result-return 0)
+                          state))
+        'var    (lambda (args state)
+                  (values (result-void)
+                          (machine-scope-bind state 'x 0)))
+        '=      (lambda (args state)
+                  (values (result-void)
+                          state))))
+
+(define (operation? statement)
+  (and (pair? statement)
+       (hash-has-key? operations
+                      (car statement))))
+
+(define (operate statement state)
+  ((hash-ref operations (car statement)) (cdr statement)
+                                         state))
+
 (define (machine-update state statement)
-  (if (equal? '(var x) statement)
-      (values (result-void)
-              (machine-scope-bind state 'x 0))
-      (values (result-return 0)
-              state)))
+  (cond [(operation? statement) (operate statement state)]
+        [else                   (result-error "undefined operation")]))
 
 (define (machine-consume state statements)
   (if (null? statements)

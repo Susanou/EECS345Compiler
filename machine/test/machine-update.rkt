@@ -4,7 +4,8 @@
 
 (require rackunit
          "../machine.rkt"
-         "../machine-update.rkt")
+         "../machine-update.rkt"
+         "../machine-scope.rkt")
 
 (define/provide-test-suite
   test-machine-update
@@ -19,18 +20,28 @@
                    (result-return 0))
       (test-equal? "state is unchanged"
                    state
-                   (machine-new)))))
+                   (machine-new))))
+   (test-suite
+    "var x;"
+    (let-values ([(result state)
+                  (machine-update (machine-new) '(var x))])
+      (test-equal? "result is void"
+                   result
+                   (result-void))
+      (test-true "scope has x bound"
+                 (machine-scope-bound? state 'x)))))
   (test-suite
    "consume"
-   "(return 0)"
-   (let-values ([(result state)
-                 (machine-consume (machine-new) '((return 0)))])
-     (test-equal? "result is return of zero"
-                  result
-                  (result-return 0))
-     (test-equal? "state is unchanged"
-                  state
-                  (machine-new)))))
+   (test-suite
+    "(return 0)"
+    (let-values ([(result state)
+                  (machine-consume (machine-new) '((return 0)))])
+      (test-equal? "result is return of zero"
+                   result
+                   (result-return 0))
+      (test-equal? "state is unchanged"
+                   state
+                   (machine-new))))))
 
 (module+ main
   (require rackunit/text-ui)

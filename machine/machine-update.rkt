@@ -6,6 +6,8 @@
          machine-update
          machine-consume)
 
+(require "machine-scope.rkt")
+
 (struct result-void ()
   #:transparent)
 
@@ -16,7 +18,11 @@
   #:transparent)
 
 (define (machine-update state statement)
-  (values (result-return 0) state))
+  (if (equal? '(var x) statement)
+      (values (result-void)
+              (machine-scope-bind state 'x 0))
+      (values (result-return 0)
+              state)))
 
 (define (machine-consume state statements)
   (values (result-return 0) state))

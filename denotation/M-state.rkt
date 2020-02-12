@@ -5,14 +5,30 @@
 (require "mapping.rkt"
          "../machine/machine-scope.rkt")
 
+(define operations
+  (hash 'var (lambda (args state)
+               (mapping-value
+                (machine-scope-bind state
+                                    'x
+                                    null)))
+        '=   (lambda (args state)
+               (mapping-value 
+                (machine-scope-bind state
+                                    'x
+                                    0)))))
+
+(define (operation? expression)
+  (and (pair? expression)
+       (hash-has-key? operations (car expression))))
+
+(define (operate expression state)
+  ((hash-ref operations (car expression)) (cdr expression)
+                                          state))
+
+(define (no-op state)
+  (mapping-value state))
+
 (define (M-state expression state)
-  (cond [(equal? expression '(var x))
-         (mapping-value (machine-scope-bind state
-                                            'x
-                                            null))]
-        [(equal? expression '(= x 0))
-         (mapping-value (machine-scope-bind state
-                                            'x
-                                            0))]
-        [else
-         (mapping-value state)]))
+  (if (operation? expression)
+      (operate expression state)
+      (no-op state)))

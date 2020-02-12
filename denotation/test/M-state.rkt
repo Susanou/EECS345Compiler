@@ -19,7 +19,15 @@
                (check-pred mapping-value? mapping)
                (check-true (machine-scope-bound?
                             (mapping-value-value mapping)
-                            'x)))))
+                            'x))))
+  (test-case "state has value after assignment"
+             (let* ([state   (machine-scope-bind (machine-new) 'x null)]
+                    [mapping (M-state '(= x 0) state)])
+                   (check-pred mapping-value?
+                               mapping)
+                   (check-equal? (machine-scope-ref (mapping-value-value mapping)
+                                 'x)
+                                 0))))
 
 (module+ main
   (require rackunit/text-ui)

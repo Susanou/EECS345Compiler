@@ -6,17 +6,19 @@
          "../machine/binding.rkt"
          "../machine/machine-scope.rkt")
 
+(define DEFAULT-BINDING (binding null null))
+
 (define operations
   (hash 'var (lambda (args state)
                (mapping-value
                 (machine-scope-bind state
-                                    'x
-                                    null)))
+                                    (car args)
+                                    DEFAULT-BINDING)))
         '=   (lambda (args state)
                (mapping-value 
                 (machine-scope-bind state
-                                    'x
-                                    (binding 'INT 0))))))
+                                    (car args)
+                                    (binding 'INT (second args)))))))
 
 (define (operation? expression)
   (and (pair? expression)

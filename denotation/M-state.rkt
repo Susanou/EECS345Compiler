@@ -2,7 +2,12 @@
 
 (provide M-state)
 
-(require "mapping.rkt")
+(require "mapping.rkt"
+         "../machine/machine-scope.rkt")
 
 (define (M-state expression state)
-  (mapping-value state))
+  (if (equal? expression '(var x))
+      (mapping-value (machine-scope-bind state
+                                         'x
+                                         null))
+      (mapping-value state)))

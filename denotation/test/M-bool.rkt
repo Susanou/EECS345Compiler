@@ -41,7 +41,31 @@
     "! false"
     (check-equal?
      (M-bool '(! false) null)
-     MAPPING-TRUE)))
+     MAPPING-TRUE))
+
+    (test-case
+    "1 == 1"
+    (check-equal?
+      (M-bool '(== 1 1) null)
+      MAPPING-TRUE))
+
+    (test-case
+    "1 == 0"
+    (check-equal?
+      (M-bool '(== 1 1) null)
+      MAPPING-FALSE)  
+
+    (test-case
+    "1 != 0"
+    (check-equal?
+      (M-bool '(== 1 1) null)
+      MAPPING-TRUE) 
+
+    (test-case
+    "0 != 0"
+    (check-equal?
+      (M-bool '(== 1 1) null)
+      MAPPING-TRUE) 
 
 
   (test-suite

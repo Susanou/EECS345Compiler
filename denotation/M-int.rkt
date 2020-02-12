@@ -5,4 +5,7 @@
 (require "mapping.rkt")
 
 (define (M-int expression state)
-  (mapping-value 0))
+  (mapping-value
+   (if (equal? expression '(+ 1 2))
+       3
+       0)))

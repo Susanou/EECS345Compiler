@@ -4,13 +4,14 @@
 
 (require rackunit
          "../mapping.rkt"
-         "../M-state.rkt")
+         "../M-state.rkt"
+         "../../machine/machine.rkt")
 
 (define/provide-test-suite 
   test-M-state
-  (test-equal? "null"
-               (M-state null null)
-               (mapping-value null)))
+  (test-equal? "state unchanged by interger constant"
+               (M-state 0 (machine-new))
+               (mapping-value (machine-new))))
 
 (module+ main
   (require rackunit/text-ui)

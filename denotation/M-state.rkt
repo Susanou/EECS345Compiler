@@ -5,4 +5,4 @@
 (require "mapping.rkt")
 
 (define (M-state expression state)
-  (mapping-value null))
+  (mapping-value state))

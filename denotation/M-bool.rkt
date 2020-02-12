@@ -19,7 +19,20 @@
    '! (lambda (expression state)
         (mapping-value
          (not (mapping-value-value
-               (M-bool (car expression) state)))))))
+               (M-bool (car expression) state)))))
+   '&& (lambda (args state)
+          (mapping-value
+            (and (mapping-value-value
+                  (M-bool (car args) state)) 
+                (mapping-value-value
+                  (M-bool (cdr args) state)))))
+   '|| (lambda (args state)
+            (mapping-value
+              (or (mapping-value-value
+                (M-bool (car args) state))
+                  (mapping-value-value
+                (M-bool (car args) state)))))
+                 ))
 
 (define (operation? expression)
   (and (list? expression)
@@ -33,3 +46,4 @@
     [(constant?  expression) (constant-mapping-value  expression)]
     [(operation? expression) (operation-mapping-value expression state)]
     [else                    (mapping-error "unsupported")]))
+

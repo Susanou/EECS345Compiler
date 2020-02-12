@@ -2,7 +2,8 @@
 
 (provide M-bool)
 
-(require "mapping.rkt")
+(require  "mapping.rkt"
+          "M-int.rkt")
 
 (define constants
   (hash 'true #t
@@ -31,8 +32,49 @@
               (or (mapping-value-value
                 (M-bool (car args) state))
                   (mapping-value-value
-                (M-bool (car args) state)))))
-                 ))
+                (M-bool (cdr args) state)))))
+
+   '== (lambda (args state)
+            (mapping-value
+              (eq? (mapping-value-value
+                (M-int (car args) state))
+                  (mapping-value-value
+                (M-int (cdr args) state)))))
+
+   '!= (lambda (args state)
+            (mapping-value
+              (not (eq? (mapping-value-value
+                (M-int (car args) state))
+                  (mapping-value-value
+                (M-int (cdr args) state))))))
+
+    '>= (lambda (args state)
+            (mapping-value
+              (>= (mapping-value-value
+                    (M-int (car args) state))
+                  (mapping-value-value
+                    (M-int (cdr args) state)))))
+
+    '<= (lambda (args state)
+            (mapping-value
+              (<= (mapping-value-value
+                    (M-int (car args) state))
+                  (mapping-value-value
+                    (M-int (cdr args) state)))))
+                    
+    '> (lambda (args state)
+            (mapping-value
+              (> (mapping-value-value
+                    (M-int (car args) state))
+                  (mapping-value-value
+                    (M-int (cdr args) state)))))
+
+    '< (lambda (args state)
+            (mapping-value
+              (< (mapping-value-value
+                    (M-int (car args) state))
+                  (mapping-value-value
+                    (M-int (cdr args) state)))))               ))
 
 (define (operation? expression)
   (and (list? expression)

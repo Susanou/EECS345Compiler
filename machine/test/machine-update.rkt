@@ -87,7 +87,17 @@
                    result
                    (result-return 0))
       (test-false "scope does not have x bound"
-                 (machine-scope-bound? state 'x))))))
+                  (machine-scope-bound? state 'x))))
+   (test-suite
+    "(var x)(= x 1)"
+    (let-values ([(result state)
+                  (machine-consume (machine-new) '((var x)(= x 1)))])
+      (test-equal? "result is void"
+                   result
+                   (result-void))
+      (test-equal? "x is bound to 1"
+                   (machine-scope-ref state 'x)
+                   1)))))
 
 (module+ main
   (require rackunit/text-ui)

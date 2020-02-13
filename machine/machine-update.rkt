@@ -30,7 +30,9 @@
                           (machine-scope-bind state 'x 0)))
         '=      (lambda (args state)
                   (values (result-void)
-                          state))))
+                          (machine-scope-bind state
+                                              (first args)
+                                              (second args))))))
 
 (define (operation? statement)
   (and (pair? statement)

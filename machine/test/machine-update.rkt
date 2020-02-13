@@ -77,6 +77,16 @@
                    result
                    (result-return 0))
       (test-true "scope has x bound"
+                 (machine-scope-bound? state 'x))))
+   (test-suite
+    "(return 0)(var x)"
+    (let-values ([(result state)
+                  (machine-consume (machine-new) '((return 0)
+                                                   (var x)))])
+      (test-equal? "result is return 0"
+                   result
+                   (result-return 0))
+      (test-false "scope does not have x bound"
                  (machine-scope-bound? state 'x))))))
 
 (module+ main

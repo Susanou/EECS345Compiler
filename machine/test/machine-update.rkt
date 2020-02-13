@@ -22,6 +22,13 @@
                    state
                    (machine-new))))
    (test-suite
+    "return 1;"
+    (let-values ([(result state)
+                  (machine-update (machine-new) '(return 1))])
+      (test-equal? "result is return of five"
+                   result
+                   (result-return 1))))
+   (test-suite
     "var x;"
     (let-values ([(result state)
                   (machine-update (machine-new) '(var x))])

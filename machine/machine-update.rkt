@@ -6,7 +6,9 @@
          machine-update
          machine-consume)
 
-(require "machine-scope.rkt")
+(require "machine-scope.rkt"
+         "../denotation/mapping.rkt"
+         "../denotation/M-int.rkt")
 
 (struct result-void ()
   #:transparent)
@@ -19,7 +21,9 @@
 
 (define operations
   (hash 'return (lambda (args state)
-                  (values (result-return 0)
+                  (values (result-return
+                           (mapping-value-value
+                            (M-int (car args) state)))
                           state))
         'var    (lambda (args state)
                   (values (result-void)

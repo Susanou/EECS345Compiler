@@ -5,13 +5,15 @@
 (require rackunit
          "M-int.rkt"
          "M-bool.rkt"
-         "M-state.rkt")
+         "M-state.rkt"
+         "M-type.rkt")
 
 (define/provide-test-suite
   test-denotation
   test-M-int
   test-M-bool
-  test-M-state)
+  test-M-state
+  test-M-type)
 
 (module+ main
   (require rackunit/text-ui)

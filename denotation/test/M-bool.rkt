@@ -84,7 +84,7 @@
      MAPPING-FALSE)))
   
   
-    (test-suite
+#|     (test-suite
    "conversion"
    
    (test-case
@@ -99,7 +99,8 @@
     (check-equal?
      (M-bool 1 null)
      MAPPING-TRUE
-     "one maps to #t"))))
+     "one maps to #t")))) |#
+     )
 
  
  (module+ main

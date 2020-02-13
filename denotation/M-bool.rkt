@@ -26,34 +26,34 @@
             (and (mapping-value-value
                   (M-bool (car args) state)) 
                 (mapping-value-value
-                  (M-bool (cdr args) state)))))
+                  (M-bool (cadr args) state)))))
    '|| (lambda (args state)
             (mapping-value
               (or (mapping-value-value
                 (M-bool (car args) state))
                   (mapping-value-value
-                (M-bool (cdr args) state)))))
+                (M-bool (cadr args) state)))))
 
    '== (lambda (args state)
             (mapping-value
               (= (mapping-value-value
                 (M-int (car args) state))
                   (mapping-value-value
-                (M-int (cdr args) state)))))
+                (M-int (cadr args) state)))))
 
    '!= (lambda (args state)
             (mapping-value
               (not (= (mapping-value-value
                 (M-int (car args) state))
                   (mapping-value-value
-                (M-int (cdr args) state))))))
+                (M-int (cadr args) state))))))
 
     '>= (lambda (args state)
             (mapping-value
               (>= (mapping-value-value
                     (M-int (car args) state))
                   (mapping-value-value
-                    (M-int (cdr args) state)))))
+                    (M-int (cadr args) state)))))
 
     '<= (lambda (args state)
             (mapping-value
@@ -67,14 +67,14 @@
               (> (mapping-value-value
                     (M-int (car args) state))
                   (mapping-value-value
-                    (M-int (cdr args) state)))))
+                    (M-int (cadr args) state)))))
 
     '< (lambda (args state)
             (mapping-value
               (< (mapping-value-value
                     (M-int (car args) state))
                   (mapping-value-value
-                    (M-int (cdr args) state)))))               ))
+                    (M-int (cadr args) state)))))))
 
 (define (operation? expression)
   (and (list? expression)

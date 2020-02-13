@@ -60,6 +60,16 @@
                    result
                    (result-void))
       (test-true "scope has x bound"
+                 (machine-scope-bound? state 'x))))
+   (test-suite
+    "(var x)(return 0)"
+    (let-values ([(result state)
+                  (machine-consume (machine-new) '((var x)
+                                                   (return 0)))])
+      (test-equal? "result is return 0"
+                   result
+                   (result-return 0))
+      (test-true "scope has x bound"
                  (machine-scope-bound? state 'x))))))
 
 (module+ main

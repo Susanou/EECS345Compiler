@@ -43,5 +43,14 @@
 
 (define (machine-consume state statements)
   (if (null? statements)
-      (values (result-void) state)
-      (machine-update state (car statements))))
+      (values (result-void)
+              state)
+      (let-values ([(result new-state)
+                    (machine-update state
+                                    (car statements))])
+        (cond [(result-return? result) (values result
+                                               new-state)]
+              [(result-error?  result) (values result
+                                               new-state)]
+              [else                    (machine-consume new-state
+                                                        (cdr statements))]))))

@@ -21,12 +21,14 @@
         (mapping-value
          (not (mapping-value-value
                (M-bool (car expression) state)))))
+               
    '&& (lambda (args state)
           (mapping-value
             (and (mapping-value-value
                   (M-bool (car args) state)) 
                 (mapping-value-value
                   (M-bool (cadr args) state)))))
+                  
    '|| (lambda (args state)
             (mapping-value
               (or (mapping-value-value

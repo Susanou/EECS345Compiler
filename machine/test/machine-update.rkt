@@ -101,7 +101,17 @@
                    (result-void))
       (test-equal? "x is bound to 1"
                    (machine-scope-ref state 'x)
-                   (binding 'INT 1))))))
+                   (binding 'INT 1))))
+   (test-suite
+    "(var x)(= x false)"
+    (let-values ([(result state)
+                  (machine-consume (machine-new) '((var x)(= x false)))])
+      (test-equal? "result is void"
+                   result
+                   (result-void))
+      (test-equal? "x is bound to false"
+                   (machine-scope-ref state 'x)
+                   (binding 'BOOL #f))))))
 
 (module+ main
   (require rackunit/text-ui)

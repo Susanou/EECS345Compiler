@@ -9,7 +9,9 @@
 (require "machine-scope.rkt"
          "binding.rkt"
          "../denotation/mapping.rkt"
-         "../denotation/M-int.rkt")
+         "../denotation/M-int.rkt"
+         "../denotation/M-type.rkt"
+         "../denotation/M-bool.rkt")
 
 (struct result-void ()
   #:transparent)
@@ -32,10 +34,19 @@
                                               (first args)
                                               (binding 'NULL null))))
         '=      (lambda (args state)
-                  (values (result-void)
-                          (machine-scope-bind state
-                                              (first args)
-                                              (binding 'INT (second args)))))))
+                  (let* ([variable   (first args)]
+                         [value      (second args)]
+                         [value-type (mapping-value-value (M-type value state))]
+                         [value-int  (M-int  value state)]
+                         [value-bool (M-bool value state)])
+                    (values (result-void)
+                            (machine-scope-bind state
+                                                variable
+                                                (binding value-type
+                                                         (mapping-value-value
+                                                          (case value-type
+                                                            [(INT) value-int]
+                                                            [(BOOL) value-bool])))))))))
 
 (define (operation? statement)
   (and (pair? statement)

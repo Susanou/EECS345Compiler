@@ -5,7 +5,8 @@
 (require rackunit
          "../machine.rkt"
          "../machine-update.rkt"
-         "../machine-scope.rkt")
+         "../machine-scope.rkt"
+         "../binding.rkt")
 
 (define/provide-test-suite
   test-machine-update
@@ -36,7 +37,10 @@
                    result
                    (result-void))
       (test-true "scope has x bound"
-                 (machine-scope-bound? state 'x)))))
+                 (machine-scope-bound? state 'x))
+      (test-equal? "x is bound to null binding"
+                   (machine-scope-ref state 'x)
+                   (binding 'NULL null)))))
   (test-suite
    "consume"
    (test-suite
@@ -97,7 +101,7 @@
                    (result-void))
       (test-equal? "x is bound to 1"
                    (machine-scope-ref state 'x)
-                   1)))))
+                   (binding 'INT 1))))))
 
 (module+ main
   (require rackunit/text-ui)

@@ -7,6 +7,7 @@
          machine-consume)
 
 (require "machine-scope.rkt"
+         "binding.rkt"
          "../denotation/mapping.rkt"
          "../denotation/M-int.rkt")
 
@@ -27,12 +28,14 @@
                           state))
         'var    (lambda (args state)
                   (values (result-void)
-                          (machine-scope-bind state 'x 0)))
+                          (machine-scope-bind state
+                                              (first args)
+                                              (binding 'NULL null))))
         '=      (lambda (args state)
                   (values (result-void)
                           (machine-scope-bind state
                                               (first args)
-                                              (second args))))))
+                                              (binding 'INT (second args)))))))
 
 (define (operation? statement)
   (and (pair? statement)

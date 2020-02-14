@@ -8,7 +8,7 @@
          "M-int.rkt"
          "M-type.rkt")
 
-(define DEFAULT-BINDING (binding null null))
+(define DEFAULT-BINDING (binding 'NULL null))
 
 (define operations
   (hash 'var (lambda (args state)

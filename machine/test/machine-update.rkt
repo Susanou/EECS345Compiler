@@ -26,7 +26,7 @@
     "return 1;"
     (let-values ([(result state)
                   (machine-update (machine-new) '(return 1))])
-      (test-equal? "result is return of five"
+      (test-equal? "result is return of one"
                    result
                    (result-return (binding 'INT 1)))))
    (test-suite

@@ -24,10 +24,15 @@
 
 (define operations
   (hash 'return (lambda (args state)
-                  (values (result-return
-                           (mapping-value-value
-                            (M-int (car args) state)))
-                          state))
+                  (let ([value (first args)])
+                    (values (result-return
+                             (binding (mapping-value-value
+                                       (M-type value
+                                               state))
+                                      (mapping-value-value
+                                       (M-int value
+                                              state))))
+                            state)))
         'var    (lambda (args state)
                   (values (result-void)
                           (machine-scope-bind state

@@ -18,7 +18,7 @@
                   (machine-update (machine-new) '(return 0))])
       (test-equal? "result is return of zero"
                    result
-                   (result-return 0))
+                   (result-return (binding 'INT 0)))
       (test-equal? "state is unchanged"
                    state
                    (machine-new))))
@@ -28,7 +28,7 @@
                   (machine-update (machine-new) '(return 1))])
       (test-equal? "result is return of five"
                    result
-                   (result-return 1))))
+                   (result-return (binding 'INT 1)))))
    (test-suite
     "var x;"
     (let-values ([(result state)
@@ -59,7 +59,7 @@
                   (machine-consume (machine-new) '((return 0)))])
       (test-equal? "result is return of zero"
                    result
-                   (result-return 0))
+                   (result-return (binding 'INT 0)))
       (test-equal? "state is unchanged"
                    state
                    (machine-new))))
@@ -79,7 +79,7 @@
                                                    (return 0)))])
       (test-equal? "result is return 0"
                    result
-                   (result-return 0))
+                   (result-return (binding 'INT 0)))
       (test-true "scope has x bound"
                  (machine-scope-bound? state 'x))))
    (test-suite
@@ -89,7 +89,7 @@
                                                    (var x)))])
       (test-equal? "result is return 0"
                    result
-                   (result-return 0))
+                   (result-return (binding 'INT 0)))
       (test-false "scope does not have x bound"
                   (machine-scope-bound? state 'x))))
    (test-suite

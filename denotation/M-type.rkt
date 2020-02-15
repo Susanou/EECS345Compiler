@@ -6,13 +6,6 @@
          "../machine/machine-scope.rkt"
          "../machine/binding.rkt")
 
-(define BOOL 'BOOL)
-(define INT  'INT)
-
-(define MAPPING-BOOL (mapping-value BOOL))
-(define MAPPING-INT  (mapping-value INT))
-(define MAPPING-NULL  (mapping-value 'NULL))
-
 (define boolean-literals
   '(true false))
 
@@ -42,17 +35,22 @@
 
 (define variable? symbol?)
 
-(define (variable-type name state)
+(define (variable-type-mapping name state)
   (if (machine-scope-bound? state name)
       (mapping-value (binding-type (machine-scope-ref state name)))
       (mapping-error "unbound variable")))
 
 (define (M-type expression state)
-  (cond [(boolean-literal?  expression) MAPPING-BOOL]
-        [(boolean-operator? expression) MAPPING-BOOL]
-        [(integer-literal?  expression) MAPPING-INT]
-        [(integer-operator? expression) MAPPING-INT]
-        [(variable? expression)
-         (variable-type expression state)]
+  (cond [(or (boolean-literal?  expression)
+             (boolean-operator? expression))
+         (mapping-value 'BOOL)]
+        
+        [(or(integer-literal?   expression)
+            (integer-operator?  expression))
+         (mapping-value 'INT)]
+        
+        [(variable?             expression)
+         (variable-type-mapping expression state)]
+        
         [else
          (mapping-error "unrecognized type")]))

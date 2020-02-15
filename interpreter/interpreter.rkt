@@ -17,7 +17,8 @@
 
 (define interpreter-value-mapping
   (hash 'BOOL (lambda (value) (if value 'true 'false))
-        'INT  (lambda (value) value)))
+        'INT  values
+        'NULL (thunk* 'null)))
 
 (define (interpreter-value-of-result result)
   (let* ([binding (result-return-value result)]

@@ -21,14 +21,14 @@
        '((1 150)
          (2 -4)
          (3 10)
-         ;(4 16)
+         (4 16)
          ;(5 220)
          ;(6 5)
          ;(7 6)
          ;(8 10)
          ;(9 5)
          (10 -39)
-         ;(15 true)
+         (15 true)
          ;(16 100)
          ;(17 false)
          ;(18 true)
@@ -60,9 +60,17 @@
 (define examples-manifest
   (append
    (list
+    (example "return null"
+             (build-path EXAMPLES-DIR
+                         "return-null.txt")
+             (interpreter-value 'null))
     (example "return zero"
              (build-path EXAMPLES-DIR
                          "return-zero.txt")
-             (interpreter-value 0)))
+             (interpreter-value 0))
+    (example "return false"
+             (build-path EXAMPLES-DIR
+                         "return-false.txt")
+             (interpreter-value 'false)))
    provided-example-value-tests
    provided-example-error-tests))

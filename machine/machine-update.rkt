@@ -22,35 +22,39 @@
 (struct result-error (message)
   #:transparent)
 
+(define type-mappers
+  (hash 'INT  M-int
+        'BOOL M-bool
+        'NULL (thunk* (mapping-value null))))
+
+(define (auto-type-binding value state)
+  (let ([type (mapping-value-value (M-type value
+                                           state))])
+    (binding type
+             (mapping-value-value
+              ((hash-ref type-mappers type) value
+                                            state)))))
+
 (define operations
   (hash 'return (lambda (args state)
-                  (let ([value (first args)])
-                    (values (result-return
-                             (binding (mapping-value-value
-                                       (M-type value
-                                               state))
-                                      (mapping-value-value
-                                       (M-int value
-                                              state))))
-                            state)))
+                  (values (result-return (auto-type-binding (first args)
+                                                            state))
+                          state))
         'var    (lambda (args state)
                   (values (result-void)
                           (machine-scope-bind state
                                               (first args)
-                                              (binding 'NULL null))))
+                                              (if (< (length args) 2)
+                                                  (binding 'NULL null)
+                                                  (auto-type-binding (second args)
+                                                                     state)))))
         '=      (lambda (args state)
                   (let* ([variable   (first args)]
-                         [value      (second args)]
-                         [value-type (mapping-value-value (M-type value state))])
+                         [value      (second args)])
                     (values (result-void)
                             (machine-scope-bind state
                                                 variable
-                                                (binding value-type
-                                                         (mapping-value-value
-                                                          ((case value-type
-                                                             [(INT)  M-int]
-                                                             [(BOOL) M-bool]) value state)))))))))
-
+                                                (auto-type-binding value state)))))))
 (define (operation? statement)
   (and (pair? statement)
        (hash-has-key? operations

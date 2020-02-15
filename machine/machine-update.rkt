@@ -41,17 +41,15 @@
         '=      (lambda (args state)
                   (let* ([variable   (first args)]
                          [value      (second args)]
-                         [value-type (mapping-value-value (M-type value state))]
-                         [value-int  (M-int  value state)]
-                         [value-bool (M-bool value state)])
+                         [value-type (mapping-value-value (M-type value state))])
                     (values (result-void)
                             (machine-scope-bind state
                                                 variable
                                                 (binding value-type
                                                          (mapping-value-value
-                                                          (case value-type
-                                                            [(INT) value-int]
-                                                            [(BOOL) value-bool])))))))))
+                                                          ((case value-type
+                                                             [(INT)  M-int]
+                                                             [(BOOL) M-bool]) value state)))))))))
 
 (define (operation? statement)
   (and (pair? statement)

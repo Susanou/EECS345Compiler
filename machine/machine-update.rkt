@@ -44,7 +44,10 @@
                   (values (result-void)
                           (machine-scope-bind state
                                               (first args)
-                                              (binding 'NULL null))))
+                                              (if (< (length args) 2)
+                                                  (binding 'NULL null)
+                                                  (auto-type-binding (second args)
+                                                                     state)))))
         '=      (lambda (args state)
                   (let* ([variable   (first args)]
                          [value      (second args)])

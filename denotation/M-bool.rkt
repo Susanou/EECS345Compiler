@@ -3,7 +3,8 @@
 (provide M-bool)
 
 (require  "mapping.rkt"
-          "M-int.rkt")
+          "M-int.rkt"
+          "../machine/binding.rkt")
 
 (define constants
   (hash 'true #t
@@ -87,7 +88,12 @@
 
 (define (M-bool expression state)
   (cond
+    ((number? expression) (mapping-error "not bool"))
+    ((and (atom? expression) (binding-type? expression)) (constant-mapping-value expression))
     [(constant?  expression) (constant-mapping-value  expression)]
     [(operation? expression) (operation-mapping-value expression state)]
     [else                    (mapping-error "unsupported")]))
 
+(define atom?
+  (lambda (x)
+  (and (not (pair? x)) (not (null? x)))))

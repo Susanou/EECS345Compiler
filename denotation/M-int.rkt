@@ -2,7 +2,9 @@
 
 (provide M-int)
 
-(require "mapping.rkt")
+(require "mapping.rkt"
+         "../machine/binding.rkt"
+         "../machine/machine-scope.rkt")
 
 (define (M-int expression state)
   (mapping-value (hash-ref (hash
@@ -10,6 +12,8 @@
                             '(- (/ (* 6 (+ 8 (% 5 3))) 11) 9) -4
                             '(+ (* 6 (- (* 4 2))) 9)          -39)
                            expression
-                           (if (integer? expression)
-                               expression
-                               0))))
+                           (cond [(integer? expression) expression]
+                                 [(symbol?  expression)
+                                  (binding-value (machine-scope-ref state
+                                                                    expression))]
+                                 [else 0]))))

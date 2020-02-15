@@ -60,9 +60,17 @@
 (define examples-manifest
   (append
    (list
+    (example "return null"
+             (build-path EXAMPLES-DIR
+                         "return-null.txt")
+             (interpreter-value 'null))
     (example "return zero"
              (build-path EXAMPLES-DIR
                          "return-zero.txt")
-             (interpreter-value 0)))
+             (interpreter-value 0))
+    (example "return false"
+             (build-path EXAMPLES-DIR
+                         "return-false.txt")
+             (interpreter-value 'false)))
    provided-example-value-tests
    provided-example-error-tests))

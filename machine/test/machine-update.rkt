@@ -6,41 +6,11 @@
          "../machine.rkt"
          "../machine-update.rkt"
          "../machine-scope.rkt"
-         "../binding.rkt")
+         "../binding.rkt"
+         "../../denotation/M-state.rkt")
 
 (define/provide-test-suite
   test-machine-update
-  (test-suite
-   "update"
-   (test-suite
-    "return 0;"
-    (let-values ([(result state)
-                  (machine-update (machine-new) '(return 0))])
-      (test-equal? "result is return of zero"
-                   result
-                   (result-return (binding 'INT 0)))
-      (test-equal? "state is unchanged"
-                   state
-                   (machine-new))))
-   (test-suite
-    "return 1;"
-    (let-values ([(result state)
-                  (machine-update (machine-new) '(return 1))])
-      (test-equal? "result is return of one"
-                   result
-                   (result-return (binding 'INT 1)))))
-   (test-suite
-    "var x;"
-    (let-values ([(result state)
-                  (machine-update (machine-new) '(var x))])
-      (test-equal? "result is void"
-                   result
-                   (result-void))
-      (test-true "scope has x bound"
-                 (machine-scope-bound? state 'x))
-      (test-equal? "x is bound to null binding"
-                   (machine-scope-ref state 'x)
-                   (binding 'NULL null)))))
   (test-suite
    "consume"
    (test-suite

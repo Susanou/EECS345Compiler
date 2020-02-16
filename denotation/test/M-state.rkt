@@ -93,7 +93,23 @@
        (test-false "x NOT bound"
                    (machine-scope-bound? state 'x))
        (test-true  "y bound"
-                   (machine-scope-bound? state 'y)))))))
+                   (machine-scope-bound? state 'y))))))
+  (test-suite
+   "while"
+   (test-suite
+    "body never runs"
+    (let-values ([(result state)
+                  (M-state '(while false (return 0)) (machine-new))])
+      (test-pred "result is void"
+                 result-void?
+                 result)))
+   (test-suite
+    "body returns"
+    (let-values ([(result state)
+                  (M-state '(while true (return 0)) (machine-new))])
+      (test-pred "result is return"
+                 result-return?
+                 result)))))
      
 (module+ main
   (require rackunit/text-ui)

@@ -60,7 +60,16 @@
                       (M-state (second args) state)
                       (if (>= (length args) 3)
                           (M-state (third args)  state)
-                          (values  (result-void) state))))))
+                          (values  (result-void) state))))
+        'while  (lambda (args state)
+                  (if (mapping-value-value (M-bool (first args) state))
+                      (let-values ([(body-result body-state)
+                                    (M-state (second args) state)])
+                        (if (result-void? body-result)
+                            (M-state (cons 'while args) body-state)
+                            (values body-result body-state)))
+                      (values (result-void) state)))))
+                      
 
 (define (operation? expression)
   (and (pair? expression)

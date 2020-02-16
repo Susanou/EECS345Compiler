@@ -176,7 +176,13 @@
           
       (check-equal?
         mapping
-        MAPPING-ERROR)))
+        MAPPING-ERROR))
+        
+      (check-equal?
+        (M-bool '(= x (= y true)) (machine-new))
+        MAPPING-TRUE
+        )
+        )
      
      )
 

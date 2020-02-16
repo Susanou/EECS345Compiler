@@ -32,4 +32,4 @@
                 (machine-consume (machine-new)
                                  (parser filename))])
     (cond [(result-return? result) (interpreter-value-of-result result)]
-          [else                    (interpreter-error (result))])))
+          [else                    (interpreter-error (result-error-message result))])))

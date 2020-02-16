@@ -58,7 +58,15 @@
                   (mapping-value 'BOOL))
      (test-equal? "type of w returns map error"
                   (M-type 'w state)
-                  (mapping-error "unbound variable")))))
+                  (mapping-error "unbound variable"))))
+  (test-suite
+   "assignments"
+   (test-equal? "boolean"
+                (M-type '(= x false) null)
+                (mapping-value 'BOOL))
+   (test-equal? "integer"
+                (M-type '(= x 0) null)
+                (mapping-value 'INT))))
 
 (module+ main
   (require rackunit/text-ui)

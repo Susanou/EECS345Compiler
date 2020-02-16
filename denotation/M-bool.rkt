@@ -19,6 +19,9 @@
 
 (define operations
   (hash
+   '= (lambda (expression state)
+          (M-bool (second expression) state))
+
    '! (lambda (expression state)
         (mapping-value
          (not (mapping-value-value

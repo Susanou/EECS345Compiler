@@ -62,7 +62,7 @@
               (<= (mapping-value-value
                     (M-int (car args) state))
                   (mapping-value-value
-                    (M-int (cdr args) state)))))
+                    (M-int (cadr args) state)))))
                     
     '> (lambda (args state)
             (mapping-value

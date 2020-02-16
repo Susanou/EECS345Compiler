@@ -47,15 +47,21 @@
                         (values (result-error (mapping-error-message mapping))
                                 state))))
         'var    (lambda (args state)
-                  (values
-                   (result-void)
-                   (machine-scope-bind state
-                                       (first args)
-                                       (if (< (length args) 2)
-                                           (binding 'NULL null)
-                                           (mapping-value-value
-                                            (auto-type-binding-mapping (second args)
-                                                                       state))))))
+                  (let ([name  (first  args)])
+                    (if (machine-scope-bound? state name)
+                        (values (result-error (format "redefining: ~a"
+                                                      name))
+                                state)
+                        (values
+                         (result-void)
+                         (machine-scope-bind state
+                                             name
+                                             (if (< (length args) 2)
+                                                 (binding 'NULL null)
+                                                 (mapping-value-value
+                                                  (auto-type-binding-mapping
+                                                   (second args)
+                                                   state))))))))
         '=      (lambda (args state)
                   (let ([name  (first  args)]
                         [value (second args)])

@@ -54,7 +54,7 @@
        '((11 "assign before declare: y")
          ;(12 "using before declare")
          ;(13 "use before assign")
-         ;(14 "redefining: x")
+         (14 "redefining: x")
          )))
 
 (define examples-manifest

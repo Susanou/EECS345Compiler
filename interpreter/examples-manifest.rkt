@@ -51,10 +51,10 @@
                               "provided"
                               (number->string (first p)))
                   (interpreter-error (second p))))
-       '(;(11 "using before declare")
+       '((11 "assign before declare: y")
          ;(12 "using before declare")
          ;(13 "use before assign")
-         ;(14 "redefining")
+         ;(14 "redefining: x")
          )))
 
 (define examples-manifest

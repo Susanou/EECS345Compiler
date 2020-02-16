@@ -49,12 +49,18 @@
                                            (auto-type-binding (second args)
                                                               state)))))
         '=      (lambda (args state)
-                  (values
-                   (result-void)
-                   (machine-scope-bind state
-                                       (first args)
-                                       (auto-type-binding (second args)
-                                                          state))))
+                  (let ([name  (first  args)]
+                        [value (second args)])
+                    (if (machine-scope-bound? state name)
+                        (values
+                         (result-void)
+                         (machine-scope-bind state
+                                             name
+                                             (auto-type-binding value
+                                                                state)))
+                        (values (result-error (format "assign before declare: ~s"
+                                                      name))
+                                state))))
         'if     (lambda (args state)
                   (if (mapping-value-value (M-bool (first args) state))
                       (M-state (second args) state)

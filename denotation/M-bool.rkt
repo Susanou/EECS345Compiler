@@ -4,6 +4,7 @@
 
 (require  "mapping.rkt"
           "M-int.rkt"
+          "../machine/machine-scope.rkt"
           "../machine/binding.rkt")
 
 (define constants
@@ -88,10 +89,11 @@
 
 (define (M-bool expression state)
   (cond
-    ((number? expression) (mapping-error "not bool"))
-    ((and (atom? expression) (binding-type? expression)) (constant-mapping-value expression))
     [(constant?  expression) (constant-mapping-value  expression)]
     [(operation? expression) (operation-mapping-value expression state)]
+    ((and (atom? expression) (machine-scope-bound? state expression) 
+          (eq? (binding-type (machine-scope-ref state expression)) 'BOOL)) 
+            (mapping-value (binding-value (machine-scope-ref state expression))))
     [else                    (mapping-error "unsupported")]))
 
 (define atom?

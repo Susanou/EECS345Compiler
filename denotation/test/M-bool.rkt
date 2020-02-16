@@ -4,11 +4,15 @@
 
 (require rackunit
          "../mapping.rkt"
-         "../M-bool.rkt")
+         "../M-bool.rkt"
+         "../../machine/binding.rkt"
+         "../../machine/machine-scope.rkt"
+         "../../machine/binding.rkt"
+         "../../machine/machine.rkt")
 
 (define MAPPING-TRUE  (mapping-value #t))
 (define MAPPING-FALSE (mapping-value #f))
-(define MAPPING-ERROR (mapping-error "unsuported"))
+(define MAPPING-ERROR (mapping-error "unsupported"))
 
 (define/provide-test-suite 
   test-M-bool
@@ -154,7 +158,27 @@
       MAPPING-TRUE))
      
      
-     ))
+     )
+
+     (test-suite
+     "state operations"
+     (let* ([state   (machine-scope-bind (machine-new) 'x (binding 'BOOL #t))]
+                    [mapping (M-bool 'x state)])
+
+          
+      (check-equal?
+        mapping
+        MAPPING-TRUE))
+
+      (let* ([state   (machine-scope-bind (machine-new) 'x (binding 'INT 3))]
+                    [mapping (M-bool 'x state)])
+
+          
+      (check-equal?
+        mapping
+        MAPPING-ERROR)))
+     
+     )
 
  
  (module+ main

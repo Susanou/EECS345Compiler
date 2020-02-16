@@ -51,6 +51,8 @@
         
         [(variable?             expression)
          (variable-type-mapping expression state)]
+
+        [(eq? (first expression) '=) (M-type (third expression) state)]
         
         [else
          (mapping-error "unrecognized type")]))

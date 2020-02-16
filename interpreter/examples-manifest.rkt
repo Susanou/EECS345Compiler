@@ -52,7 +52,7 @@
                               (number->string (first p)))
                   (interpreter-error (second p))))
        '((11 "assign before declare: y")
-         ;(12 "using before declare")
+         (12 "use before declare: x")
          ;(13 "use before assign")
          (14 "redefining: x")
          )))

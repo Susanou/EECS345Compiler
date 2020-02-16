@@ -66,13 +66,16 @@
                   (let ([name  (first  args)]
                         [value (second args)])
                     (if (machine-scope-bound? state name)
-                        (values
-                         (result-void)
-                         (machine-scope-bind state
-                                             name
-                                             (mapping-value-value
-                                              (auto-type-binding-mapping value
-                                                                         state))))
+                        (let ([mapping (auto-type-binding-mapping value state)])
+                          (if (mapping-value? mapping)
+                              (values
+                               (result-void)
+                               (machine-scope-bind state
+                                                   name
+                                                   (mapping-value-value
+                                                    mapping)))
+                              (values (result-error (mapping-error-message mapping))
+                                      state)))
                         (values (result-error (format "assign before declare: ~s"
                                                       name))
                                 state))))

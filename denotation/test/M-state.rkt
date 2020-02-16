@@ -143,7 +143,20 @@
                   (machine-new))
      (test-equal? "result is error"
                   result
-                  (result-error "use before declare: x")))))
+                  (result-error "use before declare: x"))))
+  (test-suite
+   "assign from before declare"
+   (let ([state (machine-scope-bind (machine-new)
+                                    'y
+                                    (binding 'NULL null))])
+     (let-values ([(result new-state)
+                   (M-state '(= y x) state)])
+       (test-equal? "state unchanged"
+                    new-state
+                    state)
+       (test-equal? "result is error"
+                    result
+                    (result-error "use before declare: x"))))))
      
 (module+ main
   (require rackunit/text-ui)

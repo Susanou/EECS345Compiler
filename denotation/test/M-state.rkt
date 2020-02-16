@@ -11,32 +11,25 @@
 
 (define/provide-test-suite 
   test-M-state
-  (test-equal? "state unchanged by interger constant"
-               (M-state 0 (machine-new))
-               (mapping-value (machine-new)))
-  (test-case "state has variable after var expression"
-             (let ([mapping
-                    (M-state '(var x) (machine-new))])
-               (check-pred mapping-value? mapping)
-               (check-true (machine-scope-bound?
-                            (mapping-value-value mapping)
-                            'x))))
-  (test-case "state has value after assignment"
-             (let* ([state   (machine-scope-bind (machine-new) 'x null)]
-                    [mapping (M-state '(= x 0) state)])
-               (check-pred mapping-value?
-                           mapping)
-               (check-equal? (machine-scope-ref (mapping-value-value mapping)
-                                                'x)
-                             (binding 'INT 0))))
-  (test-case "assignment value can be expression"
-             (let* ([state   (machine-scope-bind (machine-new) 'x null)]
-                    [mapping (M-state '(= x (+ 1 2)) state)])
-               (check-pred mapping-value?
-                           mapping)
-               (check-equal? (machine-scope-ref (mapping-value-value mapping)
-                                                'x)
-                             (binding 'INT 3)))))
+  (test-suite
+   "state unchanged by interger constant"
+   (let-values ([(result state)
+                 (M-state 0 (machine-new))])
+     (test-pred "result is void"
+                result-void?
+                result)
+     (test-equal? "state unchanged"
+                  state
+                  (machine-new))))
+  (test-suite
+   "state has variable after var expression"
+   (let-values ([(result state)
+                 (M-state '(var x) (machine-new))])
+     (test-pred "result is void"
+                result-void?
+                result)
+     (test-true "variable bound"
+                (machine-scope-bound? state 'x)))))
 
 (module+ main
   (require rackunit/text-ui)

@@ -1,13 +1,25 @@
 #lang racket
 
-(provide M-state)
+(provide (struct-out result-void)
+         (struct-out result-return)
+         (struct-out result-error)
+         M-state)
 
-(require "mapping.rkt"
-         "../machine/binding.rkt"
+(require "../machine/binding.rkt"
          "../machine/machine-scope.rkt"
          "M-int.rkt"
          "M-bool.rkt"
-         "M-type.rkt")
+         "M-type.rkt"
+         "mapping.rkt")
+
+(struct result-void ()
+  #:transparent)
+
+(struct result-return (value)
+  #:transparent)
+
+(struct result-error (message)
+  #:transparent)
 
 (define type-mappers
   (hash 'INT  M-int
@@ -23,8 +35,13 @@
                                             state)))))
 
 (define operations
-  (hash 'var    (lambda (args state)
-                  (mapping-value
+  (hash 'return (lambda (args state)
+                  (values (result-return (auto-type-binding (car args)
+                                                            state))
+                          state))
+        'var    (lambda (args state)
+                  (values
+                   (result-void)
                    (machine-scope-bind state
                                        (first args)
                                        (if (< (length args) 2)
@@ -34,7 +51,8 @@
         '=      (lambda (args state)
                   (let* ([variable   (first args)]
                          [value      (second args)])
-                    (mapping-value
+                    (values
+                     (result-void)
                      (machine-scope-bind state
                                          variable
                                          (auto-type-binding value state)))))))
@@ -47,10 +65,7 @@
   ((hash-ref operations (car expression)) (cdr expression)
                                           state))
 
-(define (no-op state)
-  (mapping-value state))
-
 (define (M-state expression state)
   (if (operation? expression)
       (operate expression state)
-      (no-op state)))
+      (values (result-void) state)))

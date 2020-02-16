@@ -7,7 +7,8 @@
 (require "../machine/machine.rkt"
          "../machine/machine-update.rkt"
          "../parser/simpleParser.rkt"
-         "../machine/binding.rkt")
+         "../machine/binding.rkt"
+         "../denotation/M-state.rkt")
 
 (struct interpreter-value (value)
   #:transparent)

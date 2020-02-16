@@ -109,7 +109,20 @@
                   (M-state '(while true (return 0)) (machine-new))])
       (test-pred "result is return"
                  result-return?
-                 result)))))
+                 result)))
+   (test-suite
+    "run once"
+    (let-values ([(result state)
+                  (M-state '(while x (= x false))
+                           (machine-scope-bind (machine-new)
+                                               'x
+                                               (binding 'BOOL #t)))])
+      (test-pred "result is void"
+                 result-void?
+                 result)
+      (test-equal? "x is bound to false"
+                   (machine-scope-ref state 'x)
+                   (binding 'BOOL #f))))))
      
 (module+ main
   (require rackunit/text-ui)

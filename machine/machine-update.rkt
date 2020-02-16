@@ -11,7 +11,8 @@
          "../denotation/mapping.rkt"
          "../denotation/M-int.rkt"
          "../denotation/M-type.rkt"
-         "../denotation/M-bool.rkt")
+         "../denotation/M-bool.rkt"
+         "../denotation/M-state.rkt")
 
 (struct result-void ()
   #:transparent)
@@ -22,6 +23,7 @@
 (struct result-error (message)
   #:transparent)
 
+; DUPLICATE CODE! vvvv from M-state
 (define type-mappers
   (hash 'INT  M-int
         'BOOL M-bool
@@ -34,39 +36,18 @@
              (mapping-value-value
               ((hash-ref type-mappers type) value
                                             state)))))
+; ^^^^
 
-(define operations
-  (hash 'return (lambda (args state)
-                  (values (result-return (auto-type-binding (first args)
-                                                            state))
-                          state))
-        'var    (lambda (args state)
-                  (values (result-void)
-                          (machine-scope-bind state
-                                              (first args)
-                                              (if (< (length args) 2)
-                                                  (binding 'NULL null)
-                                                  (auto-type-binding (second args)
-                                                                     state)))))
-        '=      (lambda (args state)
-                  (let* ([variable   (first args)]
-                         [value      (second args)])
-                    (values (result-void)
-                            (machine-scope-bind state
-                                                variable
-                                                (auto-type-binding value state)))))))
-(define (operation? statement)
-  (and (pair? statement)
-       (hash-has-key? operations
-                      (car statement))))
-
-(define (operate statement state)
-  ((hash-ref operations (car statement)) (cdr statement)
-                                         state))
+(define (return-operation args state)
+  (values (result-return (auto-type-binding (second args)
+                                            state))
+          state))
 
 (define (machine-update state statement)
-  (cond [(operation? statement) (operate statement state)]
-        [else                   (result-error "undefined operation")]))
+  (if (eq? (car statement) 'return)
+      (return-operation statement state)
+      (values (result-void)
+              (mapping-value-value (M-state statement state)))))
 
 (define (machine-consume state statements)
   (if (null? statements)

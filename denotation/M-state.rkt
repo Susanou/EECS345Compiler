@@ -49,13 +49,16 @@
                                            (auto-type-binding (second args)
                                                               state)))))
         '=      (lambda (args state)
-                  (let* ([variable   (first args)]
-                         [value      (second args)])
-                    (values
-                     (result-void)
-                     (machine-scope-bind state
-                                         variable
-                                         (auto-type-binding value state)))))))
+                  (values
+                   (result-void)
+                   (machine-scope-bind state
+                                       (first args)
+                                       (auto-type-binding (second args)
+                                                          state))))
+        'if     (lambda (args state)
+                  (if (mapping-value-value (M-bool (first args) state))
+                      (M-state (second args) state)
+                      (M-state (third  args) state)))))
 
 (define (operation? expression)
   (and (pair? expression)

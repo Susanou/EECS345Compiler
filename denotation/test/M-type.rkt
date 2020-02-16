@@ -58,7 +58,7 @@
                   (mapping-value 'BOOL))
      (test-equal? "type of w returns map error"
                   (M-type 'w state)
-                  (mapping-error "unbound variable"))))
+                  (mapping-error "use before declare: w"))))
   (test-suite
    "assignments"
    (test-equal? "boolean"

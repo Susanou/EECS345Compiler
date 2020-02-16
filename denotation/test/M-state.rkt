@@ -133,7 +133,17 @@
                   (machine-new))
      (test-equal? "result is error"
                   result
-                  (result-error "assign before declare: x")))))
+                  (result-error "assign before declare: x"))))
+  (test-suite
+   "return before declare"
+   (let-values ([(result state)
+                 (M-state '(return x) (machine-new))])
+     (test-equal? "state unchanged"
+                  state
+                  (machine-new))
+     (test-equal? "result is error"
+                  result
+                  (result-error "use before declare: x")))))
      
 (module+ main
   (require rackunit/text-ui)

@@ -51,6 +51,24 @@
                     result
                     (result-return (binding 'INT 1))))))
    (test-suite
+    "no else"
+    (test-suite
+     "true"
+     (let-values ([(result state)
+                   (M-state '(if true (return 0))
+                            (machine-new))])
+       (test-equal? "return properly"
+                    result
+                    (result-return (binding 'INT 0)))))
+    (test-suite
+     "false"
+     (let-values ([(result state)
+                   (M-state '(if false (return 0))
+                            (machine-new))])
+       (test-equal? "return properly"
+                    result
+                    (result-void)))))
+   (test-suite
     "bind"
     (test-suite
      "true"

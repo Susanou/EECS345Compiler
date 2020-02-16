@@ -58,7 +58,9 @@
         'if     (lambda (args state)
                   (if (mapping-value-value (M-bool (first args) state))
                       (M-state (second args) state)
-                      (M-state (third  args) state)))))
+                      (if (>= (length args) 3)
+                          (M-state (third args)  state)
+                          (values  (result-void) state))))))
 
 (define (operation? expression)
   (and (pair? expression)

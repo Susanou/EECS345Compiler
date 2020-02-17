@@ -41,7 +41,16 @@
    "expressions"
    (test-equal? "plus"
                 (M-int '(+ 1 2) null)
-                (mapping-value 3))))
+                (mapping-value 3))
+   (test-equal? "minus"
+                (M-int '(- 1 2) null)
+                (mapping-value -1))
+   (test-equal? "divide"
+                (M-int '(/ 5 2) null)
+                (mapping-value 2))
+   (test-equal? "mod"
+                (M-int '(% 5 2) null)
+                (mapping-value 1))))
 
 (module+ main
   (require rackunit/text-ui)

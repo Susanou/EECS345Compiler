@@ -16,11 +16,17 @@
       (mapping-error (format "use before bind: ~s"
                              name))))
 
+(define (binary-operation operator)
+  (lambda (args state)
+    (mapping-value
+     (operator (mapping-value-value (M-int (first  args) state))
+               (mapping-value-value (M-int (second args) state))))))
+
 (define operations
-  (hash '+ (lambda (args state)
-             (mapping-value
-              (+ (mapping-value-value (M-int (first  args) state))
-                 (mapping-value-value (M-int (second args) state)))))))
+  (hash '+ (binary-operation +)
+        '- (binary-operation -)
+        '/ (binary-operation quotient)
+        '% (binary-operation remainder)))
 
 (define (map-operation expression state)
   (if (hash-has-key? operations (first expression))

@@ -45,18 +45,22 @@
    (test-equal? "minus"
                 (M-int '(- 1 2) null)
                 (mapping-value -1))
+   (test-equal? "multiply"
+                (M-int '(* 5 2) null)
+                (mapping-value 10))
    (test-equal? "divide"
                 (M-int '(/ 5 2) null)
                 (mapping-value 2))
    (test-equal? "mod"
                 (M-int '(% 5 2) null)
                 (mapping-value 1))
-   (test-equal? "multiply"
-                (M-int '(* 5 2) null)
-                (mapping-value 10))
    (test-equal? "unary minus"
                 (M-int '(- 5) null)
-                (mapping-value -5))))
+                (mapping-value -5))
+(test-equal? "6 * (8 + (5 % 3)) / 11 - 9"
+             (M-int '(- (/ (* 6 (+ 8 (% 5 3))) 11) 9) (machine-new))
+             (mapping-value -4)
+             )))
 
 (module+ main
   (require rackunit/text-ui)

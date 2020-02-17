@@ -38,7 +38,8 @@
 (define (variable-type-mapping name state)
   (if (machine-scope-bound? state name)
       (mapping-value (binding-type (machine-scope-ref state name)))
-      (mapping-error "unbound variable")))
+      (mapping-error (format "use before declare: ~s"
+                             name))))
 
 (define (M-type expression state)
   (cond [(or (boolean-literal?  expression)

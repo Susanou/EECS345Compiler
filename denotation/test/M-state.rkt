@@ -122,7 +122,41 @@
                  result)
       (test-equal? "x is bound to false"
                    (machine-scope-ref state 'x)
-                   (binding 'BOOL #f))))))
+                   (binding 'BOOL #f)))))
+  (test-suite
+   "assign before declare"
+   (let-values ([(result state)
+                 (M-state '(= x 0)
+                          (machine-new))])
+     (test-equal? "state unchanged"
+                  state
+                  (machine-new))
+     (test-equal? "result is error"
+                  result
+                  (result-error "assign before declare: x"))))
+  (test-suite
+   "return before declare"
+   (let-values ([(result state)
+                 (M-state '(return x) (machine-new))])
+     (test-equal? "state unchanged"
+                  state
+                  (machine-new))
+     (test-equal? "result is error"
+                  result
+                  (result-error "use before declare: x"))))
+  (test-suite
+   "assign from before declare"
+   (let ([state (machine-scope-bind (machine-new)
+                                    'y
+                                    (binding 'NULL null))])
+     (let-values ([(result new-state)
+                   (M-state '(= y x) state)])
+       (test-equal? "state unchanged"
+                    new-state
+                    state)
+       (test-equal? "result is error"
+                    result
+                    (result-error "use before declare: x"))))))
      
 (module+ main
   (require rackunit/text-ui)

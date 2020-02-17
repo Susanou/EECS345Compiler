@@ -22,9 +22,21 @@
      (operator (mapping-value-value (M-int (first  args) state))
                (mapping-value-value (M-int (second args) state))))))
 
+(define (unary-operation operator)
+  (lambda (args state)
+    (mapping-value
+     (operator (mapping-value-value (M-int (first  args) state))))))
+
+(define (unary-binary-operator unary binary)
+  (lambda (args state)
+    (if (< (length args) 2)
+        (unary   args state)
+        (binary  args state))))
+
 (define operations
   (hash '+ (binary-operation +)
-        '- (binary-operation -)
+        '- (unary-binary-operator (unary-operation -)
+                                  (binary-operation -))
         '/ (binary-operation quotient)
         '% (binary-operation remainder)))
 

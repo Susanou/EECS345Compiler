@@ -51,6 +51,9 @@
    (test-equal? "mod"
                 (M-int '(% 5 2) null)
                 (mapping-value 1))
+   (test-equal? "multiply"
+                (M-int '(* 5 2) null)
+                (mapping-value 10))
    (test-equal? "unary minus"
                 (M-int '(- 5) null)
                 (mapping-value -5))))

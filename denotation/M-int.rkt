@@ -38,7 +38,8 @@
         '- (unary-binary-operator (unary-operation -)
                                   (binary-operation -))
         '/ (binary-operation quotient)
-        '% (binary-operation remainder)))
+        '% (binary-operation remainder)
+        '* (binary-operation *)))
 
 (define (map-operation expression state)
   (if (hash-has-key? operations (first expression))

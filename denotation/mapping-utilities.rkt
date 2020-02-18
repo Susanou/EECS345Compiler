@@ -3,6 +3,7 @@
 (provide map-variable
          binary-operation
          unary-operation
+         unary-operation-right-hand
          unary-binary-operator
          expression-operator
          expression-left
@@ -47,6 +48,11 @@
   (lambda (args state)
     (mapping-value
      (operator (mapping-value-value (M-value (first  args) state))))))
+
+(define (unary-operation-right-hand operator M-value)
+  (lambda (args state)
+    (mapping-value
+     (operator (mapping-value-value (M-value (second  args) state))))))
 
 (define (unary-binary-operator unary binary)
   (lambda (args state)

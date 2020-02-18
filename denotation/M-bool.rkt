@@ -5,7 +5,15 @@
 (require  "mapping.rkt"
           "M-int.rkt"
           "../machine/machine-scope.rkt"
-          "../machine/binding.rkt")
+          "../machine/binding.rkt"
+          "mapping-utilities.rkt")
+
+(define (M-bool expression state)
+  (cond
+    [(constant? expression) (constant-mapping-value  expression)]
+    [(list?     expression) (operation-mapping-value expression state)]
+    [(symbol?   expression) (map-variable 'BOOL      expression state)]
+    [else                   (mapping-error "unsupported")]))
 
 (define constants
   (hash 'true #t
@@ -17,88 +25,37 @@
 (define (constant-mapping-value expression)
   (mapping-value (hash-ref constants expression)))
 
+; define binary and and or procedures: since
+; (and ...) and (or ...) are both syntax, not procedures
+; so they can't be passed around like variables
+
+(define (andb a b)
+  (and a b))
+
+(define (orb a b)
+  (or a b))
+
+; define != procedure
+
+(define (!= a b)
+  (not (= a b)))
+
 (define operations
   (hash
-   '= (lambda (expression state)
-        (M-bool (second expression) state))
+   '=  (unary-operation-right-hand values M-bool)
 
-   '! (lambda (expression state)
-        (mapping-value
-         (not (mapping-value-value
-               (M-bool (car expression) state)))))
-               
-   '&& (lambda (args state)
-         (mapping-value
-          (and (mapping-value-value
-                (M-bool (car args) state)) 
-               (mapping-value-value
-                (M-bool (cadr args) state)))))
-                  
-   '|| (lambda (args state)
-         (mapping-value
-          (or (mapping-value-value
-               (M-bool (car args) state))
-              (mapping-value-value
-               (M-bool (cadr args) state)))))
-
-   '== (lambda (args state)
-         (mapping-value
-          (= (mapping-value-value
-              (M-int (car args) state))
-             (mapping-value-value
-              (M-int (cadr args) state)))))
-
-   '!= (lambda (args state)
-         (mapping-value
-          (not (= (mapping-value-value
-                   (M-int (car args) state))
-                  (mapping-value-value
-                   (M-int (cadr args) state))))))
-
-   '>= (lambda (args state)
-         (mapping-value
-          (>= (mapping-value-value
-               (M-int (car args) state))
-              (mapping-value-value
-               (M-int (cadr args) state)))))
-
-   '<= (lambda (args state)
-         (mapping-value
-          (<= (mapping-value-value
-               (M-int (car args) state))
-              (mapping-value-value
-               (M-int (cadr args) state)))))
-                    
-   '> (lambda (args state)
-        (mapping-value
-         (> (mapping-value-value
-             (M-int (car args) state))
-            (mapping-value-value
-             (M-int (cadr args) state)))))
-
-   '< (lambda (args state)
-        (mapping-value
-         (< (mapping-value-value
-             (M-int (car args) state))
-            (mapping-value-value
-             (M-int (cadr args) state)))))))
-
-(define (operation? expression)
-  (and (list? expression)
-       (hash-has-key? operations (car expression))))
+   '!  (unary-operation  not  M-bool       )
+   '&& (binary-operation andb M-bool M-bool)
+   '|| (binary-operation orb  M-bool M-bool)
+   
+   '== (binary-operation =    M-int  M-int )
+   '!= (binary-operation !=   M-int  M-int ) 
+   '>= (binary-operation >=   M-int  M-int )
+   '<= (binary-operation <=   M-int  M-int )
+   '>  (binary-operation >    M-int  M-int )
+   '<  (binary-operation <    M-int  M-int )))
 
 (define (operation-mapping-value expression state)
-  ((hash-ref operations (car expression)) (cdr expression) state))
-
-(define (M-bool expression state)
-  (cond
-    [(constant?  expression) (constant-mapping-value  expression)]
-    [(operation? expression) (operation-mapping-value expression state)]
-    ((and (atom? expression) (machine-scope-bound? state expression) 
-          (eq? (binding-type (machine-scope-ref state expression)) 'BOOL)) 
-     (mapping-value (binding-value (machine-scope-ref state expression))))
-    [else                    (mapping-error "unsupported")]))
-
-(define atom?
-  (lambda (x)
-    (and (not (pair? x)) (not (null? x)))))
+  (if (hash-has-key? operations (car expression))
+      ((hash-ref operations (car expression)) (cdr expression) state)
+      (mapping-error "unrecognized operation")))

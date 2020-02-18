@@ -3,12 +3,13 @@
 (provide M-int)
 
 (require "mapping.rkt"
-         "mapping-utilities.rkt")
+         "mapping-utilities.rkt"
+         "language.rkt")
 
 (define (M-int expression state)
-  (cond [(lang-integer?    expression) (mapping-value            expression)]
-        [(lang-variable?   expression) (map-variable 'INT        expression state)]
-        [(lang-expression? expression) (map-operation operations expression state)]
+  (cond [(INT? expression) (mapping-value            expression)]
+        [(VAR? expression) (map-variable 'INT        expression state)]
+        [(EXP? expression) (map-operation operations expression state)]
         [else                          (mapping-error "unrecognized expression")]))
 
 (define operations

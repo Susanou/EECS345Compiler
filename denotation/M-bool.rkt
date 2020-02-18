@@ -4,14 +4,15 @@
 
 (require  "mapping.rkt"
           "M-int.rkt"
-          "mapping-utilities.rkt")
+          "mapping-utilities.rkt"
+          "language.rkt")
 
 (define (M-bool expression state)
   (cond
-    [(lang-boolean?    expression) (constant-mapping-value   expression)]
-    [(lang-variable?   expression) (map-variable 'BOOL       expression state)]
-    [(lang-expression? expression) (map-operation operations expression state)]
-    [else                          (mapping-error "unsupported")]))
+    [(BOOL? expression) (constant-mapping-value   expression)]
+    [(VAR?  expression) (map-variable 'BOOL       expression state)]
+    [(EXP?  expression) (map-operation operations expression state)]
+    [else               (mapping-error "unsupported")]))
 
 (define constants
   (hash 'true #t

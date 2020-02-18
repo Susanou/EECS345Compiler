@@ -5,7 +5,8 @@
 (require "mapping.rkt"
          "../machine/machine-scope.rkt"
          "../machine/binding.rkt"
-         "mapping-utilities.rkt")
+         "mapping-utilities.rkt"
+         "language.rkt")
 
 (define boolean-operators
   '(! || && == != <= >= < >))
@@ -32,15 +33,15 @@
                              name))))
 
 (define (M-type expression state)
-  (cond [(or (lang-boolean?  expression)
+  (cond [(or (BOOL?  expression)
              (boolean-operator? expression))
          (mapping-value 'BOOL)]
         
-        [(or(lang-integer?   expression)
+        [(or(INT?   expression)
             (integer-operator?  expression))
          (mapping-value 'INT)]
         
-        [(lang-variable?             expression)
+        [(VAR?             expression)
          (variable-type-mapping expression state)]
 
         [(eq? (first expression) '=) (M-type (third expression) state)]

@@ -7,16 +7,16 @@
           "mapping-utilities.rkt"
           "language.rkt")
 
-(define (M-bool expression state)
+(define (M-bool exp state)
   (cond
-    [(BOOL? expression) (constant-mapping-value   expression)]
-    [(VAR?  expression) (map-variable 'BOOL       expression state)]
-    [(EXP?  expression) (map-operation operations expression state)]
-    [else               (mapping-error "unsupported")]))
+    [(BOOL? exp) (constant-mapping-value   exp        )]
+    [(VAR?  exp) (map-variable 'BOOL       exp state  )]
+    [(EXP?  exp) (map-operation operations exp state  )]
+    [else        (mapping-error "not mappable to BOOL")]))
 
 (define constants
-  (hash 'true #t
-        'false #f))
+  (hash TRUE #t
+        FALSE #f))
 
 (define (constant-mapping-value expression)
   (mapping-value (hash-ref constants expression)))
@@ -38,15 +38,13 @@
 
 (define operations
   (hash
-   '=  (unary-operation-right-hand values M-bool)
-
-   '!  (unary-operation  not  M-bool       )
-   '&& (binary-operation andb M-bool M-bool)
-   '|| (binary-operation orb  M-bool M-bool)
-   
-   '== (binary-operation =    M-int  M-int )
-   '!= (binary-operation !=   M-int  M-int ) 
-   '>= (binary-operation >=   M-int  M-int )
-   '<= (binary-operation <=   M-int  M-int )
-   '>  (binary-operation >    M-int  M-int )
-   '<  (binary-operation <    M-int  M-int )))
+   OP-ASSIGN (unary-operation-right-hand values M-bool)
+   OP-NOT (unary-operation  not  M-bool       )
+   OP-AND (binary-operation andb M-bool M-bool)
+   OP-OR  (binary-operation orb  M-bool M-bool)
+   OP-EQ  (binary-operation =    M-int  M-int )
+   OP-NEQ (binary-operation !=   M-int  M-int ) 
+   OP-LTE (binary-operation <=   M-int  M-int )
+   OP-GTE (binary-operation >=   M-int  M-int )
+   OP-LT  (binary-operation <    M-int  M-int )
+   OP-GT  (binary-operation >    M-int  M-int )))

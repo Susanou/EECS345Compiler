@@ -16,15 +16,17 @@
          BOOL-OPS
          BOOL-OP?
          OP-ADD
-         OP-SUBTRACT
-         OP-MULTIPLY
-         OP-DIVIDE
-         OP-MODULO
+         OP-SUB
+         OP-MUL
+         OP-DIV
+         OP-MOD
          INT-OPS
          INT-OP?
          OP-ASSIGN
-         OP-IF
-         OP-WHILE
+         OP-IF      
+         OP-WHILE   
+         OP-RETURN  
+         OP-DECLARE 
          STM-OPS
          STM-OP?
          OPS
@@ -77,28 +79,32 @@
 (define BOOL-OP? (f-member-of-set BOOL-OPS))
 
 (define OP-ADD      '+)
-(define OP-SUBTRACT '-)
-(define OP-MULTIPLY '*)
-(define OP-DIVIDE   '/)
-(define OP-MODULO   '%)
+(define OP-SUB '-)
+(define OP-MUL '*)
+(define OP-DIV   '/)
+(define OP-MOD   '%)
 
 (define INT-OPS
   (set OP-ADD
-       OP-SUBTRACT
-       OP-MULTIPLY
-       OP-DIVIDE
-       OP-MODULO))
+       OP-SUB
+       OP-MUL
+       OP-DIV
+       OP-MOD))
 
 (define INT-OP? (f-member-of-set INT-OPS))
 
-(define OP-ASSIGN '=)
-(define OP-IF     'if)
-(define OP-WHILE  'while)
+(define OP-ASSIGN  '=)
+(define OP-IF      'if)
+(define OP-WHILE   'while)
+(define OP-RETURN  'return)
+(define OP-DECLARE 'var)
 
 (define STM-OPS
   (set OP-ASSIGN
        OP-IF
-       OP-WHILE))
+       OP-WHILE
+       OP-RETURN
+       OP-DECLARE))
 
 (define STM-OP? (f-member-of-set STM-OPS))
 
@@ -117,7 +123,7 @@
 (define RESERVED? (f-member-of-set RESERVED))
 
 (define (EXP? x)
-  (and (list? x) (OP? (exp-op x))))
+  (and (pair? x) (OP? (exp-op x))))
            
 (define (VAR? x)
   (and (symbol? x) (not (RESERVED? x))))

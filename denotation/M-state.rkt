@@ -10,7 +10,9 @@
          "M-int.rkt"
          "M-bool.rkt"
          "M-type.rkt"
-         "mapping.rkt")
+         "mapping.rkt"
+         "language.rkt"
+         "mapping-utilities.rkt")
 
 (struct result-void ()
   #:transparent)
@@ -38,72 +40,66 @@
         mapping)))
 
 (define operations
-  (hash 'return (lambda (args state)
-                  (let ([mapping (auto-type-binding-mapping (car args) state)])
-                    (if (mapping-value? mapping)
-                        (values (result-return
-                                 (mapping-value-value mapping))
-                                state)
-                        (values (result-error (mapping-error-message mapping))
-                                state))))
-        'var    (lambda (args state)
-                  (let ([name  (first  args)])
-                    (if (machine-scope-bound? state name)
-                        (values (result-error (format "redefining: ~a"
-                                                      name))
-                                state)
-                        (values
-                         (result-void)
-                         (machine-scope-bind state
-                                             name
-                                             (if (< (length args) 2)
-                                                 (binding 'NULL null)
-                                                 (mapping-value-value
-                                                  (auto-type-binding-mapping
-                                                   (second args)
-                                                   state))))))))
-        '=      (lambda (args state)
-                  (let ([name  (first  args)]
-                        [value (second args)])
-                    (if (machine-scope-bound? state name)
-                        (let ([mapping (auto-type-binding-mapping value state)])
-                          (if (mapping-value? mapping)
+  (hash OP-RETURN (lambda (args state)
+                    (let ([mapping (auto-type-binding-mapping (car args) state)])
+                      (if (mapping-value? mapping)
+                          (values (result-return
+                                   (mapping-value-value mapping))
+                                  state)
+                          (values (result-error (mapping-error-message mapping))
+                                  state))))
+        OP-DECLARE    (lambda (args state)
+                        (let ([name  (first  args)])
+                          (if (machine-scope-bound? state name)
+                              (values (result-error (format "redefining: ~a"
+                                                            name))
+                                      state)
                               (values
                                (result-void)
                                (machine-scope-bind state
                                                    name
-                                                   (mapping-value-value
-                                                    mapping)))
-                              (values (result-error (mapping-error-message mapping))
-                                      state)))
-                        (values (result-error (format "assign before declare: ~s"
-                                                      name))
-                                state))))
-        'if     (lambda (args state)
-                  (if (mapping-value-value (M-bool (first args) state))
-                      (M-state (second args) state)
-                      (if (>= (length args) 3)
-                          (M-state (third args)  state)
-                          (values  (result-void) state))))
-        'while  (lambda (args state)
-                  (if (mapping-value-value (M-bool (first args) state))
-                      (let-values ([(body-result body-state)
-                                    (M-state (second args) state)])
-                        (if (result-void? body-result)
-                            (M-state (cons 'while args) body-state)
-                            (values body-result body-state)))
-                      (values (result-void) state)))))
-                      
+                                                   (if (< (length args) 2)
+                                                       (binding 'NULL null)
+                                                       (mapping-value-value
+                                                        (auto-type-binding-mapping
+                                                         (second args)
+                                                         state))))))))
+        OP-ASSIGN      (lambda (args state)
+                         (let ([name  (first  args)]
+                               [value (second args)])
+                           (if (machine-scope-bound? state name)
+                               (let ([mapping (auto-type-binding-mapping value state)])
+                                 (if (mapping-value? mapping)
+                                     (values
+                                      (result-void)
+                                      (machine-scope-bind state
+                                                          name
+                                                          (mapping-value-value
+                                                           mapping)))
+                                     (values (result-error (mapping-error-message mapping))
+                                             state)))
+                               (values (result-error (format "assign before declare: ~s"
+                                                             name))
+                                       state))))
+        OP-IF     (lambda (args state)
+                    (if (mapping-value-value (M-bool (first args) state))
+                        (M-state (second args) state)
+                        (if (>= (length args) 3)
+                            (M-state (third args)  state)
+                            (values  (result-void) state))))
+        OP-WHILE  (lambda (args state)
+                    (if (mapping-value-value (M-bool (first args) state))
+                        (let-values ([(body-result body-state)
+                                      (M-state (second args) state)])
+                          (if (result-void? body-result)
+                              (M-state (cons 'while args) body-state)
+                              (values body-result body-state)))
+                        (values (result-void) state)))))
 
-(define (operation? expression)
-  (and (pair? expression)
-       (hash-has-key? operations (car expression))))
+(define (no-op state)
+  (values (result-void) state))
 
-(define (operate expression state)
-  ((hash-ref operations (car expression)) (cdr expression)
-                                          state))
-
-(define (M-state expression state)
-  (if (operation? expression)
-      (operate expression state)
-      (values (result-void) state)))
+(define (M-state exp state)
+  (cond [(and (EXP? exp)
+              (STM-OP? (exp-op exp))) (map-operation operations exp state)]
+        [else          (no-op state)]))

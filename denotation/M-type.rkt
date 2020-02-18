@@ -8,23 +8,11 @@
          "mapping-utilities.rkt"
          "language.rkt")
 
-(define boolean-operators
-  '(! || && == != <= >= < >))
-
-(define integer-operators
-  '(+ - * / %))
-
 (define (operator-expression-check operators)
   (lambda (expression)
     (and (pair? expression)
          (member (car expression)
                  operators))))
-
-(define boolean-operator?
-  (operator-expression-check boolean-operators))
-
-(define integer-operator?
-  (operator-expression-check integer-operators))
 
 (define (variable-type-mapping name state)
   (if (machine-scope-bound? state name)
@@ -32,19 +20,17 @@
       (mapping-error (format "use before declare: ~s"
                              name))))
 
-(define (M-type expression state)
-  (cond [(or (BOOL?  expression)
-             (boolean-operator? expression))
-         (mapping-value 'BOOL)]
-        
-        [(or(INT?   expression)
-            (integer-operator?  expression))
-         (mapping-value 'INT)]
-        
-        [(VAR?             expression)
-         (variable-type-mapping expression state)]
+(define TYPE-MAPPING-BOOL (mapping-value 'BOOL))
+(define TYPE-MAPPING-INT  (mapping-value 'INT))
 
-        [(eq? (first expression) '=) (M-type (third expression) state)]
-        
-        [else
-         (mapping-error "unrecognized type")]))
+(define (M-type exp state)
+  (if (EXP? exp)
+      (let ([op   (exp-op   exp)]
+            [args (exp-args exp)])
+        (cond [(BOOL-OP?      op) TYPE-MAPPING-BOOL               ]
+              [(INT-OP?       op) TYPE-MAPPING-INT                ]
+              [(eq? OP-ASSIGN op) (M-type (args-right args) state)]
+              [else (mapping-error "expression has no type")]))
+      (cond [(BOOL? exp) TYPE-MAPPING-BOOL]
+            [(INT?  exp) TYPE-MAPPING-INT ]
+            [(VAR?  exp) (variable-type-mapping exp state)])))

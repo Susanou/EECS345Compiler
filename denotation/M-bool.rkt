@@ -4,15 +4,13 @@
 
 (require  "mapping.rkt"
           "M-int.rkt"
-          "../machine/machine-scope.rkt"
-          "../machine/binding.rkt"
           "mapping-utilities.rkt")
 
 (define (M-bool expression state)
   (cond
-    [(constant? expression) (constant-mapping-value  expression)]
-    [(list?     expression) (operation-mapping-value expression state)]
-    [(symbol?   expression) (map-variable 'BOOL      expression state)]
+    [(constant? expression) (constant-mapping-value   expression)]
+    [(list?     expression) (map-operation operations expression state)]
+    [(symbol?   expression) (map-variable 'BOOL       expression state)]
     [else                   (mapping-error "unsupported")]))
 
 (define constants
@@ -54,8 +52,3 @@
    '<= (binary-operation <=   M-int  M-int )
    '>  (binary-operation >    M-int  M-int )
    '<  (binary-operation <    M-int  M-int )))
-
-(define (operation-mapping-value expression state)
-  (if (hash-has-key? operations (car expression))
-      ((hash-ref operations (car expression)) (cdr expression) state)
-      (mapping-error "unrecognized operation")))

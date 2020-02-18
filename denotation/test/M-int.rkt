@@ -33,7 +33,7 @@
                 (M-int 'x (machine-scope-bind (machine-new)
                                               'x
                                               (binding 'NULL null)))
-                (mapping-error "variable not integer: x"))
+                (mapping-error "variable not INT: x"))
    (test-equal? "unbound"
                 (M-int 'x (machine-new))
                 (mapping-error "use before bind: x")))

@@ -12,7 +12,8 @@
         [else                  (mapping-error "unrecognized expression")]))
 
 (define operations
-  (hash '+ (binary-operation +                        M-int M-int)
+  (hash '= (unary-operation-right-hand values         M-int)
+        '+ (binary-operation +                        M-int M-int)
         '- (unary-binary-operator (unary-operation  - M-int)
                                   (binary-operation - M-int M-int))
         '/ (binary-operation quotient                 M-int M-int)

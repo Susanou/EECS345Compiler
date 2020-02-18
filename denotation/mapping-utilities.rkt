@@ -12,11 +12,27 @@
          expression-arguments
          arguments-left     
          arguments-right
-         map-operation)
+         map-operation
+         lang-expression?
+         lang-variable?
+         lang-integer?
+         lang-boolean-literals
+         lang-boolean?)
 
 (require "mapping.rkt"
          "../machine/binding.rkt"
          "../machine/machine-scope.rkt")
+
+
+(define lang-expression? list?)
+(define lang-variable?   symbol?)
+(define lang-integer?    integer?)
+
+(define lang-boolean-literals
+  '(true false))
+
+(define (lang-boolean? x)
+  (member x lang-boolean-literals))
 
 (define expression-operator  first)
 (define expression-left      second)

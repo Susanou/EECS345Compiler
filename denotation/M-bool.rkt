@@ -8,17 +8,14 @@
 
 (define (M-bool expression state)
   (cond
-    [(constant? expression) (constant-mapping-value   expression)]
-    [(list?     expression) (map-operation operations expression state)]
-    [(symbol?   expression) (map-variable 'BOOL       expression state)]
-    [else                   (mapping-error "unsupported")]))
+    [(lang-boolean?    expression) (constant-mapping-value   expression)]
+    [(lang-variable?   expression) (map-variable 'BOOL       expression state)]
+    [(lang-expression? expression) (map-operation operations expression state)]
+    [else                          (mapping-error "unsupported")]))
 
 (define constants
   (hash 'true #t
         'false #f))
-
-(define (constant? expression)
-  (hash-has-key? constants expression))
 
 (define (constant-mapping-value expression)
   (mapping-value (hash-ref constants expression)))

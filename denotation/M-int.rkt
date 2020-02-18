@@ -6,10 +6,10 @@
          "mapping-utilities.rkt")
 
 (define (M-int expression state)
-  (cond [(integer? expression) (mapping-value            expression)]
-        [(symbol?  expression) (map-variable 'INT        expression state)]
-        [(list?    expression) (map-operation operations expression state)]
-        [else                  (mapping-error "unrecognized expression")]))
+  (cond [(lang-integer?    expression) (mapping-value            expression)]
+        [(lang-variable?   expression) (map-variable 'INT        expression state)]
+        [(lang-expression? expression) (map-operation operations expression state)]
+        [else                          (mapping-error "unrecognized expression")]))
 
 (define operations
   (hash '= (unary-operation-right-hand values         M-int)

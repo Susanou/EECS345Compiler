@@ -4,16 +4,8 @@
 
 (require "mapping.rkt"
          "../machine/machine-scope.rkt"
-         "../machine/binding.rkt")
-
-(define boolean-literals
-  '(true false))
-
-(define (boolean-literal? expression)
-  (member expression boolean-literals))
-
-(define integer-literal?
-  integer?)
+         "../machine/binding.rkt"
+         "mapping-utilities.rkt")
 
 (define boolean-operators
   '(! || && == != <= >= < >))
@@ -33,8 +25,6 @@
 (define integer-operator?
   (operator-expression-check integer-operators))
 
-(define variable? symbol?)
-
 (define (variable-type-mapping name state)
   (if (machine-scope-bound? state name)
       (mapping-value (binding-type (machine-scope-ref state name)))
@@ -42,15 +32,15 @@
                              name))))
 
 (define (M-type expression state)
-  (cond [(or (boolean-literal?  expression)
+  (cond [(or (lang-boolean?  expression)
              (boolean-operator? expression))
          (mapping-value 'BOOL)]
         
-        [(or(integer-literal?   expression)
+        [(or(lang-integer?   expression)
             (integer-operator?  expression))
          (mapping-value 'INT)]
         
-        [(variable?             expression)
+        [(lang-variable?             expression)
          (variable-type-mapping expression state)]
 
         [(eq? (first expression) '=) (M-type (third expression) state)]

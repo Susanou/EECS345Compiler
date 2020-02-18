@@ -176,7 +176,7 @@
           
       (check-equal?
         mapping
-        MAPPING-ERROR))
+        (mapping-error "variable not BOOL: x")))
         
       (check-equal?
         (M-bool '(= x (= y true)) (machine-new))

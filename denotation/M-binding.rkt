@@ -1,0 +1,28 @@
+#lang racket
+
+(provide M-binding)
+
+(require "../machine/binding.rkt"
+         "../machine/machine-scope.rkt"
+         "M-int.rkt"
+         "M-bool.rkt"
+         "M-type.rkt"
+         "mapping.rkt"
+         "language.rkt"
+         "mapping-utilities.rkt")
+
+(define type-mappers
+  (hash 'INT  M-int
+        'BOOL M-bool
+        'NULL (thunk* (mapping-value null))))
+
+(define (M-binding value state)
+  (let ([mapping (M-type value state)])
+    (if (mapping-value? mapping)
+        (mapping-value 
+         (let ([type (mapping-value-value mapping)])
+           (binding type
+                    (mapping-value-value
+                     ((hash-ref type-mappers type) value
+                                                   state)))))
+        mapping)))

@@ -12,7 +12,8 @@
          "M-type.rkt"
          "mapping.rkt"
          "language.rkt"
-         "mapping-utilities.rkt")
+         "mapping-utilities.rkt"
+         "M-binding.rkt")
 
 (struct result-void ()
   #:transparent)
@@ -23,25 +24,9 @@
 (struct result-error (message)
   #:transparent)
 
-(define type-mappers
-  (hash 'INT  M-int
-        'BOOL M-bool
-        'NULL (thunk* (mapping-value null))))
-
-(define (auto-type-binding-mapping value state)
-  (let ([mapping (M-type value state)])
-    (if (mapping-value? mapping)
-        (mapping-value 
-         (let ([type (mapping-value-value mapping)])
-           (binding type
-                    (mapping-value-value
-                     ((hash-ref type-mappers type) value
-                                                   state)))))
-        mapping)))
-
 (define operations
   (hash OP-RETURN (lambda (args state)
-                    (let ([mapping (auto-type-binding-mapping (car args) state)])
+                    (let ([mapping (M-binding (car args) state)])
                       (if (mapping-value? mapping)
                           (values (result-return
                                    (mapping-value-value mapping))
@@ -61,14 +46,14 @@
                                                    (if (< (length args) 2)
                                                        (binding 'NULL null)
                                                        (mapping-value-value
-                                                        (auto-type-binding-mapping
+                                                        (M-binding
                                                          (second args)
                                                          state))))))))
         OP-ASSIGN      (lambda (args state)
                          (let ([name  (first  args)]
                                [value (second args)])
                            (if (machine-scope-bound? state name)
-                               (let ([mapping (auto-type-binding-mapping value state)])
+                               (let ([mapping (M-binding value state)])
                                  (if (mapping-value? mapping)
                                      (values
                                       (result-void)

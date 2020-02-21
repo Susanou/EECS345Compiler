@@ -5,7 +5,8 @@
          TYPE-BOOL
          TYPES
          TYPE?
-         (struct-out binding))
+         (struct-out binding)
+         BINDING-NULL)
 
 (define TYPE-NULL 'NULL)
 (define TYPE-INT  'INT)
@@ -49,3 +50,5 @@
                   [else         (raise-argument-error 'type
                                                       "binding-type?"
                                                       type)])))
+
+(define BINDING-NULL (binding TYPE-NULL null))

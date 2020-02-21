@@ -12,9 +12,9 @@
          "mapping-utilities.rkt")
 
 (define type-mappers
-  (hash 'INT  M-int
-        'BOOL M-bool
-        'NULL (thunk* (mapping-value null))))
+  (hash  TYPE-INT  M-int
+         TYPE-BOOL M-bool
+         TYPE-NULL (thunk* (mapping-value null))))
 
 (define (M-binding exp state)
   (let ([mapping (M-type exp state)])

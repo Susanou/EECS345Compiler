@@ -100,6 +100,5 @@
   (values (result-void) state))
 
 (define (M-state exp state)
-  (cond [(and (EXP? exp)
-              (STM-OP? (exp-op exp))) (map-operation operations exp state)]
-        [else          (no-op state)]))
+  (cond [(EXP? exp) (map-operation operations exp state)]
+        [else       (no-op state)]))

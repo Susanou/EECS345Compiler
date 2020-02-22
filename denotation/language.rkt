@@ -78,11 +78,11 @@
 
 (define BOOL-OP? (f-member-of-set BOOL-OPS))
 
-(define OP-ADD      '+)
+(define OP-ADD '+)
 (define OP-SUB '-)
 (define OP-MUL '*)
-(define OP-DIV   '/)
-(define OP-MOD   '%)
+(define OP-DIV '/)
+(define OP-MOD '%)
 
 (define INT-OPS
   (set OP-ADD
@@ -123,10 +123,12 @@
 (define RESERVED? (f-member-of-set RESERVED))
 
 (define (EXP? x)
-  (and (pair? x) (OP? (exp-op x))))
+  (and (pair? x)
+       (OP? (exp-op x))))
            
 (define (VAR? x)
-  (and (symbol? x) (not (RESERVED? x))))
+  (and (symbol? x)
+       (not (RESERVED? x))))
 
 (define INT? integer?)
 

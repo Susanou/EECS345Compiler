@@ -38,13 +38,13 @@
 
 (define operations
   (hash
-   OP-ASSIGN (unary-operation-right-hand values M-bool)
-   OP-NOT (unary-operation  not  M-bool       )
-   OP-AND (binary-operation andb M-bool M-bool)
-   OP-OR  (binary-operation orb  M-bool M-bool)
-   OP-EQ  (binary-operation =    M-int  M-int )
-   OP-NEQ (binary-operation !=   M-int  M-int ) 
-   OP-LTE (binary-operation <=   M-int  M-int )
-   OP-GTE (binary-operation >=   M-int  M-int )
-   OP-LT  (binary-operation <    M-int  M-int )
-   OP-GT  (binary-operation >    M-int  M-int )))
+   OP-ASSIGN (unary-operation  values args-right M-bool)
+   OP-NOT    (unary-operation  not    args-left  M-bool       )
+   OP-AND    (binary-operation andb              M-bool M-bool)
+   OP-OR     (binary-operation orb               M-bool M-bool)
+   OP-EQ     (binary-operation =                 M-int  M-int )
+   OP-NEQ    (binary-operation !=                M-int  M-int ) 
+   OP-LTE    (binary-operation <=                M-int  M-int )
+   OP-GTE    (binary-operation >=                M-int  M-int )
+   OP-LT     (binary-operation <                 M-int  M-int )
+   OP-GT     (binary-operation >                 M-int  M-int )))

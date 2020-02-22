@@ -3,7 +3,6 @@
 (provide map-variable
          binary-operation
          unary-operation
-         unary-operation-right-hand
          unary-binary-operator
          map-operation)
 
@@ -25,19 +24,17 @@
 
 (define (binary-operation operator M-left M-right)
   (lambda (args state)
-    (mapping-value
-     (operator (mapping-value-value (M-left  (args-left  args) state))
-               (mapping-value-value (M-right (args-right args) state))))))
+    (map-bind (M-left  (args-left  args) state)
+              (lambda (left)
+                (map-bind (M-right (args-right args) state)
+                          (lambda (right)
+                            (mapping-value (operator left right))))))))
 
-(define (unary-operation operator M-value)
+(define (unary-operation operator hand M-value)
   (lambda (args state)
-    (mapping-value
-     (operator (mapping-value-value (M-value (args-left  args) state))))))
-
-(define (unary-operation-right-hand operator M-value)
-  (lambda (args state)
-    (mapping-value
-     (operator (mapping-value-value (M-value (args-right  args) state))))))
+    (map-bind (M-value (hand args) state)
+              (lambda (value)
+                (mapping-value (operator value))))))
 
 (define (unary-binary-operator unary binary)
   (lambda (args state)

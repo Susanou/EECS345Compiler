@@ -13,10 +13,11 @@
         [else       (mapping-error "not mappable to INT")]))
 
 (define operations
-  (hash OP-ASSIGN (unary-operation-right-hand values         M-int      )
-        OP-ADD    (binary-operation +                        M-int M-int)
-        OP-SUB    (unary-binary-operator (unary-operation  - M-int      )
-                                         (binary-operation - M-int M-int))
-        OP-MUL    (binary-operation *                        M-int M-int)
-        OP-DIV    (binary-operation quotient                 M-int M-int)
-        OP-MOD    (binary-operation remainder                M-int M-int)))
+  (hash OP-ASSIGN (unary-operation   values args-right        M-int      )
+        OP-ADD    (binary-operation  +                        M-int M-int)
+        OP-SUB    (unary-binary-operator
+                   (unary-operation  -     args-left          M-int      )
+                   (binary-operation -                        M-int M-int))
+        OP-MUL    (binary-operation  *                        M-int M-int)
+        OP-DIV    (binary-operation  quotient                 M-int M-int)
+        OP-MOD    (binary-operation  remainder                M-int M-int)))

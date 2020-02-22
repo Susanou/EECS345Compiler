@@ -9,17 +9,17 @@
 
 (define (M-bool exp state)
   (cond
-    [(BOOL? exp) (constant-mapping-value   exp        )]
+    [(BOOL? exp) (literal-mapping-value    exp        )]
     [(VAR?  exp) (map-variable 'BOOL       exp state  )]
     [(EXP?  exp) (map-operation operations exp state  )]
     [else        (mapping-error "not mappable to BOOL")]))
 
-(define constants
-  (hash TRUE #t
+(define literals
+  (hash TRUE  #t
         FALSE #f))
 
-(define (constant-mapping-value expression)
-  (mapping-value (hash-ref constants expression)))
+(define (literal-mapping-value expression)
+  (mapping-value (hash-ref literals expression)))
 
 ; define binary and and or procedures: since
 ; (and ...) and (or ...) are both syntax, not procedures

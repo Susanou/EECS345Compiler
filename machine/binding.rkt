@@ -22,23 +22,25 @@
 
 (define binding-types
   (hash TYPE-NULL (lambda (value)
-                    (if (not (null? value))
+                    (if (null? value)
+                        (values TYPE-NULL null)
                         (raise-argument-error 'value
                                               "null?"
-                                              value)
-                        (values 'NULL null)))
+                                              value)))
+        
         TYPE-INT  (lambda (value)
-                    (if (not (integer? value))
+                    (if (integer? value)
+                        (values TYPE-INT value)
                         (raise-argument-error 'value
                                               "integer?"
-                                              value)
-                        (values 'INT value)))
+                                              value)))
+        
         TYPE-BOOL (lambda (value)
-                    (if (not (boolean? value))
+                    (if (boolean? value)
+                        (values TYPE-BOOL value)
                         (raise-argument-error 'value
                                               "boolean?"
-                                              value)
-                        (values 'BOOL value)))))
+                                              value)))))
 
 (define (bind-type type value)
   ((hash-ref binding-types type) value))
@@ -46,9 +48,10 @@
 (struct binding (type value)
   #:transparent
   #:guard (lambda (type value name)
-            (cond [(TYPE? type) (bind-type type value)]
-                  [else         (raise-argument-error 'type
-                                                      "binding-type?"
-                                                      type)])))
+            (if (TYPE? type)
+                (bind-type type value)
+                (raise-argument-error 'type
+                                      "binding-type?"
+                                      type))))
 
 (define BINDING-NULL (binding TYPE-NULL null))

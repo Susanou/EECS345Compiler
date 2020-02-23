@@ -4,20 +4,24 @@
 
 (require "mapping.rkt"
          "mapping-utilities.rkt"
-         "language.rkt")
+         "../language/symbol/literal/int.rkt"
+         "../language/symbol/variable.rkt"
+         "../language/expression.rkt"
+         "../language/symbol/operator/int.rkt"
+         "../language/symbol/operator/variable.rkt")
 
 (define (M-int exp state)
   (cond [(INT? exp) (mapping-value            exp       )]
-        [(VAR? exp) (map-variable 'INT        exp state )]
-        [(EXP? exp) (map-operation operations exp state )]
+        [(VARIABLE? exp) (map-variable 'INT        exp state )]
+        [(EXPRESSION? exp) (map-operation operations exp state )]
         [else       (mapping-error "not mappable to INT")]))
 
 (define operations
-  (hash OP-ASSIGN (unary-operation   values args-right        M-int      )
-        OP-ADD    (binary-operation  +                        M-int M-int)
-        OP-SUB    (unary-binary-operator
-                   (unary-operation  -     args-left          M-int      )
+  (hash VARIABLE-ASSIGN (unary-operation   values right-argument        M-int      )
+        INT-ADDITION    (binary-operation  +                        M-int M-int)
+        INT-SUBTRACTION    (unary-binary-operator
+                   (unary-operation  -     left-argument          M-int      )
                    (binary-operation -                        M-int M-int))
-        OP-MUL    (binary-operation  *                        M-int M-int)
-        OP-DIV    (binary-operation  quotient                 M-int M-int)
-        OP-MOD    (binary-operation  remainder                M-int M-int)))
+        INT-MULTIPLICATION    (binary-operation  *                        M-int M-int)
+        INT-DIVISION    (binary-operation  quotient                 M-int M-int)
+        INT-MODULO    (binary-operation  remainder                M-int M-int)))

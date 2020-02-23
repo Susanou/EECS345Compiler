@@ -11,9 +11,11 @@
          "M-bool.rkt"
          "M-type.rkt"
          "mapping.rkt"
-         "language.rkt"
          "mapping-utilities.rkt"
-         "M-binding.rkt")
+         "M-binding.rkt"
+         "../language/symbol/operator/control.rkt"
+         "../language/symbol/operator/variable.rkt"
+         "../language/expression.rkt")
 
 (struct result-void ()
   #:transparent)
@@ -25,7 +27,7 @@
   #:transparent)
 
 (define operations
-  (hash OP-RETURN (lambda (args state)
+  (hash CONTROL-RETURN (lambda (args state)
                     (let ([mapping (M-binding (car args) state)])
                       (if (mapping-value? mapping)
                           (values (result-return
@@ -33,7 +35,7 @@
                                   state)
                           (values (result-error (mapping-error-message mapping))
                                   state))))
-        OP-DECLARE    (lambda (args state)
+        VARIABLE-DECLARE    (lambda (args state)
                         (let ([name  (first  args)])
                           (if (machine-scope-bound? state name)
                               (values (result-error (format "redefining: ~a"
@@ -49,7 +51,7 @@
                                                         (M-binding
                                                          (second args)
                                                          state))))))))
-        OP-ASSIGN      (lambda (args state)
+        VARIABLE-ASSIGN      (lambda (args state)
                          (let ([name  (first  args)]
                                [value (second args)])
                            (if (machine-scope-bound? state name)
@@ -66,13 +68,13 @@
                                (values (result-error (format "assign before declare: ~s"
                                                              name))
                                        state))))
-        OP-IF     (lambda (args state)
+        CONTROL-IF     (lambda (args state)
                     (if (mapping-value-value (M-bool (first args) state))
                         (M-state (second args) state)
                         (if (>= (length args) 3)
                             (M-state (third args)  state)
                             (values  (result-void) state))))
-        OP-WHILE  (lambda (args state)
+        CONTROL-WHILE  (lambda (args state)
                     (if (mapping-value-value (M-bool (first args) state))
                         (let-values ([(body-result body-state)
                                       (M-state (second args) state)])
@@ -85,5 +87,5 @@
   (values (result-void) state))
 
 (define (M-state exp state)
-  (cond [(EXP? exp) (map-operation operations exp state)]
+  (cond [(EXPRESSION? exp) (map-operation operations exp state)]
         [else       (no-op state)]))

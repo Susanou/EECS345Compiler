@@ -5,13 +5,18 @@
 (require  "mapping.rkt"
           "M-int.rkt"
           "mapping-utilities.rkt"
-          "language.rkt")
+          "../language/symbol/literal/bool.rkt"
+          "../language/symbol/variable.rkt"
+          "../language/expression.rkt"
+          "../language/symbol/operator/variable.rkt"
+          "../language/symbol/operator/bool.rkt"
+          "../language/symbol/operator/comparison.rkt")
 
 (define (M-bool exp state)
   (cond
     [(BOOL? exp) (literal-mapping-value    exp        )]
-    [(VAR?  exp) (map-variable 'BOOL       exp state  )]
-    [(EXP?  exp) (map-operation operations exp state  )]
+    [(VARIABLE?  exp) (map-variable 'BOOL       exp state  )]
+    [(EXPRESSION?  exp) (map-operation operations exp state  )]
     [else        (mapping-error "not mappable to BOOL")]))
 
 (define literals
@@ -38,13 +43,13 @@
 
 (define operations
   (hash
-   OP-ASSIGN (unary-operation  values args-right M-bool)
-   OP-NOT    (unary-operation  not    args-left  M-bool       )
-   OP-AND    (binary-operation andb              M-bool M-bool)
-   OP-OR     (binary-operation orb               M-bool M-bool)
-   OP-EQ     (binary-operation =                 M-int  M-int )
-   OP-NEQ    (binary-operation !=                M-int  M-int ) 
-   OP-LTE    (binary-operation <=                M-int  M-int )
-   OP-GTE    (binary-operation >=                M-int  M-int )
-   OP-LT     (binary-operation <                 M-int  M-int )
-   OP-GT     (binary-operation >                 M-int  M-int )))
+   VARIABLE-ASSIGN (unary-operation  values right-argument M-bool)
+   BOOL-NOT    (unary-operation  not    left-argument  M-bool       )
+   BOOL-AND    (binary-operation andb              M-bool M-bool)
+   BOOL-OR     (binary-operation orb               M-bool M-bool)
+   COMPARISON-EQUAL     (binary-operation =                 M-int  M-int )
+   COMPARISON-NOT-EQUAL    (binary-operation !=                M-int  M-int ) 
+   COMPARISON-LESS-THAN-OR-EQUAL    (binary-operation <=                M-int  M-int )
+   COMPARISON-GREATER-THAN-OR-EQUAL    (binary-operation >=                M-int  M-int )
+   COMPARISON-LESS-THAN     (binary-operation <                 M-int  M-int )
+   COMPARISON-GREATER-THAN     (binary-operation >                 M-int  M-int )))

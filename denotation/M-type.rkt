@@ -6,7 +6,14 @@
          "../machine/machine-scope.rkt"
          "../machine/binding.rkt"
          "mapping-utilities.rkt"
-         "language.rkt")
+         "../language/expression.rkt"
+         "../language/symbol/operator/bool.rkt"
+         "../language/symbol/operator/comparison.rkt"
+         "../language/symbol/operator/int.rkt"
+         "../language/symbol/operator/variable.rkt"
+         "../language/symbol/literal/bool.rkt"
+         "../language/symbol/literal/int.rkt"
+         "../language/symbol/variable.rkt")
 
 (define (operator-expression-check operators)
   (lambda (expression)
@@ -24,13 +31,14 @@
 (define TYPE-MAPPING-INT  (mapping-value 'INT))
 
 (define (M-type exp state)
-  (if (EXP? exp)
-      (let ([op   (exp-op   exp)]
-            [args (exp-args exp)])
-        (cond [(BOOL-OP?      op) TYPE-MAPPING-BOOL               ]
-              [(INT-OP?       op) TYPE-MAPPING-INT                ]
-              [(eq? OP-ASSIGN op) (M-type (args-right args) state)]
+  (if (EXPRESSION? exp)
+      (let ([op   (operator   exp)]
+            [args (arguments exp)])
+        (cond [(or (BOOL-OPERATOR?      op)
+                   (COMPARISON-OPERATOR?      op)) TYPE-MAPPING-BOOL               ]
+              [(INT-OPERATOR?       op) TYPE-MAPPING-INT                ]
+              [(eq? VARIABLE-ASSIGN op) (M-type (right-argument args) state)]
               [else (mapping-error "expression has no type")]))
       (cond [(BOOL? exp) TYPE-MAPPING-BOOL]
             [(INT?  exp) TYPE-MAPPING-INT ]
-            [(VAR?  exp) (variable-type-mapping exp state)])))
+            [(VARIABLE?  exp) (variable-type-mapping exp state)])))

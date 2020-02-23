@@ -9,7 +9,7 @@
 (require "mapping.rkt"
          "../machine/binding.rkt"
          "../machine/machine-scope.rkt"
-         "language.rkt")
+         "../language/expression.rkt")
 
 (define (map-variable type name state)
   (if (machine-scope-bound? state name)
@@ -24,9 +24,9 @@
 
 (define (binary-operation operator M-left M-right)
   (lambda (args state)
-    (map-bind (M-left  (args-left  args) state)
+    (map-bind (M-left  (left-argument  args) state)
               (lambda (left)
-                (map-bind (M-right (args-right args) state)
+                (map-bind (M-right (right-argument args) state)
                           (lambda (right)
                             (mapping-value (operator left right))))))))
 
@@ -43,8 +43,8 @@
         (binary  args state))))
 
 (define (map-operation operations expression state)
-  (let ([operator  (exp-op   expression)]
-        [arguments (exp-args expression)])
+  (let ([operator  (operator  expression)]
+        [arguments (arguments expression)])
     (if (hash-has-key? operations operator)
         ((hash-ref     operations operator) arguments state)
         (mapping-error "unrecognized operation"))))

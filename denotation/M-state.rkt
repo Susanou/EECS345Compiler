@@ -25,7 +25,7 @@
   #:transparent)
 
 (define operations
-  (hash CONTROL-RETURN (lambda (args state)
+  (hash RETURN (lambda (args state)
                          (on (M-binding (car args) state)
                               (lambda (value)
                                 (values (result-return value)
@@ -33,7 +33,7 @@
                               (lambda (cause)
                                 (values (result-error cause)
                                         state))))
-        VARIABLE-DECLARE    (lambda (args state)
+        DECLARE    (lambda (args state)
                               (let ([name  (first  args)])
                                 (if (machine-scope-bound? state name)
                                     (values (result-error (format "redefining: ~a"
@@ -49,7 +49,7 @@
                                                               (M-binding
                                                                (second args)
                                                                state))))))))
-        VARIABLE-ASSIGN      (lambda (args state)
+        ASSIGN      (lambda (args state)
                                (let ([name  (first  args)]
                                      [value (second args)])
                                  (if (machine-scope-bound? state name)
@@ -66,7 +66,7 @@
                                      (values (result-error (format "assign before declare: ~s"
                                                                    name))
                                              state))))
-        CONTROL-IF     (lambda (args state)
+        IF     (lambda (args state)
                          (on (M-bool (first args) state)
                               (lambda (condition)
                                 (if condition
@@ -74,7 +74,7 @@
                                     (if (>= (length args) 3)
                                         (M-state (third args)  state)
                                         (values  (result-void) state))))))
-        CONTROL-WHILE  (lambda (args state)
+        WHILE  (lambda (args state)
                          (if (success-value (M-bool (first args) state))
                              (let-values ([(body-result body-state)
                                            (M-state (second args) state)])

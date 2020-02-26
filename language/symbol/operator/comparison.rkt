@@ -1,29 +1,27 @@
 #lang racket
 
-(provide (prefix-out COMPARISON-
-                     (combine-out
-                      EQUAL
-                      NOT-EQUAL
-                      LESS-THAN-OR-EQUAL
-                      GREATER-THAN-OR-EQUAL
-                      LESS-THAN
-                      GREATER-THAN
-                      OPERATOR?)))
+(provide EQUAL
+         NOT-EQUAL
+         LESS-OR-EQUAL
+         GREATER-OR-EQUAL
+         LESS
+         GREATER
+         COMPARISON-OPERATOR?)
 
-(define EQUAL                 '==)
-(define NOT-EQUAL             '!=)
-(define LESS-THAN-OR-EQUAL    '<=)
-(define GREATER-THAN-OR-EQUAL '>=)
-(define LESS-THAN             '< )
-(define GREATER-THAN          '> )
+(define EQUAL            '==)
+(define NOT-EQUAL        '!=)
+(define LESS-OR-EQUAL    '<=)
+(define GREATER-OR-EQUAL '>=)
+(define LESS             '< )
+(define GREATER          '> )
 
 (define OPERATORS
   (set EQUAL
        NOT-EQUAL
-       LESS-THAN-OR-EQUAL
-       GREATER-THAN-OR-EQUAL
-       LESS-THAN
-       GREATER-THAN))
+       LESS-OR-EQUAL
+       GREATER-OR-EQUAL
+       LESS
+       GREATER))
 
-(define (OPERATOR? x)
+(define (COMPARISON-OPERATOR? x)
   (set-member? OPERATORS x))

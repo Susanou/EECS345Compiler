@@ -1,12 +1,11 @@
 #lang racket
 
-(provide (prefix-out INT-
-                     (combine-out ADDITION
-                                  SUBTRACTION
-                                  MULTIPLICATION
-                                  DIVISION
-                                  MODULO
-                                  OPERATOR?)))
+(provide ADDITION
+         SUBTRACTION
+         MULTIPLICATION
+         DIVISION
+         MODULO
+         INT-OPERATOR?)
 
 (define ADDITION       '+)
 (define SUBTRACTION    '-)
@@ -21,5 +20,5 @@
        DIVISION
        MODULO))
 
-(define (OPERATOR? x)
+(define (INT-OPERATOR? x)
   (set-member? OPERATORS x))

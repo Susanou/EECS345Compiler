@@ -1,9 +1,9 @@
 #lang racket
 
-(provide (prefix-out CONTROL- (combine-out IF
-                                          WHILE
-                                          RETURN
-                                          OPERATOR?)))
+(provide IF
+         WHILE
+         RETURN
+         CONTROL-OPERATOR?)
 
 (define IF     'if    )
 (define WHILE  'while )
@@ -14,5 +14,5 @@
        WHILE
        RETURN))
 
-(define (OPERATOR? x)
+(define (CONTROL-OPERATOR? x)
   (set-member? OPERATORS x))

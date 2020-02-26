@@ -36,7 +36,7 @@
         (cond [(or (BOOL-OPERATOR?      op)
                    (COMPARISON-OPERATOR?      op)) TYPE-MAPPING-BOOL               ]
               [(INT-OPERATOR?       op) TYPE-MAPPING-INT                ]
-              [(eq? VARIABLE-ASSIGN op) (M-type (right-argument args) state)]
+              [(eq? ASSIGN op) (M-type (right-argument args) state)]
               [else (failure "expression has no type")]))
       (cond [(BOOL? exp) TYPE-MAPPING-BOOL]
             [(INT?  exp) TYPE-MAPPING-INT ]

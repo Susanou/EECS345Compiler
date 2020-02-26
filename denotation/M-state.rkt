@@ -7,11 +7,9 @@
 
 (require "../machine/binding.rkt"
          "../machine/machine-scope.rkt"
-         "M-int.rkt"
          "M-bool.rkt"
-         "M-type.rkt"
          "../functional/either.rkt"
-         "mapping-utilities.rkt"
+         "util.rkt"
          "M-binding.rkt"
          "../language/symbol/operator/control.rkt"
          "../language/symbol/operator/variable.rkt"

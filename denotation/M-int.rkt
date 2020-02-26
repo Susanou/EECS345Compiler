@@ -3,7 +3,7 @@
 (provide M-int)
 
 (require "../functional/either.rkt"
-         "mapping-utilities.rkt"
+         "util.rkt"
          "../language/symbol/literal/int.rkt"
          "../language/symbol/variable.rkt"
          "../language/expression.rkt"

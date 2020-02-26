@@ -5,7 +5,6 @@
 (require "../functional/either.rkt"
          "../machine/machine-scope.rkt"
          "../machine/binding.rkt"
-         "mapping-utilities.rkt"
          "../language/expression.rkt"
          "../language/symbol/operator/bool.rkt"
          "../language/symbol/operator/comparison.rkt"

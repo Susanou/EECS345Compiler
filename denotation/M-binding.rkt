@@ -3,12 +3,10 @@
 (provide M-binding)
 
 (require "../machine/binding.rkt"
-         "../machine/machine-scope.rkt"
          "M-int.rkt"
          "M-bool.rkt"
          "M-type.rkt"
-         "../functional/either.rkt"
-         "mapping-utilities.rkt")
+         "../functional/either.rkt")
 
 (define type-mappers
   (hash  TYPE-INT  M-int

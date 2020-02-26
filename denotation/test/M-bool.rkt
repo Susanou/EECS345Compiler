@@ -3,16 +3,16 @@
 #lang racket
 
 (require rackunit
-         "../mapping.rkt"
+         "../../functional/either.rkt"
          "../M-bool.rkt"
          "../../machine/binding.rkt"
          "../../machine/machine-scope.rkt"
          "../../machine/binding.rkt"
          "../../machine/machine.rkt")
 
-(define MAPPING-TRUE  (mapping-value #t))
-(define MAPPING-FALSE (mapping-value #f))
-(define MAPPING-ERROR (mapping-error "unsupported"))
+(define MAPPING-TRUE  (success #t))
+(define MAPPING-FALSE (success #f))
+(define MAPPING-ERROR (failure "unsupported"))
 
 (define/provide-test-suite 
   test-M-bool
@@ -176,7 +176,7 @@
           
       (check-equal?
         mapping
-        (mapping-error "variable not BOOL: x")))
+        (failure "variable not BOOL: x")))
         
       (check-equal?
         (M-bool '(= x (= y true)) (machine-new))

@@ -2,7 +2,7 @@
 
 (provide M-bool)
 
-(require  "mapping.rkt"
+(require  "../functional/either.rkt"
           "M-int.rkt"
           "mapping-utilities.rkt"
           "../language/symbol/literal/bool.rkt"
@@ -17,14 +17,14 @@
     [(BOOL? exp) (literal-mapping-value    exp        )]
     [(VARIABLE?  exp) (map-variable 'BOOL       exp state  )]
     [(EXPRESSION?  exp) (map-operation operations exp state  )]
-    [else        (mapping-error "not mappable to BOOL")]))
+    [else        (failure "not mappable to BOOL")]))
 
 (define literals
   (hash TRUE  #t
         FALSE #f))
 
 (define (literal-mapping-value expression)
-  (mapping-value (hash-ref literals expression)))
+  (success (hash-ref literals expression)))
 
 ; define binary and and or procedures: since
 ; (and ...) and (or ...) are both syntax, not procedures

@@ -7,18 +7,17 @@
          "M-int.rkt"
          "M-bool.rkt"
          "M-type.rkt"
-         "mapping.rkt"
-         "mapping-utilities.rkt"
-         "mapping.rkt")
+         "../functional/either.rkt"
+         "mapping-utilities.rkt")
 
 (define type-mappers
   (hash  TYPE-INT  M-int
          TYPE-BOOL M-bool
-         TYPE-NULL (thunk* (mapping-value null))))
+         TYPE-NULL (thunk* (success null))))
 
 (define (M-binding exp state)
-  (map-bind (M-type exp state)
-            (lambda (type)
-              (map-bind ((hash-ref type-mappers type) exp state)
-                        (lambda (value)
-                          (mapping-value (binding type value)))))))
+  (try (M-type exp state)
+       (lambda (type)
+         (try ((hash-ref type-mappers type) exp state)
+              (lambda (value)
+                (success (binding type value)))))))

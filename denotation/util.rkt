@@ -7,9 +7,9 @@
          map-operation)
 
 (require "../functional/either.rkt"
+         "../language/expression.rkt"
          "../machine/binding.rkt"
-         "../machine/machine-scope.rkt"
-         "../language/expression.rkt")
+         "../machine/machine-scope.rkt")
 
 (define (map-variable type name state)
   (if (machine-scope-bound? state name)
@@ -38,13 +38,11 @@
 
 (define (unary-binary-operator unary binary)
   (lambda (args state)
-    (if (< (length args) 2)
-        (unary   args state)
-        (binary  args state))))
+    ((cond [(single-argument? args) unary]
+           [(binary-argument? args) binary]) args state)))
 
 (define (map-operation operations expression state)
-  (let ([operator  (operator  expression)]
-        [arguments (arguments expression)])
+  (let ([operator  (operator  expression)])
     (if (hash-has-key? operations operator)
-        ((hash-ref     operations operator) arguments state)
+        ((hash-ref     operations operator) (arguments expression) state)
         (failure "unrecognized operation"))))

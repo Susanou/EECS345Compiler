@@ -3,14 +3,17 @@
 #lang racket
 
 (require rackunit
-         "../machine.rkt"
-         "../machine-update.rkt"
-         "../machine-scope.rkt"
-         "../binding.rkt"
-         "../../denotation/M-state.rkt")
+         "../../language/symbol/operator/block.rkt"
+         "../../machine/binding.rkt"
+         "../../machine/machine.rkt"
+         "../../machine/machine-scope.rkt"
+         "../M-state.rkt")
+
+(define (machine-consume state statements)
+  (M-state (cons BLOCK statements) state))
 
 (define/provide-test-suite
-  test-machine-update
+  test-machine-update-legacy
   (test-suite
    "consume"
    (test-suite
@@ -85,4 +88,4 @@
 
 (module+ main
   (require rackunit/text-ui)
-  (exit (run-tests test-machine-update)))
+  (exit (run-tests test-machine-update-legacy)))

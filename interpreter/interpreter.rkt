@@ -3,15 +3,17 @@
 (provide interpret)
 
 (require "../functional/either.rkt"
+         "../language/symbol/types.rkt"
+         "../language/symbol/literal/null.rkt"
+         "../language/symbol/literal/bool.rkt"
+         "../machine/binding.rkt"
          "../machine/machine.rkt"
          "../machine/machine-update.rkt"
-         "../parser/simpleParser.rkt"
-         "../machine/binding.rkt"
          "../denotation/M-state.rkt"
-         "../language/symbol/literal/bool.rkt")
+         "../parser/simpleParser.rkt")
 
 (define null-thunk*
-  (thunk* 'null))
+  (thunk* NULL-VALUE))
 
 (define (bool-token bool)
   (if bool
@@ -19,9 +21,9 @@
       FALSE))
 
 (define transformers
-  (hash 'BOOL bool-token
-        'INT  values
-        'NULL null-thunk*))
+  (hash BOOL      bool-token
+        INT       values
+        NULL-TYPE null-thunk*))
 
 (define (transformer type)
   (hash-ref transformers type))

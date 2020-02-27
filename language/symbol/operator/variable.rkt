@@ -1,9 +1,8 @@
 #lang racket
 
-(provide (prefix-out VARIABLE-
-                     (combine-out ASSIGN
-                                  DECLARE
-                                  OPERATOR?)))
+(provide ASSIGN
+         DECLARE
+         VARIABLE-OPERATOR?)
 
 (define ASSIGN  '=  )
 (define DECLARE 'var)
@@ -12,5 +11,5 @@
   (set ASSIGN
        DECLARE))
 
-(define (OPERATOR? x)
+(define (VARIABLE-OPERATOR? x)
   (set-member? OPERATORS x))

@@ -1,10 +1,9 @@
 #lang racket
 
-(provide (prefix-out BOOL-
-                     (combine-out NOT
-                                  OR
-                                  AND
-                                  OPERATOR?)))
+(provide NOT
+         OR
+         AND
+         BOOL-OPERATOR?)
 
 (define NOT '! )
 (define OR  '||)
@@ -15,5 +14,5 @@
        OR
        AND))
 
-(define (OPERATOR? x)
+(define (BOOL-OPERATOR? x)
   (set-member? OPERATORS x))

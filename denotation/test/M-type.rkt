@@ -3,7 +3,7 @@
 #lang racket
 
 (require rackunit
-         "../mapping.rkt"
+         "../../functional/either.rkt"
          "../M-type.rkt"
          "../../machine/machine.rkt"
          "../../machine/machine-scope.rkt"
@@ -15,26 +15,26 @@
    "integer literals"
    (test-equal? "zero"
                 (M-type 0 null)
-                (mapping-value 'INT))
+                (success 'INT))
    (test-equal? "one"
                 (M-type 1 null)
-                (mapping-value 'INT)))
+                (success 'INT)))
   (test-suite
    "integer operations"
    (test-equal? "+"
                 (M-type '(+ this that) null)
-                (mapping-value 'INT))
+                (success 'INT))
    (test-suite
     "boolean literals"
     (test-equal? "false"
                  (M-type 'false null)
-                 (mapping-value 'BOOL))
+                 (success 'BOOL))
     (test-equal? "true"
                  (M-type 'true null)
-                 (mapping-value 'BOOL)))
+                 (success 'BOOL)))
    (test-equal? "||"
                 (M-type '(|| this that) null)
-                (mapping-value 'BOOL)))
+                (success 'BOOL)))
   (test-suite
    "bound variable types"
    (let ([state (machine-scope-bind
@@ -49,24 +49,24 @@
                  (binding 'BOOL #f))])
      (test-equal? "type of x is NULL"
                   (M-type 'x state)
-                  (mapping-value 'NULL))
+                  (success 'NULL))
      (test-equal? "type of y is INT"
                   (M-type 'y state)
-                  (mapping-value 'INT))
+                  (success 'INT))
      (test-equal? "type of z is BOOL"
                   (M-type 'z state)
-                  (mapping-value 'BOOL))
+                  (success 'BOOL))
      (test-equal? "type of w returns map error"
                   (M-type 'w state)
-                  (mapping-error "use before declare: w"))))
+                  (failure "use before declare: w"))))
   (test-suite
    "assignments"
    (test-equal? "boolean"
                 (M-type '(= x false) null)
-                (mapping-value 'BOOL))
+                (success 'BOOL))
    (test-equal? "integer"
                 (M-type '(= x 0) null)
-                (mapping-value 'INT))))
+                (success 'INT))))
 
 (module+ main
   (require rackunit/text-ui)

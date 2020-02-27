@@ -1,35 +1,41 @@
 #lang racket
 
-(provide interpret
-         (struct-out interpreter-value)
-         (struct-out interpreter-error))
+(provide interpret)
 
-(require "../machine/machine.rkt"
+(require "../functional/either.rkt"
+         "../machine/machine.rkt"
          "../machine/machine-update.rkt"
          "../parser/simpleParser.rkt"
          "../machine/binding.rkt"
-         "../denotation/M-state.rkt")
+         "../denotation/M-state.rkt"
+         "../language/symbol/literal/bool.rkt")
 
-(struct interpreter-value (value)
-  #:transparent)
+(define null-thunk*
+  (thunk* 'null))
 
-(struct interpreter-error (message)
-  #:transparent)
+(define (bool-token bool)
+  (if bool
+      TRUE
+      FALSE))
 
-(define interpreter-value-mapping
-  (hash 'BOOL (lambda (value) (if value 'true 'false))
+(define transformers
+  (hash 'BOOL bool-token
         'INT  values
-        'NULL (thunk* 'null)))
+        'NULL null-thunk*))
 
-(define (interpreter-value-of-result result)
-  (let* ([binding (result-return-value result)]
-         [type    (binding-type        binding)]
-         [value   (binding-value       binding)])
-    (interpreter-value ((hash-ref interpreter-value-mapping type) value))))
+(define (transformer type)
+  (hash-ref transformers type))
+
+(define (transform type value)
+  ((transformer type) value))
+
+(define (return binding)
+  (success (transform (binding-type  binding)
+                      (binding-value binding))))
 
 (define (interpret filename)
-  (let-values ([(result state)
+  (let-values ([(result _)
                 (machine-consume (machine-new)
                                  (parser filename))])
-    (cond [(result-return? result) (interpreter-value-of-result result)]
-          [else                    (interpreter-error (result-error-message result))])))
+    (cond [(result-return? result) (return  (result-return-value  result))]
+          [else                    (failure (result-error-message result))])))

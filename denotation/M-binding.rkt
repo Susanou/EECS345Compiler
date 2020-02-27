@@ -2,23 +2,32 @@
 
 (provide M-binding)
 
-(require "../machine/binding.rkt"
-         "../machine/machine-scope.rkt"
+(require "../functional/either.rkt"
+         "../machine/binding.rkt"
          "M-int.rkt"
          "M-bool.rkt"
-         "M-type.rkt"
-         "mapping.rkt"
-         "mapping-utilities.rkt"
-         "mapping.rkt")
+         "M-type.rkt")
 
-(define type-mappers
+(define M-null
+  (thunk* (success null)))
+
+(define mappers
   (hash  TYPE-INT  M-int
          TYPE-BOOL M-bool
-         TYPE-NULL (thunk* (mapping-value null))))
+         TYPE-NULL M-null))
+
+(define (mapper type)
+  (hash-ref mappers type))
+
+(define (value type exp state)
+  ((mapper type) exp state))
+
+(define (bind type exp state)
+  (try (value type exp state)
+       (lambda (value)
+         (success (binding type value)))))
 
 (define (M-binding exp state)
-  (map-bind (M-type exp state)
-            (lambda (type)
-              (map-bind ((hash-ref type-mappers type) exp state)
-                        (lambda (value)
-                          (mapping-value (binding type value)))))))
+  (try (M-type exp state)
+       (lambda (type)
+         (bind type exp state))))

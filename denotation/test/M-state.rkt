@@ -3,7 +3,6 @@
 #lang racket
 
 (require rackunit
-         "../mapping.rkt"
          "../M-state.rkt"
          "../../machine/binding.rkt"
          "../../machine/machine.rkt"

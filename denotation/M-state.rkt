@@ -9,6 +9,7 @@
          "../language/expression.rkt"
          "../language/symbol/operator/control.rkt"
          "../language/symbol/operator/variable.rkt"
+         "../language/symbol/operator/block.rkt"
          "../machine/binding.rkt"
          "../machine/machine-scope.rkt"
          "util.rkt"
@@ -30,6 +31,12 @@
       (lambda (cause)
         (values (result-error cause)
                 state))))
+
+(define (try-void thx state f)
+  (let-values ([(result state) (thx)])
+    (if (result-void? result)
+        (f state)
+        (values result state))))
 
 (define (void-and state)
   (values
@@ -93,7 +100,15 @@
                                  (if (result-void? result)
                                      (M-state (cons WHILE args) state)
                                      (values result state)))
-                               (void-and state)))))))
+                               (void-and state)))))
+   BLOCK   (lambda (args state)
+             (if (null? args)
+                 (void-and state)
+                 (let-values ([(result new-state)
+                               (M-state (first args) state)])
+                   (if (result-void? result)
+                       (M-state (cons BLOCK (rest args)) new-state)
+                       (values result new-state)))))))
 
 (define (M-state exp state)
   (cond [(EXPRESSION? exp) (map-operation operations exp state)]

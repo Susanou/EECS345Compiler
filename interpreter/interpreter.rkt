@@ -6,9 +6,9 @@
          "../language/type.rkt"
          "../language/symbol/literal/null.rkt"
          "../language/symbol/literal/bool.rkt"
+         "../language/symbol/operator/block.rkt"
          "../machine/binding.rkt"
          "../machine/machine.rkt"
-         "../machine/machine-update.rkt"
          "../denotation/M-state.rkt"
          "../parser/simpleParser.rkt")
 
@@ -34,7 +34,7 @@
 
 (define (interpret filename)
   (let-values ([(result _)
-                (machine-consume (machine-new)
-                                 (parser filename))])
+                (M-state (cons BLOCK (parser filename))
+                         (machine-new))])
     (cond [(result-return? result) (return  (result-return-value  result))]
           [else                    (failure (result-error-message result))])))

@@ -21,15 +21,12 @@
       FALSE))
 
 (define transformers
-  (hash BOOL      bool-token
-        INT       values
-        NULL-TYPE null-thunk*))
-
-(define (transformer type)
-  (hash-ref transformers type))
+  (hash NULL-TYPE null-thunk*
+        BOOL      bool-token
+        INT       values))
 
 (define (transform type value)
-  ((transformer type) value))
+  ((hash-ref transformers type) value))
 
 (define (return binding)
   (success (transform (binding-type  binding)

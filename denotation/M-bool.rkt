@@ -21,7 +21,7 @@
 
 (define (M-bool exp state)
   (cond
-    [(BOOL?       exp) (literal    exp      )]
+    [(BOOL?       exp) (literal                  exp      )]
     [(VARIABLE?   exp) (map-variable 'BOOL       exp state)]
     [(EXPRESSION? exp) (map-operation operations exp state)]
     [else              (failure "not mappable to BOOL"    )]))
@@ -37,13 +37,13 @@
 
 (define operations
   (hash
-   ASSIGN           (unary-operation values right-argument M-bool)
-   NOT              (unary-operation not left-argument M-bool)
-   AND              (binary-operation 2and M-bool M-bool)
-   OR               (binary-operation 2or M-bool M-bool)
-   EQUAL            (binary-operation = M-int M-int)
-   NOT-EQUAL        (binary-operation != M-int M-int) 
-   LESS-OR-EQUAL    (binary-operation <= M-int M-int)
-   GREATER-OR-EQUAL (binary-operation >= M-int M-int)
-   LESS             (binary-operation < M-int M-int)
-   GREATER          (binary-operation > M-int M-int)))
+   ASSIGN           (unary-operation  values right-argument M-bool)
+   NOT              (unary-operation  not    left-argument  M-bool)
+   AND              (binary-operation 2and                  M-bool M-bool)
+   OR               (binary-operation 2or                   M-bool M-bool)
+   EQUAL            (binary-operation =                     M-int  M-int)
+   NOT-EQUAL        (binary-operation !=                    M-int  M-int) 
+   LESS-OR-EQUAL    (binary-operation <=                    M-int  M-int)
+   GREATER-OR-EQUAL (binary-operation >=                    M-int  M-int)
+   LESS             (binary-operation <                     M-int  M-int)
+   GREATER          (binary-operation >                     M-int  M-int)))

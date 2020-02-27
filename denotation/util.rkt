@@ -7,15 +7,23 @@
          map-operation)
 
 (require "../functional/either.rkt"
+         "../language/type.rkt"
          "../language/expression.rkt"
-         "../machine/binding.rkt"
          "../machine/machine-scope.rkt")
+
+(define type-checkers
+  (hash NULL-TYPE null?
+        BOOL      boolean?
+        INT       integer?))
+
+(define (check-type type value)
+  ((hash-ref type-checkers type) value))
 
 (define (map-variable type name state)
   (if (machine-scope-bound? state name)
-      (let ([binding (machine-scope-ref state name)])
-        (if (eq? type (binding-type binding))
-            (success (binding-value binding))
+      (let ([value (machine-scope-ref state name)])
+        (if (check-type type value)
+            (success value)
             (failure (format "variable not ~s: ~s"
                              type
                              name))))

@@ -1,10 +1,9 @@
 #lang racket
 
-(provide M-binding)
+(provide M-value)
 
 (require "../functional/either.rkt"
          "../language/type.rkt"
-         "../machine/binding.rkt"
          "M-int.rkt"
          "M-bool.rkt"
          "M-type.rkt")
@@ -26,9 +25,9 @@
 (define (bind type exp state)
   (try (value type exp state)
        (lambda (value)
-         (success (binding type value)))))
+         (success value))))
 
-(define (M-binding exp state)
+(define (M-value exp state)
   (try (M-type exp state)
        (lambda (type)
          (bind type exp state))))

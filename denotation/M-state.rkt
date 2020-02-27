@@ -10,11 +10,10 @@
          "../language/symbol/operator/control.rkt"
          "../language/symbol/operator/variable.rkt"
          "../language/symbol/operator/block.rkt"
-         "../machine/binding.rkt"
          "../machine/machine-scope.rkt"
          "util.rkt"
          "M-bool.rkt"
-         "M-binding.rkt")
+         "M-value.rkt")
 
 (struct result-void ()
   #:transparent)
@@ -46,7 +45,7 @@
 (define operations
   (hash
    RETURN  (lambda (args state)
-             (try-result (M-binding (single-argument args) state)
+             (try-result (M-value (single-argument args) state)
                          state
                          (lambda (value)
                            (values (result-return value)
@@ -58,7 +57,7 @@
                                                  name))
                            state)
                    (if (binary-argument? args)
-                       (try-result (M-binding (right-argument args) state)
+                       (try-result (M-value (right-argument args) state)
                                    state
                                    (lambda (init)
                                      (void-and (machine-scope-bind state
@@ -68,11 +67,11 @@
                         (result-void)
                         (machine-scope-bind state
                                             name
-                                            BINDING-NULL))))))
+                                            null))))))
    ASSIGN  (lambda (args state)
              (let ([name  (left-argument  args)])
                (if (machine-scope-bound? state name)
-                   (try-result (M-binding (right-argument args) state)
+                   (try-result (M-value (right-argument args) state)
                                state
                                (lambda (value)
                                  (void-and (machine-scope-bind state

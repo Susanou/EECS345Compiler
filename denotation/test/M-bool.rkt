@@ -5,9 +5,7 @@
 (require rackunit
          "../../functional/either.rkt"
          "../M-bool.rkt"
-         "../../machine/binding.rkt"
          "../../machine/machine-scope.rkt"
-         "../../machine/binding.rkt"
          "../../machine/machine.rkt")
 
 (define MAPPING-TRUE  (success #t))
@@ -162,7 +160,7 @@
 
      (test-suite
      "state operations"
-     (let* ([state   (machine-scope-bind (machine-new) 'x (binding 'BOOL #t))]
+     (let* ([state   (machine-scope-bind (machine-new) 'x #t)]
                     [mapping (M-bool 'x state)])
 
           
@@ -170,7 +168,7 @@
         mapping
         MAPPING-TRUE))
 
-      (let* ([state   (machine-scope-bind (machine-new) 'x (binding 'INT 3))]
+      (let* ([state   (machine-scope-bind (machine-new) 'x 3)]
                     [mapping (M-bool 'x state)])
 
           

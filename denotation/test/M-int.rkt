@@ -6,8 +6,7 @@
          "../../functional/either.rkt"
          "../M-int.rkt"
          "../../machine/machine-scope.rkt"
-         "../../machine/machine.rkt"
-         "../../machine/binding.rkt")
+         "../../machine/machine.rkt")
 
 (define/provide-test-suite 
   test-M-int
@@ -27,12 +26,12 @@
    (test-equal? "ok"
                 (M-int 'x (machine-scope-bind (machine-new)
                                               'x
-                                              (binding 'INT 3)))
+                                              3))
                 (success 3))
    (test-equal? "wrong type"
                 (M-int 'x (machine-scope-bind (machine-new)
                                               'x
-                                              (binding 'NULL null)))
+                                              null))
                 (failure "variable not INT: x"))
    (test-equal? "unbound"
                 (M-int 'x (machine-new))

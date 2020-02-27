@@ -7,7 +7,6 @@
          "../language/symbol/literal/null.rkt"
          "../language/symbol/literal/bool.rkt"
          "../language/symbol/operator/block.rkt"
-         "../machine/binding.rkt"
          "../machine/machine.rkt"
          "../denotation/M-state.rkt"
          "../parser/simpleParser.rkt")
@@ -28,9 +27,15 @@
 (define (transform type value)
   ((hash-ref transformers type) value))
 
+; DUPLICATE CODE
+(define (type value)
+  (cond [(null?    value) NULL-TYPE]
+        [(boolean? value) BOOL     ]
+        [(integer? value) INT      ]))
+; ==============
+
 (define (return binding)
-  (success (transform (binding-type  binding)
-                      (binding-value binding))))
+  (success (transform (type binding) binding)))
 
 (define (interpret filename)
   (let-values ([(result _)

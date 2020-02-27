@@ -6,8 +6,7 @@
          "../../functional/either.rkt"
          "../M-type.rkt"
          "../../machine/machine.rkt"
-         "../../machine/machine-scope.rkt"
-         "../../machine/binding.rkt")
+         "../../machine/machine-scope.rkt")
 
 (define/provide-test-suite 
   test-M-type
@@ -42,11 +41,11 @@
                   (machine-scope-bind
                    (machine-new)
                    'x
-                   (binding 'NULL null))
+                   null)
                   'y
-                  (binding 'INT 0))
+                  0)
                  'z
-                 (binding 'BOOL #f))])
+                 #f)])
      (test-equal? "type of x is NULL"
                   (M-type 'x state)
                   (success 'NULL))

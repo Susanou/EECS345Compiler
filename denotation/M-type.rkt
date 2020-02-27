@@ -3,6 +3,7 @@
 (provide M-type)
 
 (require "../functional/either.rkt"
+         "../language/type.rkt"
          "../language/expression.rkt"
          "../language/symbol/variable.rkt"
          "../language/symbol/literal/int.rkt"
@@ -11,12 +12,18 @@
          "../language/symbol/operator/bool.rkt"
          "../language/symbol/operator/comparison.rkt"
          "../language/symbol/operator/variable.rkt"
-         "../machine/binding.rkt"
          "../machine/machine-scope.rkt")
+
+; DUPLICATE CODE
+(define (type value)
+  (cond [(null?    value) NULL-TYPE]
+        [(boolean? value) BOOL     ]
+        [(integer? value) INT      ]))
+; ==============
 
 (define (type-of-variable name state)
   (if (machine-scope-bound? state name)
-      (success (binding-type (machine-scope-ref state name)))
+      (success (type (machine-scope-ref state name)))
       (failure (format "use before declare: ~s"
                        name))))
 

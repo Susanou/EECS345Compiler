@@ -3,6 +3,7 @@
 (provide M-binding)
 
 (require "../functional/either.rkt"
+         "../language/type.rkt"
          "../machine/binding.rkt"
          "M-int.rkt"
          "M-bool.rkt"
@@ -12,9 +13,9 @@
   (thunk* (success null)))
 
 (define mappers
-  (hash  TYPE-INT  M-int
-         TYPE-BOOL M-bool
-         TYPE-NULL M-null))
+  (hash  INT       M-int
+         BOOL      M-bool
+         NULL-TYPE M-null))
 
 (define (mapper type)
   (hash-ref mappers type))

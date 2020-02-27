@@ -3,7 +3,7 @@
 (provide interpret)
 
 (require "../functional/either.rkt"
-         "../language/symbol/types.rkt"
+         "../language/type.rkt"
          "../language/symbol/literal/null.rkt"
          "../language/symbol/literal/bool.rkt"
          "../machine/binding.rkt"

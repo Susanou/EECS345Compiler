@@ -52,7 +52,7 @@
                                    state))))
    DECLARE (lambda (args state)
              (let ([name (left-argument  args)])
-               (if (machine-scope-bound? state name)
+               (if (machine-bound-top? state name)
                    (values (result-error (format "redefining: ~a"
                                                  name))
                            state)
@@ -60,21 +60,21 @@
                        (try-result (M-value (right-argument args) state)
                                    state
                                    (lambda (init)
-                                     (void-and (machine-scope-bind state
+                                     (void-and (machine-bind-new state
                                                                    name
                                                                    init))))
                        (values
                         (result-void)
-                        (machine-scope-bind state
+                        (machine-bind-new state
                                             name
                                             null))))))
    ASSIGN  (lambda (args state)
              (let ([name  (left-argument  args)])
-               (if (machine-scope-bound? state name)
+               (if (machine-bound-any? state name)
                    (try-result (M-value (right-argument args) state)
                                state
                                (lambda (value)
-                                 (void-and (machine-scope-bind state
+                                 (void-and (machine-bind-current state
                                                                name
                                                                value))))
                    (values (result-error (format "assign before declare: ~s"

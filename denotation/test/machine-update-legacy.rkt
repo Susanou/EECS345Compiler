@@ -11,6 +11,9 @@
 (define (machine-consume state statements)
   (M-state (cons BLOCK statements) state))
 
+(define machine-scope-bound? machine-bound-any?)
+(define machine-scope-ref    machine-ref)
+
 (define/provide-test-suite
   test-machine-update-legacy
   (test-suite

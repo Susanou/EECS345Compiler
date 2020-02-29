@@ -20,8 +20,8 @@
   ((hash-ref type-checkers type) value))
 
 (define (map-variable type name state)
-  (if (machine-scope-bound? state name)
-      (let ([value (machine-scope-ref state name)])
+  (if (machine-bound-any? state name)
+      (let ([value (machine-ref state name)])
         (if (check-type type value)
             (success value)
             (failure (format "variable not ~s: ~s"

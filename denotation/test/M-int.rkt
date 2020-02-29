@@ -24,12 +24,12 @@
   (test-suite
    "variables"
    (test-equal? "ok"
-                (M-int 'x (machine-scope-bind (machine-new)
+                (M-int 'x (machine-bind-new (machine-new)
                                               'x
                                               3))
                 (success 3))
    (test-equal? "wrong type"
-                (M-int 'x (machine-scope-bind (machine-new)
+                (M-int 'x (machine-bind-new (machine-new)
                                               'x
                                               null))
                 (failure "variable not INT: x"))

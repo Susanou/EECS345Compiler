@@ -7,7 +7,8 @@
          "M-bool.rkt"
          "M-state-legacy.rkt"
          "M-type.rkt"
-         "machine-update-legacy.rkt")
+         "machine-update-legacy.rkt"
+         "continue.rkt")
 
 (define/provide-test-suite
   test-denotation
@@ -15,7 +16,8 @@
   test-M-bool
   test-M-state-legacy
   test-M-type
-  test-machine-update-legacy)
+  test-machine-update-legacy
+  test-continue)
 
 (module+ main
   (require rackunit/text-ui)

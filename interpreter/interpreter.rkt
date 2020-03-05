@@ -4,6 +4,7 @@
 
 (require "../functional/either.rkt"
          "../language/type.rkt"
+         "../language/expression.rkt"
          "../language/symbol/literal/null.rkt"
          "../language/symbol/literal/bool.rkt"
          "../language/symbol/operator/block.rkt"
@@ -34,12 +35,13 @@
         [(integer? value) INT      ]))
 ; ==============
 
-(define (return binding)
-  (success (transform (type binding) binding)))
+(define (return value)
+  (success (transform (type value) value)))
 
 (define (interpret filename)
-  (let-values ([(result _)
-                (M-state (cons BLOCK (parser filename))
-                         (machine-new))])
-    (cond [(result-return? result) (return  (result-return-value  result))]
-          [else                    (failure (result-error-message result))])))
+  (let/cc r
+    (on (M-state (single-expression BLOCK (parser filename))
+                 (machine-new)
+                 (lambda (value state)
+                   (r (return value))))
+        (thunk* (return null)))))

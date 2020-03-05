@@ -5,7 +5,7 @@
 (require rackunit
          "M-int.rkt"
          "M-bool.rkt"
-         "M-state.rkt"
+         "M-state-legacy.rkt"
          "M-type.rkt"
          "machine-update-legacy.rkt")
 
@@ -13,7 +13,7 @@
   test-denotation
   test-M-int
   test-M-bool
-  test-M-state
+  test-M-state-legacy
   test-M-type
   test-machine-update-legacy)
 

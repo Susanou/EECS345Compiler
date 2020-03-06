@@ -9,39 +9,15 @@
          "../language/symbol/operator/block.rkt"
          "../machine/machine-scope.rkt"
          "M-bool.rkt"
-         "M-value.rkt")
+         "M-state/return.rkt"
+         "M-state/declare.rkt"
+         "M-state/assign.rkt")
 
 (define operations
   (hash
-   RETURN   (lambda (args state return continue)
-              (try (M-value (single-argument args) state)
-                   (lambda (value)
-                     (return value state))))
-
-   DECLARE  (lambda (args state return continue)
-              (let ([name (left-argument  args)])
-                (if (machine-bound-top? state name)
-                    (failure (format "redefining: ~a" name))
-                    (if (binary-argument? args)
-                        (try (M-value (right-argument args) state)
-                             (lambda (init)
-                               (success (machine-bind-new state
-                                                          name
-                                                          init))))
-                        (success (machine-bind-new state
-                                                   name
-                                                   null))))))
-
-   ASSIGN   (lambda (args state return continue)
-              (let ([name  (left-argument  args)])
-                (if (machine-bound-any? state name)
-                    (try (M-value (right-argument args) state)
-                         (lambda (value)
-                           (success (machine-bind-current state
-                                                          name
-                                                          value))))
-                    (failure (format "assign before declare: ~s"
-                                     name)))))
+   RETURN   M-state-return
+   DECLARE  M-state-declare
+   ASSIGN   M-state-assign
 
    IF       (lambda (args state return continue)
               (try (M-bool (first-argument args) state)

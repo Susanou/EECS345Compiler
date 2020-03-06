@@ -7,90 +7,23 @@
          "../language/symbol/operator/control.rkt"
          "../language/symbol/operator/variable.rkt"
          "../language/symbol/operator/block.rkt"
-         "../machine/machine-scope.rkt"
-         "M-bool.rkt"
          "M-state/return.rkt"
          "M-state/declare.rkt"
-         "M-state/assign.rkt")
+         "M-state/assign.rkt"
+         "M-state/if.rkt"
+         "M-state/while.rkt"
+         "M-state/continue.rkt"
+         "M-state/block.rkt"
+         "M-state/begin.rkt")
 
-(define operations
-  (hash
-   RETURN   M-state-return
-   DECLARE  M-state-declare
-   ASSIGN   M-state-assign
-
-   IF       (lambda (args state return continue)
-              (try (M-bool (first-argument args) state)
-                   (lambda (condition)
-                     (if condition
-                         (M-state (second-argument args)
-                                  state
-                                  return
-                                  continue)
-                         (if (triady-argument? args)
-                             (M-state (third-argument args)
-                                      state
-                                      return
-                                      continue)
-                             (success state))))))
-
-   WHILE    (lambda (args state return continue)
-              (try (M-bool (left-argument args) state)
-                   (lambda (condition)
-                     (if condition
-                         (try (let/cc c
-                                (M-state (right-argument args)
-                                         state
-                                         return
-                                         (lambda (state)
-                                           (c (success state)))))
-                              (lambda (state)
-                                (M-state (single-expression WHILE args)
-                                         state
-                                         return
-                                         continue)))
-                         (success state)))))
-
-   CONTINUE (lambda (args state return continue)
-              (continue state))
-
-   BLOCK    (lambda (args state return continue)
-              (if (null? args)
-                  (success state)
-                  (try (M-state (first args)
-                                state
-                                return
-                                continue)
-                       (lambda (state)
-                         (M-state (single-expression BLOCK (rest args))
-                                  state
-                                  return
-                                  continue)))))
-
-   BEGIN    (lambda (args state return continue)
-              (try (M-state (single-expression BLOCK args)
-                            (machine-scope-push state)
-                            (lambda (value state)
-                              (return value
-                                      (machine-scope-pop state)))
-                            continue)
-                   (lambda (state)
-                     (success (machine-scope-pop state)))))))
-
-(define (operation exp state return continue)
-  (let ([op (operator exp)])
-    (if (hash-has-key? operations op)
-        ((hash-ref     operations op) (arguments exp)
-                                      state
-                                      return
-                                      continue)
-        (failure "unrecognized operation"))))
+(define (thunk*failure message)
+  (thunk* (failure message)))
 
 (define no-return
-  (thunk* (failure "unexpected return")))
+  (thunk*failure "unexpected return"))
 
 (define no-continue
-  (thunk* (failure "continue outside loop")))
+  (thunk*failure "continue outside loop"))
 
 (define (M-state
          exp
@@ -103,3 +36,23 @@
                  return
                  continue)
       (success state)))
+
+(define (operation exp state return continue)
+  (let ([op (operator exp)])
+    (if (hash-has-key? operations op)
+        ((hash-ref     operations op) (arguments exp)
+                                      state
+                                      return
+                                      continue)
+        (failure "unrecognized operation"))))
+
+(define operations
+  (hash
+   RETURN    M-state-return
+   DECLARE   M-state-declare
+   ASSIGN    M-state-assign
+   CONTINUE  M-state-continue
+   IF       (M-state-if       M-state)
+   WHILE    (M-state-while    M-state)
+   BLOCK    (M-state-block    M-state)
+   BEGIN    (M-state-begin    M-state)))

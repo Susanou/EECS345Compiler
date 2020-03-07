@@ -40,7 +40,8 @@
 (define (operation exp state return continue)
   (let ([op (operator exp)])
     (if (hash-has-key? operations op)
-        ((hash-ref     operations op) (arguments exp)
+        ((hash-ref     operations op) M-state
+                                      (arguments exp)
                                       state
                                       return
                                       continue)
@@ -48,11 +49,11 @@
 
 (define operations
   (hash
-   RETURN    M-state-return
-   DECLARE   M-state-declare
-   ASSIGN    M-state-assign
-   CONTINUE  M-state-continue
-   IF       (M-state-if       M-state)
-   WHILE    (M-state-while    M-state)
-   BLOCK    (M-state-block    M-state)
-   BEGIN    (M-state-begin    M-state)))
+   RETURN   M-state-return
+   DECLARE  M-state-declare
+   ASSIGN   M-state-assign
+   CONTINUE M-state-continue
+   IF       M-state-if
+   WHILE    M-state-while
+   BLOCK    M-state-block
+   BEGIN    M-state-begin))

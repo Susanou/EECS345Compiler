@@ -7,7 +7,7 @@
          "../../machine/machine-scope.rkt"
          "../M-value.rkt")
 
-(define (M-state-declare args state return continue)
+(define (M-state-declare M-state args state return continue)
   (let ([name (left-argument  args)])
     (if (machine-bound-top? state name)
         (failure (format "redefining: ~a" name))

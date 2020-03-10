@@ -4,28 +4,39 @@
 
 (require rackunit
          "../../functional/either.rkt"
+         "../../language/symbol/operator/int.rkt"
          "../M-state.rkt"
          "../../machine/machine-scope.rkt"
          "../../machine/machine.rkt")
 
-(define/provide-test-suite 
-  test-int-side-effect
+(define (test-op OP)
   (test-suite
-   "addition"
-   (on (M-state '(block (var x)
-                        (var y)
-                        (+ (= x 5) (= y (+ 1 x))))
+   "OP"
+   (on (M-state (quasiquote (block (var x)
+                                   (var y)
+                                   ((unquote OP) (= x 5)
+                                                 (= y (+ 1 x)))))
                 (machine-new))
        (lambda (state)
          (test-suite
           "assignment inside arguments"
-          (test-equal? "first, external only"
-                       (machine-ref state 'x)
-                       5)
-          (test-equal? "second, internal"
-                       (machine-ref state 'y)
-                       6)))
-       fail)))
+          (with-check-info (('OP OP))
+            (test-equal? "first, external only"
+                         (machine-ref state 'x)
+                         5)
+            (test-equal? "second, internal"
+                         (machine-ref state 'y)
+                         6))))
+       (thunk* (with-check-info (('OP OP))
+                 (test-case "OP state" (fail)))))))
+
+(define/provide-test-suite 
+  test-int-side-effect
+  (test-op ADDITION      )
+  (test-op SUBTRACTION   )
+  (test-op MULTIPLICATION)
+  (test-op DIVISION      )
+  (test-op MODULO        ))
 
 (module+ main
   (require rackunit/text-ui)

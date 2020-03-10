@@ -40,6 +40,9 @@
                continue)
       (success state)))
 
+(define unrecognized-op
+  (thunk (thunk*failure "unrecognized operation")))
+
 (define (operate op
                  args
                  state
@@ -47,20 +50,24 @@
                  continue)
   ((hash-ref operations
              op
-             (thunk*failure "unrecognized operation")) M-state
-                                                       args
-                                                       state
-                                                       return
-                                                       continue))
+             unrecognized-op) M-state
+                              args
+                              state
+                              return
+                              continue))
 
 (define operations
   (hash
-   RETURN   M-state-return
-   DECLARE  M-state-declare
-   ASSIGN   M-state-assign
-   CONTINUE M-state-continue
-   IF       M-state-if
-   WHILE    M-state-while
-   BLOCK    M-state-block
-   BEGIN    M-state-begin
-   ADDITION M-state-binary-arithmatic))
+   RETURN         M-state-return
+   DECLARE        M-state-declare
+   ASSIGN         M-state-assign
+   CONTINUE       M-state-continue
+   IF             M-state-if
+   WHILE          M-state-while
+   BLOCK          M-state-block
+   BEGIN          M-state-begin
+   ADDITION       M-state-binary-arithmatic
+   SUBTRACTION    M-state-binary-arithmatic
+   MULTIPLICATION M-state-binary-arithmatic
+   MODULO         M-state-binary-arithmatic
+   DIVISION       M-state-binary-arithmatic))

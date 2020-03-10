@@ -7,7 +7,11 @@
          "../../language/symbol/operator/control.rkt"
          "../M-bool.rkt")
 
-(define (M-state-while M-state args state return continue)
+(define (M-state-while M-state
+                       args
+                       state
+                       return
+                       continue)
   (try (M-bool (left-argument args) state)
        (lambda (condition)
          (if condition

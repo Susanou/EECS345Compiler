@@ -7,7 +7,11 @@
          "../../language/symbol/operator/block.rkt"
          "../../machine/machine-scope.rkt")
 
-(define (M-state-begin M-state args state return continue)
+(define (M-state-begin M-state
+                       args
+                       state
+                       return
+                       continue)
   (try (M-state (single-expression BLOCK args)
                 (machine-scope-push state)
                 (lambda (value state)

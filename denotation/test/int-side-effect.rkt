@@ -11,34 +11,18 @@
 (define/provide-test-suite 
   test-int-side-effect
   (test-suite
-   "external"
-   (on (M-state '(block (var x)
-                        (var y)
-                        (+ (= x 5) (= y 6)))
-                (machine-new))
-       (lambda (state)
-         (test-suite
-          "assignment inside addition"
-          (test-equal? "first argument"
-                       (machine-ref state 'x)
-                       5)
-          (test-equal? "second argument"
-                       (machine-ref state 'y)
-                       6)))
-       fail))
-  (test-suite
-   "internal"
+   "addition"
    (on (M-state '(block (var x)
                         (var y)
                         (+ (= x 5) (= y (+ 1 x))))
                 (machine-new))
        (lambda (state)
          (test-suite
-          "assignment inside addition"
-          (test-equal? "first argument"
+          "assignment inside arguments"
+          (test-equal? "first, external only"
                        (machine-ref state 'x)
                        5)
-          (test-equal? "second argument"
+          (test-equal? "second, internal"
                        (machine-ref state 'y)
                        6)))
        fail)))

@@ -8,7 +8,8 @@
          "M-state-legacy.rkt"
          "M-type.rkt"
          "machine-update-legacy.rkt"
-         "continue.rkt")
+         "continue.rkt"
+         "int-side-effect.rkt")
 
 (define/provide-test-suite
   test-denotation
@@ -17,7 +18,8 @@
   test-M-state-legacy
   test-M-type
   test-machine-update-legacy
-  test-continue)
+  test-continue
+  test-int-side-effect)
 
 (module+ main
   (require rackunit/text-ui)

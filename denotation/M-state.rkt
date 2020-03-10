@@ -31,21 +31,25 @@
          (return no-return)
          (continue no-continue))
   (if (EXPRESSION? exp)
-      (operation exp
+      (operate (operator  exp)
+               (arguments exp)
+               state
+               return
+               continue)
+      (success state)))
+
+(define (operate op
+                 args
                  state
                  return
                  continue)
-      (success state)))
-
-(define (operation exp state return continue)
-  (let ([op (operator exp)])
-    (if (hash-has-key? operations op)
-        ((hash-ref     operations op) M-state
-                                      (arguments exp)
-                                      state
-                                      return
-                                      continue)
-        (failure "unrecognized operation"))))
+  ((hash-ref operations
+             op
+             (thunk*failure "unrecognized operation")) M-state
+                                                       args
+                                                       state
+                                                       return
+                                                       continue))
 
 (define operations
   (hash

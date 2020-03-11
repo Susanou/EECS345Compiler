@@ -36,7 +36,17 @@
   (test-op SUBTRACTION   )
   (test-op MULTIPLICATION)
   (test-op DIVISION      )
-  (test-op MODULO        ))
+  (test-op MODULO        )
+  (test-suite
+   "unary minus"
+   (on (M-state '(block (var x)
+                        (- (= x 5)))
+                (machine-new))
+       (lambda (state)
+         (test-equal? "single"
+                      (machine-ref state 'x)
+                      5))
+       (thunk* (test-case "unary minus" (fail))))))
 
 (module+ main
   (require rackunit/text-ui)

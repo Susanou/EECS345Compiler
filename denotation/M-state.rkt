@@ -16,7 +16,8 @@
          "M-state/continue.rkt"
          "M-state/block.rkt"
          "M-state/begin.rkt"
-         "M-state/binary-arithmatic.rkt")
+         "M-state/binary-arithmatic.rkt"
+         "M-state/unary-or-binary-arithmatic.rkt")
 
 (define (thunk*failure message)
   (thunk* (failure message)))
@@ -67,7 +68,7 @@
    BLOCK          M-state-block
    BEGIN          M-state-begin
    ADDITION       M-state-binary-arithmatic
-   SUBTRACTION    M-state-binary-arithmatic
    MULTIPLICATION M-state-binary-arithmatic
    MODULO         M-state-binary-arithmatic
-   DIVISION       M-state-binary-arithmatic))
+   DIVISION       M-state-binary-arithmatic
+   SUBTRACTION    M-state-unary-or-binary-arithmatic))

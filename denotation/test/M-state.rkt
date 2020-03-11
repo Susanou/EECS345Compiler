@@ -154,7 +154,29 @@
                     state)
        (test-equal? "result is error"
                     result
-                    (result-error "use before declare: x"))))))
+                    (result-error "use before declare: x")))))
+  (test-suite
+   "begin"
+   (test-suite
+   "creates scope"
+   (let-values ([(result new-state)
+                   (M-state '(begin (var x)) (machine-new))])
+       (test-equal? "state unchanged"
+                    new-state
+                    (machine-new))
+       (test-equal? "result is error"
+                    result
+                    (result-void))))
+   (test-suite
+   "allows return"
+   (let-values ([(result new-state)
+                   (M-state '(begin (var x 5) (return x)) (machine-new))])
+       (test-equal? "state unchanged"
+                    new-state
+                    (machine-new))
+       (test-equal? "returns"
+                    result
+                    (result-return 5))))))
      
 (module+ main
   (require rackunit/text-ui)

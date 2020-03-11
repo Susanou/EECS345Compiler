@@ -107,7 +107,14 @@
                                (M-state (first args) state)])
                    (if (result-void? result)
                        (M-state (cons BLOCK (rest args)) new-state)
-                       (values result new-state)))))))
+                       (values result new-state)))))
+   
+   BEGIN   (lambda (args state)
+                 (let-values ([(result new-state)
+                               (M-state (cons BLOCK args)
+                                        (machine-scope-push state))])
+                       (values result
+                               (machine-scope-pop new-state))))))
 
 (define (M-state exp state)
   (cond [(EXPRESSION? exp) (map-operation operations exp state)]

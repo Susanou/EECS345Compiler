@@ -16,11 +16,11 @@
          BOOL      M-bool
          NULL-TYPE M-null))
 
-(define (mapper type)
+(define (mapper     type)
   (hash-ref mappers type))
 
 (define (value type exp state)
-  ((mapper type) exp state))
+  ((mapper type)    exp state))
 
 (define (bind type exp state)
   (try (value type exp state)

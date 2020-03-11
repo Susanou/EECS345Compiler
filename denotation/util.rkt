@@ -16,13 +16,13 @@
         BOOL      boolean?
         INT       integer?))
 
-(define (check-type type value)
+(define (is value          type)
   ((hash-ref type-checkers type) value))
 
 (define (map-variable type name state)
   (if (machine-bound-any? state name)
       (let ([value (machine-ref state name)])
-        (if (check-type type value)
+        (if (is      value type)
             (success value)
             (failure (format "variable not ~s: ~s"
                              type
@@ -49,8 +49,10 @@
     ((cond [(single-argument? args) unary]
            [(binary-argument? args) binary]) args state)))
 
+(define (map-operator operations expression)
+  (hash-ref operations
+            (operator expression)
+            (thunk* (failure "unrecognized operation"))))
+
 (define (map-operation operations expression state)
-  (let ([operator  (operator  expression)])
-    (if (hash-has-key? operations operator)
-        ((hash-ref     operations operator) (arguments expression) state)
-        (failure "unrecognized operation"))))
+  ((map-operator operations expression) (arguments expression) state))

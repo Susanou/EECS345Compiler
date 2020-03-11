@@ -1,9 +1,6 @@
 #lang racket
 
-(provide (struct-out result-void)
-         (struct-out result-return)
-         (struct-out result-error)
-         M-state)
+(provide M-state)
 
 (require "../functional/either.rkt"
          "../language/expression.rkt"
@@ -11,111 +8,95 @@
          "../language/symbol/operator/variable.rkt"
          "../language/symbol/operator/block.rkt"
          "../machine/machine-scope.rkt"
-         "util.rkt"
          "M-bool.rkt"
          "M-value.rkt")
 
-(struct result-void ()
-  #:transparent)
-
-(struct result-return (value)
-  #:transparent)
-
-(struct result-error (message)
-  #:transparent)
-
-(define (try-result x state f)
-  (on x
-      f
-      (lambda (cause)
-        (values (result-error cause)
-                state))))
-
-(define (try-void thx state f)
-  (let-values ([(result state) (thx)])
-    (if (result-void? result)
-        (f state)
-        (values result state))))
-
-(define (void-and state)
-  (values
-   (result-void)
-   state))
-
 (define operations
   (hash
-   RETURN  (lambda (args state)
-             (try-result (M-value (single-argument args) state)
-                         state
-                         (lambda (value)
-                           (values (result-return value)
-                                   state))))
-   DECLARE (lambda (args state)
+   RETURN  (lambda (args state return)
+             (try (M-value (single-argument args) state)
+                  (lambda (value)
+                    (return value state))))
+
+   DECLARE (lambda (args state return)
              (let ([name (left-argument  args)])
                (if (machine-bound-top? state name)
-                   (values (result-error (format "redefining: ~a"
-                                                 name))
-                           state)
+                   (failure (format "redefining: ~a" name))
                    (if (binary-argument? args)
-                       (try-result (M-value (right-argument args) state)
-                                   state
-                                   (lambda (init)
-                                     (void-and (machine-bind-new state
-                                                                   name
-                                                                   init))))
-                       (values
-                        (result-void)
-                        (machine-bind-new state
-                                            name
-                                            null))))))
-   ASSIGN  (lambda (args state)
+                       (try (M-value (right-argument args) state)
+                            (lambda (init)
+                              (success (machine-bind-new state
+                                                         name
+                                                         init))))
+                       (success (machine-bind-new state
+                                                  name
+                                                  null))))))
+
+   ASSIGN  (lambda (args state return)
              (let ([name  (left-argument  args)])
                (if (machine-bound-any? state name)
-                   (try-result (M-value (right-argument args) state)
-                               state
-                               (lambda (value)
-                                 (void-and (machine-bind-current state
-                                                               name
-                                                               value))))
-                   (values (result-error (format "assign before declare: ~s"
-                                                 name))
-                           state))))
-   IF      (lambda (args state)
-             (try-result (M-bool (first-argument args) state)
-                         state
-                         (lambda (condition)
-                           (if condition
-                               (M-state (second-argument args) state)
-                               (if (triady-argument? args)
-                                   (M-state (third-argument args)  state)
-                                   (void-and state))))))
-   WHILE   (lambda (args state)
-             (try-result (M-bool (left-argument args) state)
-                         state
-                         (lambda (condition)
-                           (if condition
-                               (let-values ([(result state)
-                                             (M-state (right-argument args) state)])
-                                 (if (result-void? result)
-                                     (M-state (cons WHILE args) state)
-                                     (values result state)))
-                               (void-and state)))))
-   BLOCK   (lambda (args state)
-             (if (null? args)
-                 (void-and state)
-                 (let-values ([(result new-state)
-                               (M-state (first args) state)])
-                   (if (result-void? result)
-                       (M-state (cons BLOCK (rest args)) new-state)
-                       (values result new-state)))))
-   
-   BEGIN   (lambda (args state)
-                 (let-values ([(result new-state)
-                               (M-state (cons BLOCK args)
-                                        (machine-scope-push state))])
-                       (values result
-                               (machine-scope-pop new-state))))))
+                   (try (M-value (right-argument args) state)
+                        (lambda (value)
+                          (success (machine-bind-current state
+                                                         name
+                                                         value))))
+                   (failure (format "assign before declare: ~s"
+                                    name)))))
 
-(define (M-state exp state)
-  (cond [(EXPRESSION? exp) (map-operation operations exp state)]
-        [else              (void-and                     state)]))
+   IF      (lambda (args state return)
+             (try (M-bool (first-argument args) state)
+                  (lambda (condition)
+                    (if condition
+                        (M-state (second-argument args)
+                                 state
+                                 return)
+                        (if (triady-argument? args)
+                            (M-state (third-argument args)
+                                     state
+                                     return)
+                            (success state))))))
+
+   WHILE   (lambda (args state return)
+             (try (M-bool (left-argument args) state)
+                  (lambda (condition)
+                    (if condition
+                        (try (M-state (right-argument args)
+                                      state
+                                      return)
+                             (lambda (state)
+                               (M-state (single-expression WHILE args)
+                                        state
+                                        return)))
+                        (success state)))))
+
+   BLOCK   (lambda (args state return)
+             (if (null? args)
+                 (success state)
+                 (try (M-state (first args) state return)
+                      (lambda (state)
+                        (M-state (single-expression BLOCK (rest args))
+                                 state
+                                 return)))))
+
+   BEGIN   (lambda (args state return)
+             (try (M-state (single-expression BLOCK args)
+                           (machine-scope-push state)
+                           (lambda (value state)
+                             (return value
+                                     (machine-scope-pop state))))
+                  (lambda (state)
+                    (success (machine-scope-pop state)))))))
+
+(define (operation exp state return)
+  (let ([op (operator exp)])
+    (if (hash-has-key? operations op)
+        ((hash-ref     operations op) (arguments exp) state return)
+        (failure "unrecognized operation"))))
+
+(define no-return
+  (thunk* (failure "unexpected return")))
+
+(define (M-state exp state (return no-return))
+  (if (EXPRESSION? exp)
+      (operation exp state return)
+      (success state)))

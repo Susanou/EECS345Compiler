@@ -3,13 +3,34 @@
 #lang racket
 
 (require rackunit
+         "../../functional/either.rkt"
          "../../language/symbol/operator/block.rkt"
          "../../machine/machine.rkt"
          "../../machine/machine-scope.rkt"
          "../M-state.rkt")
 
+; duplicate code
+(struct result-void   ()        #:transparent)
+(struct result-return (value)   #:transparent)
+(struct result-error  (message) #:transparent)
+
+(define (M-state-legacy exp state)
+  (let/cc c
+    (on (M-state exp
+                 state
+                 (lambda (v s)
+                   (c (result-return v)
+                      s)))
+        (lambda (s)
+          (values (result-void)
+                  s))
+        (lambda (m)
+          (values (result-error m)
+                  state)))))
+; duplicate code
+
 (define (machine-consume state statements)
-  (M-state (cons BLOCK statements) state))
+  (M-state-legacy (cons BLOCK statements) state))
 
 (define machine-scope-bound? machine-bound-any?)
 (define machine-scope-ref    machine-ref)

@@ -1,6 +1,7 @@
 #lang racket
 
 (provide EXPRESSION?
+         single-expression
          operator
          arguments
          single-argument?
@@ -18,6 +19,8 @@
 (define (EXPRESSION? x)
   (and (pair?               x)
        (OPERATOR? (operator x))))
+
+(define single-expression cons)
 
 (define operator  first)
 (define arguments rest )

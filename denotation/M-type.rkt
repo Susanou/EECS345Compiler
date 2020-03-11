@@ -22,8 +22,8 @@
 ; ==============
 
 (define (type-of-variable name state)
-  (if (machine-scope-bound? state name)
-      (success (type (machine-scope-ref state name)))
+  (if (machine-bound-any? state name)
+      (success (type (machine-ref state name)))
       (failure (format "use before declare: ~s"
                        name))))
 

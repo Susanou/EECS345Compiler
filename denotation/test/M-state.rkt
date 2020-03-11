@@ -27,7 +27,7 @@
                 result-void?
                 result)
      (test-true "variable bound"
-                (machine-scope-bound? state 'x))))
+                (machine-bound-any? state 'x))))
   (test-suite
    "if statement"
    (test-suite
@@ -77,9 +77,9 @@
                     result
                     (result-void))
        (test-true  "x bound"
-                   (machine-scope-bound? state 'x))
+                   (machine-bound-any? state 'x))
        (test-false "y NOT bound"
-                   (machine-scope-bound? state 'y))))
+                   (machine-bound-any? state 'y))))
     (test-suite
      "false"
      (let-values ([(result state)
@@ -89,9 +89,9 @@
                     result
                     (result-void))
        (test-false "x NOT bound"
-                   (machine-scope-bound? state 'x))
+                   (machine-bound-any? state 'x))
        (test-true  "y bound"
-                   (machine-scope-bound? state 'y))))))
+                   (machine-bound-any? state 'y))))))
   (test-suite
    "while"
    (test-suite
@@ -112,14 +112,14 @@
     "run once"
     (let-values ([(result state)
                   (M-state '(while x (= x false))
-                           (machine-scope-bind (machine-new)
+                           (machine-bind-new (machine-new)
                                                'x
                                                #t))])
       (test-pred "result is void"
                  result-void?
                  result)
       (test-equal? "x is bound to false"
-                   (machine-scope-ref state 'x)
+                   (machine-ref state 'x)
                    #f))))
   (test-suite
    "assign before declare"
@@ -144,7 +144,7 @@
                   (result-error "use before declare: x"))))
   (test-suite
    "assign from before declare"
-   (let ([state (machine-scope-bind (machine-new)
+   (let ([state (machine-bind-new (machine-new)
                                     'y
                                     null)])
      (let-values ([(result new-state)

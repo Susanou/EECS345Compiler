@@ -3,8 +3,10 @@
 (provide (struct-out machine)
          machine-new)
 
-(struct machine (scope)
+(struct machine (scopes)
   #:transparent)
 
+(define initial-scopes (list (hash)))
+
 (define (machine-new)
-  (machine (hash)))
+  (machine initial-scopes))

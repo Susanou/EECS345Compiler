@@ -160,7 +160,7 @@
 
      (test-suite
      "state operations"
-     (let* ([state   (machine-scope-bind (machine-new) 'x #t)]
+     (let* ([state   (machine-bind-new (machine-new) 'x #t)]
                     [mapping (M-bool 'x state)])
 
           
@@ -168,7 +168,7 @@
         mapping
         MAPPING-TRUE))
 
-      (let* ([state   (machine-scope-bind (machine-new) 'x 3)]
+      (let* ([state   (machine-bind-new (machine-new) 'x 3)]
                     [mapping (M-bool 'x state)])
 
           

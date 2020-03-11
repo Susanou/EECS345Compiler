@@ -36,9 +36,9 @@
                 (success 'BOOL)))
   (test-suite
    "bound variable types"
-   (let ([state (machine-scope-bind
-                 (machine-scope-bind
-                  (machine-scope-bind
+   (let ([state (machine-bind-new
+                 (machine-bind-new
+                  (machine-bind-new
                    (machine-new)
                    'x
                    null)

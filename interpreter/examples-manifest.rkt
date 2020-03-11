@@ -7,7 +7,7 @@
   #:transparent)
 
 (require racket/runtime-path
-         "interpreter.rkt")
+         "../functional/either.rkt")
 
 (define-runtime-path EXAMPLES-DIR "examples/")
 
@@ -17,7 +17,7 @@
                   (build-path EXAMPLES-DIR
                               "provided"
                               (number->string (first p)))
-                  (interpreter-value (second p))))
+                  (success (second p))))
        '((1 150)
          (2 -4)
          (3 10)
@@ -50,7 +50,7 @@
                   (build-path EXAMPLES-DIR
                               "provided"
                               (number->string (first p)))
-                  (interpreter-error (second p))))
+                  (failure (second p))))
        '((11 "assign before declare: y")
          (12 "use before declare: x")
          ;(13 "use before assign")
@@ -63,14 +63,14 @@
     (example "return null"
              (build-path EXAMPLES-DIR
                          "return-null.txt")
-             (interpreter-value 'null))
+             (success 'null))
     (example "return zero"
              (build-path EXAMPLES-DIR
                          "return-zero.txt")
-             (interpreter-value 0))
+             (success 0))
     (example "return false"
              (build-path EXAMPLES-DIR
                          "return-false.txt")
-             (interpreter-value 'false)))
+             (success 'false)))
    provided-example-value-tests
    provided-example-error-tests))

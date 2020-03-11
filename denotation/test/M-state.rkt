@@ -3,9 +3,7 @@
 #lang racket
 
 (require rackunit
-         "../mapping.rkt"
          "../M-state.rkt"
-         "../../machine/binding.rkt"
          "../../machine/machine.rkt"
          "../../machine/machine-scope.rkt")
 
@@ -41,7 +39,7 @@
                             (machine-new))])
        (test-equal? "return properly"
                     result
-                    (result-return (binding 'INT 0)))))
+                    (result-return 0))))
     (test-suite
      "false"
      (let-values ([(result state)
@@ -49,7 +47,7 @@
                             (machine-new))])
        (test-equal? "return properly"
                     result
-                    (result-return (binding 'INT 1))))))
+                    (result-return 1)))))
    (test-suite
     "no else"
     (test-suite
@@ -59,7 +57,7 @@
                             (machine-new))])
        (test-equal? "return properly"
                     result
-                    (result-return (binding 'INT 0)))))
+                    (result-return 0))))
     (test-suite
      "false"
      (let-values ([(result state)
@@ -116,13 +114,13 @@
                   (M-state '(while x (= x false))
                            (machine-scope-bind (machine-new)
                                                'x
-                                               (binding 'BOOL #t)))])
+                                               #t))])
       (test-pred "result is void"
                  result-void?
                  result)
       (test-equal? "x is bound to false"
                    (machine-scope-ref state 'x)
-                   (binding 'BOOL #f)))))
+                   #f))))
   (test-suite
    "assign before declare"
    (let-values ([(result state)
@@ -148,7 +146,7 @@
    "assign from before declare"
    (let ([state (machine-scope-bind (machine-new)
                                     'y
-                                    (binding 'NULL null))])
+                                    null)])
      (let-values ([(result new-state)
                    (M-state '(= y x) state)])
        (test-equal? "state unchanged"

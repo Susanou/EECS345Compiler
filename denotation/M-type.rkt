@@ -2,58 +2,44 @@
 
 (provide M-type)
 
-(require "mapping.rkt"
-         "../machine/machine-scope.rkt"
-         "../machine/binding.rkt")
+(require "../functional/either.rkt"
+         "../language/type.rkt"
+         "../language/expression.rkt"
+         "../language/symbol/variable.rkt"
+         "../language/symbol/literal/int.rkt"
+         "../language/symbol/literal/bool.rkt"
+         "../language/symbol/operator/int.rkt"
+         "../language/symbol/operator/bool.rkt"
+         "../language/symbol/operator/comparison.rkt"
+         "../language/symbol/operator/variable.rkt"
+         "../machine/machine-scope.rkt")
 
-(define boolean-literals
-  '(true false))
+; DUPLICATE CODE
+(define (type value)
+  (cond [(null?    value) NULL-TYPE]
+        [(boolean? value) BOOL     ]
+        [(integer? value) INT      ]))
+; ==============
 
-(define (boolean-literal? expression)
-  (member expression boolean-literals))
-
-(define integer-literal?
-  integer?)
-
-(define boolean-operators
-  '(! || && == != <= >= < >))
-
-(define integer-operators
-  '(+ - * / %))
-
-(define (operator-expression-check operators)
-  (lambda (expression)
-    (and (pair? expression)
-         (member (car expression)
-                 operators))))
-
-(define boolean-operator?
-  (operator-expression-check boolean-operators))
-
-(define integer-operator?
-  (operator-expression-check integer-operators))
-
-(define variable? symbol?)
-
-(define (variable-type-mapping name state)
+(define (type-of-variable name state)
   (if (machine-scope-bound? state name)
-      (mapping-value (binding-type (machine-scope-ref state name)))
-      (mapping-error (format "use before declare: ~s"
-                             name))))
+      (success (type (machine-scope-ref state name)))
+      (failure (format "use before declare: ~s"
+                       name))))
 
-(define (M-type expression state)
-  (cond [(or (boolean-literal?  expression)
-             (boolean-operator? expression))
-         (mapping-value 'BOOL)]
-        
-        [(or(integer-literal?   expression)
-            (integer-operator?  expression))
-         (mapping-value 'INT)]
-        
-        [(variable?             expression)
-         (variable-type-mapping expression state)]
+(define TYPE-MAPPING-BOOL (success 'BOOL))
+(define TYPE-MAPPING-INT  (success 'INT))
 
-        [(eq? (first expression) '=) (M-type (third expression) state)]
-        
-        [else
-         (mapping-error "unrecognized type")]))
+(define (M-type exp state)
+  (cond [(BOOL?       exp) TYPE-MAPPING-BOOL]
+        [(INT?        exp) TYPE-MAPPING-INT ]
+        [(VARIABLE?   exp) (type-of-variable exp state)]
+        [(EXPRESSION? exp)
+         (let ([op (operator exp)])
+           (cond [(BOOL-OPERATOR?       op) TYPE-MAPPING-BOOL]
+                 [(COMPARISON-OPERATOR? op) TYPE-MAPPING-BOOL]
+                 [(INT-OPERATOR?        op) TYPE-MAPPING-INT ]
+                 [(eq? ASSIGN           op) (M-type (right-argument (arguments exp))
+                                                    state)]
+                 [else                     (failure "operation not recognized")]))]
+        [else (failure "expression not recognized")]))

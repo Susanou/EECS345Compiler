@@ -8,6 +8,7 @@
          "../language/symbol/operator/variable.rkt"
          "../language/symbol/operator/block.rkt"
          "../language/symbol/operator/int.rkt"
+         "../language/symbol/operator/bool.rkt"
          "M-state/return.rkt"
          "M-state/declare.rkt"
          "M-state/assign.rkt"
@@ -16,6 +17,7 @@
          "M-state/continue.rkt"
          "M-state/block.rkt"
          "M-state/begin.rkt"
+         "M-state/unary-arithmatic.rkt"
          "M-state/binary-arithmatic.rkt"
          "M-state/unary-or-binary-arithmatic.rkt")
 
@@ -71,4 +73,7 @@
    MULTIPLICATION M-state-binary-arithmatic
    MODULO         M-state-binary-arithmatic
    DIVISION       M-state-binary-arithmatic
-   SUBTRACTION    M-state-unary-or-binary-arithmatic))
+   SUBTRACTION    M-state-unary-or-binary-arithmatic
+   OR             M-state-binary-arithmatic
+   AND            M-state-binary-arithmatic
+   NOT            M-state-unary-arithmatic))

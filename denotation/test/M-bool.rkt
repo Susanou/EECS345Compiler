@@ -4,6 +4,7 @@
 
 (require rackunit
          "../../functional/either.rkt"
+         "../M-state.rkt"
          "../M-bool.rkt"
          "../../machine/machine-scope.rkt"
          "../../machine/machine.rkt")
@@ -20,14 +21,14 @@
    (test-case
     "false"
     (check-equal?
-     (M-bool 'false null)
+     (M-bool 'false null M-state)
      MAPPING-FALSE
      "false maps to #f"))
    
    (test-case
     "true"
     (check-equal?
-     (M-bool 'true null)
+     (M-bool 'true null M-state)
      MAPPING-TRUE
      "true maps to #t")))
 
@@ -37,91 +38,91 @@
    (test-case
     "! true"
     (check-equal?
-     (M-bool '(! true) null)
+     (M-bool '(! true) null M-state)
      MAPPING-FALSE))
 
    (test-case
     "! false"
     (check-equal?
-     (M-bool '(! false) null)
+     (M-bool '(! false) null M-state)
      MAPPING-TRUE))
 
     (test-case
     "1 == 1"
     (check-equal?
-      (M-bool '(== 1 1) null)
+      (M-bool '(== 1 1) null M-state)
       MAPPING-TRUE))
 
     (test-case
     "1 == 0"
     (check-equal?
-      (M-bool '(== 1 0) null)
+      (M-bool '(== 1 0) null M-state)
       MAPPING-FALSE))  
 
     (test-case
     "1 != 0"
     (check-equal?
-      (M-bool '(!= 1 0) null)
+      (M-bool '(!= 1 0) null M-state)
       MAPPING-TRUE)) 
 
     (test-case
     "0 != 0"
     (check-equal?
-      (M-bool '(!= 0 0) null)
+      (M-bool '(!= 0 0) null M-state)
       MAPPING-FALSE))
       
     (test-case
     "true || false"
     (check-equal?
-      (M-bool '(|| true false) null)
+      (M-bool '(|| true false) null M-state)
       MAPPING-TRUE))
     
     (test-case
     "false || false"
     (check-equal?
-      (M-bool '(|| false false) null)
+      (M-bool '(|| false false) null M-state)
       MAPPING-FALSE))
 
     (test-case
     "true || true"
     (check-equal?
-      (M-bool '(|| true true) null)
+      (M-bool '(|| true true) null M-state)
       MAPPING-TRUE))
 
     (test-case
     "false || true"
     (check-equal?
-      (M-bool '(|| false true) null)
+      (M-bool '(|| false true) null M-state)
       MAPPING-TRUE))
 
     (test-case
     "1 > 0"
     (check-equal?
-      (M-bool '(> 1 0) null)
+      (M-bool '(> 1 0) null M-state)
       MAPPING-TRUE))
 
     (test-case
     "1 >= 0"
     (check-equal?
-      (M-bool '(>= 1 0) null)
+      (M-bool '(>= 1 0) null M-state)
       MAPPING-TRUE  ))
 
     (test-case
     "0 >= 0"
     (check-equal?
-      (M-bool '(>= 0 0) null)
+      (M-bool '(>= 0 0) null M-state)
       MAPPING-TRUE))
 
     (test-case
     "0 >= 1"
     (check-equal?
-      (M-bool '(>= 0 1) null)
+      (M-bool '(>= 0 1) null M-state)
       MAPPING-FALSE))
 
     (test-case
     "0 > 1"
     (check-equal? 
-      (M-bool '(>= 0 1) null)
+      (M-bool '(>= 0 1) null M-state)
       MAPPING-FALSE))
 
     
@@ -134,25 +135,25 @@
    (test-case
     "! ! true"
     (check-equal?
-     (M-bool '(! (! true)) null)
+     (M-bool '(! (! true)) null M-state)
      MAPPING-TRUE))
 
    (test-case
     "! ! false"
     (check-equal?
-     (M-bool '(! (! false)) null)
+     (M-bool '(! (! false)) null M-state)
      MAPPING-FALSE))  
 
     (test-case
     "!(1 == 1)"
     (check-equal?
-      (M-bool '(! (== 1 1)) null)
+      (M-bool '(! (== 1 1)) null M-state)
       MAPPING-FALSE))
 
     (test-case
     "((1 > 0) && (0 <= 1))"
     (check-equal?
-      (M-bool '(&& (> 1 0) (<= 0 1)) null)
+      (M-bool '(&& (> 1 0) (<= 0 1)) null M-state)
       MAPPING-TRUE))
      
      
@@ -161,7 +162,7 @@
      (test-suite
      "state operations"
      (let* ([state   (machine-bind-new (machine-new) 'x #t)]
-                    [mapping (M-bool 'x state)])
+                    [mapping (M-bool 'x state M-state)])
 
           
       (check-equal?
@@ -169,7 +170,7 @@
         MAPPING-TRUE))
 
       (let* ([state   (machine-bind-new (machine-new) 'x 3)]
-                    [mapping (M-bool 'x state)])
+                    [mapping (M-bool 'x state M-state)])
 
           
       (check-equal?
@@ -177,7 +178,7 @@
         (failure "variable not BOOL: x")))
         
       (check-equal?
-        (M-bool '(= x (= y true)) (machine-new))
+        (M-bool '(= x (= y true)) (machine-new) M-state)
         MAPPING-TRUE
         )
         )

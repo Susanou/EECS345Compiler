@@ -11,7 +11,7 @@
                     state
                     return
                     continue)
-  (try (M-bool (first-argument args) state)
+  (try (M-bool (first-argument args) state M-state)
        (lambda (condition)
          (if condition
              (M-state (second-argument args)

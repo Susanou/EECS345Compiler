@@ -10,11 +10,11 @@
          "../language/symbol/operator/variable.rkt"
          "util.rkt")
 
-(define (M-int exp state)
-  (cond [(INT?        exp) (success                  exp      )]
-        [(VARIABLE?   exp) (map-variable  'INT       exp state)]
-        [(EXPRESSION? exp) (map-operation operations exp state)]
-        [else              (failure "not mappable to INT"     )]))
+(define (M-int exp state M-state)
+  (cond [(INT?        exp) (success                  exp              )]
+        [(VARIABLE?   exp) (map-variable  'INT       exp state        )]
+        [(EXPRESSION? exp) (map-operation operations exp state M-state)]
+        [else              (failure "not mappable to INT"             )]))
 
 (define operations
   (hash

@@ -4,6 +4,7 @@
 
 (require rackunit
          "../../functional/either.rkt"
+         "../M-state.rkt"
          "../M-type.rkt"
          "../../machine/machine.rkt"
          "../../machine/machine-scope.rkt")
@@ -13,26 +14,26 @@
   (test-suite
    "integer literals"
    (test-equal? "zero"
-                (M-type 0 null)
+                (M-type 0 null M-state)
                 (success 'INT))
    (test-equal? "one"
-                (M-type 1 null)
+                (M-type 1 null M-state)
                 (success 'INT)))
   (test-suite
    "integer operations"
    (test-equal? "+"
-                (M-type '(+ this that) null)
+                (M-type '(+ this that) null M-state)
                 (success 'INT))
    (test-suite
     "boolean literals"
     (test-equal? "false"
-                 (M-type 'false null)
+                 (M-type 'false null M-state)
                  (success 'BOOL))
     (test-equal? "true"
-                 (M-type 'true null)
+                 (M-type 'true null M-state)
                  (success 'BOOL)))
    (test-equal? "||"
-                (M-type '(|| this that) null)
+                (M-type '(|| this that) null M-state)
                 (success 'BOOL)))
   (test-suite
    "bound variable types"
@@ -47,24 +48,24 @@
                  'z
                  #f)])
      (test-equal? "type of x is NULL"
-                  (M-type 'x state)
+                  (M-type 'x state M-state)
                   (success 'NULL))
      (test-equal? "type of y is INT"
-                  (M-type 'y state)
+                  (M-type 'y state M-state)
                   (success 'INT))
      (test-equal? "type of z is BOOL"
-                  (M-type 'z state)
+                  (M-type 'z state M-state)
                   (success 'BOOL))
      (test-equal? "type of w returns map error"
-                  (M-type 'w state)
+                  (M-type 'w state M-state)
                   (failure "use before declare: w"))))
   (test-suite
    "assignments"
    (test-equal? "boolean"
-                (M-type '(= x false) null)
+                (M-type '(= x false) null M-state)
                 (success 'BOOL))
    (test-equal? "integer"
-                (M-type '(= x 0) null)
+                (M-type '(= x 0) null M-state)
                 (success 'INT))))
 
 (module+ main

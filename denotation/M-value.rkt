@@ -19,15 +19,15 @@
 (define (mapper     type)
   (hash-ref mappers type))
 
-(define (value type exp state)
-  ((mapper type)    exp state))
+(define (value type exp state M-state)
+  ((mapper type)    exp state M-state))
 
-(define (bind type exp state)
-  (try (value type exp state)
+(define (bind type exp state M-state)
+  (try (value type exp state M-state)
        (lambda (value)
          (success value))))
 
-(define (M-value exp state)
-  (try (M-type exp state)
+(define (M-value exp state M-state)
+  (try (M-type exp state M-state)
        (lambda (type)
-         (bind type exp state))))
+         (bind type exp state M-state))))

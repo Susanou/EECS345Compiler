@@ -12,7 +12,7 @@
                        state
                        return
                        continue)
-  (try (M-bool (left-argument args) state)
+  (try (M-bool (left-argument args) state M-state)
        (lambda (condition)
          (if condition
              (try (let/cc c

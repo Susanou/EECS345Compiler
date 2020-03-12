@@ -15,7 +15,7 @@
          continue)
   (let ([name  (left-argument  args)])
     (if (machine-bound-any? state name)
-        (try (M-value (right-argument args) state)
+        (try (M-value (right-argument args) state M-state)
              (lambda (value)
                (success (machine-bind-current state
                                               name

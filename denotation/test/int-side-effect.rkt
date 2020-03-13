@@ -46,7 +46,18 @@
          (test-equal? "single"
                       (machine-ref state 'x)
                       5))
-       (thunk* (test-case "unary minus" (fail))))))
+       (thunk* (test-case "unary minus" (fail)))))
+  (test-suite
+   "internal"
+   (on (M-state '(block (var x)
+                        (var y (+ (= x 5) x)))
+                (machine-new))
+       (lambda (state)
+         (test-equal? "single"
+                      (machine-ref state 'y)
+                      10))
+       (lambda (message)
+         (test-case "internal" (fail message))))))
 
 (module+ main
   (require rackunit/text-ui)

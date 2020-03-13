@@ -16,11 +16,13 @@
     (if (machine-bound-top? state name)
         (failure (format "redefining: ~a" name))
         (if (binary-argument? args)
-            (try (M-value (right-argument args) state)
+            (try (M-value (right-argument args) state M-state)
                  (lambda (init)
-                   (success (machine-bind-new state
-                                              name
-                                              init))))
+                   (try (M-state (right-argument args) state)
+                        (lambda (state)
+                          (success (machine-bind-new state
+                                                     name
+                                                     init))))))
             (success (machine-bind-new state
                                        name
                                        null))))))

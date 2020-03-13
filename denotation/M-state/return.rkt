@@ -11,6 +11,6 @@
                         state
                         return
                         continue)
-  (try (M-value (single-argument args) state)
+  (try (M-value (single-argument args) state M-state)
        (lambda (value)
          (return value state))))

@@ -31,28 +31,30 @@
                        name))))
 
 (define (binary-operation operator M-left M-right)
-  (lambda (args state)
-    (try (M-left  (left-argument  args) state)
+  (lambda (args state M-state)
+    (try (M-left  (left-argument  args) state M-state)
          (lambda (left)
-           (try (M-right (right-argument args) state)
-                (lambda (right)
-                  (success (operator left right))))))))
+           (try (M-state (left-argument args) state)
+                (lambda (state)
+                  (try (M-right (right-argument args) state M-state)
+                       (lambda (right)
+                         (success (operator left right))))))))))
 
 (define (unary-operation operator hand M-value)
-  (lambda (args state)
-    (try (M-value (hand args) state)
+  (lambda (args state M-state)
+    (try (M-value (hand args) state M-state)
          (lambda (value)
            (success (operator value))))))
 
 (define (unary-binary-operator unary binary)
-  (lambda (args state)
+  (lambda (args state M-state)
     ((cond [(single-argument? args) unary]
-           [(binary-argument? args) binary]) args state)))
+           [(binary-argument? args) binary]) args state M-state)))
 
 (define (map-operator operations expression)
   (hash-ref operations
             (operator expression)
             (thunk* (failure "unrecognized operation"))))
 
-(define (map-operation operations expression state)
-  ((map-operator operations expression) (arguments expression) state))
+(define (map-operation operations expression state M-state)
+  ((map-operator operations expression) (arguments expression) state M-state))

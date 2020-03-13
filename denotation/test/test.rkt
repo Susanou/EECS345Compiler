@@ -10,7 +10,8 @@
          "machine-update-legacy.rkt"
          "continue.rkt"
          "int-side-effect.rkt"
-         "bool-side-effect.rkt")
+         "bool-side-effect.rkt"
+         "comparison-side-effect.rkt")
 
 (define/provide-test-suite
   test-denotation
@@ -21,7 +22,8 @@
   test-machine-update-legacy
   test-continue
   test-int-side-effect
-  test-bool-side-effect)
+  test-bool-side-effect
+  test-comparison-side-effect)
 
 (module+ main
   (require rackunit/text-ui)

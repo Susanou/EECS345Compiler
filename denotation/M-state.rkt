@@ -9,6 +9,7 @@
          "../language/symbol/operator/block.rkt"
          "../language/symbol/operator/int.rkt"
          "../language/symbol/operator/bool.rkt"
+         "../language/symbol/operator/comparison.rkt"
          "M-state/return.rkt"
          "M-state/declare.rkt"
          "M-state/assign.rkt"
@@ -61,19 +62,25 @@
 
 (define operations
   (hash
-   RETURN         M-state-return
-   DECLARE        M-state-declare
-   ASSIGN         M-state-assign
-   CONTINUE       M-state-continue
-   IF             M-state-if
-   WHILE          M-state-while
-   BLOCK          M-state-block
-   BEGIN          M-state-begin
-   ADDITION       M-state-binary-arithmatic
-   MULTIPLICATION M-state-binary-arithmatic
-   MODULO         M-state-binary-arithmatic
-   DIVISION       M-state-binary-arithmatic
-   SUBTRACTION    M-state-unary-or-binary-arithmatic
-   OR             M-state-binary-arithmatic
-   AND            M-state-binary-arithmatic
-   NOT            M-state-unary-arithmatic))
+   RETURN           M-state-return
+   DECLARE          M-state-declare
+   ASSIGN           M-state-assign
+   CONTINUE         M-state-continue
+   IF               M-state-if
+   WHILE            M-state-while
+   BLOCK            M-state-block
+   BEGIN            M-state-begin
+   ADDITION         M-state-binary-arithmatic
+   MULTIPLICATION   M-state-binary-arithmatic
+   MODULO           M-state-binary-arithmatic
+   DIVISION         M-state-binary-arithmatic
+   SUBTRACTION      M-state-unary-or-binary-arithmatic
+   OR               M-state-binary-arithmatic
+   AND              M-state-binary-arithmatic
+   NOT              M-state-unary-arithmatic
+   EQUAL            M-state-binary-arithmatic
+   NOT-EQUAL        M-state-binary-arithmatic
+   LESS-OR-EQUAL    M-state-binary-arithmatic
+   GREATER-OR-EQUAL M-state-binary-arithmatic
+   LESS             M-state-binary-arithmatic
+   GREATER          M-state-binary-arithmatic))

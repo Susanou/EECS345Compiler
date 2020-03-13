@@ -14,7 +14,7 @@
 (define provided-example-value-tests
   (append
    (map (lambda (p)
-          (example (format "provided example #~s" (first p))
+          (example (format "provided example (1) #~s" (first p))
                    (build-path EXAMPLES-DIR
                                "provided"
                                "1"
@@ -46,7 +46,7 @@
           ;(28 164)
           ))
    (map (lambda (p)
-          (example (format "provided example #~s" (first p))
+          (example (format "provided example (2) #~s" (first p))
                    (build-path EXAMPLES-DIR
                                "provided"
                                "2"
@@ -73,7 +73,7 @@
 (define provided-example-error-tests
   (append
    (map (lambda (p)
-          (example (format "provided example [error] #~s" (first p))
+          (example (format "provided example (1) [error] #~s" (first p))
                    (build-path EXAMPLES-DIR
                                "provided"
                                "1"
@@ -85,7 +85,7 @@
           (14 "redefining: x")
           ))
    (map (lambda (p)
-          (example (format "provided example [error] #~s" (first p))
+          (example (format "provided example (2) [error] #~s" (first p))
                    (build-path EXAMPLES-DIR
                                "provided"
                                "2"

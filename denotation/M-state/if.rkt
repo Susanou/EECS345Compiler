@@ -11,16 +11,19 @@
                     state
                     return
                     continue)
-  (try (M-bool (first-argument args) state M-state)
-       (lambda (condition)
-         (if condition
-             (M-state (second-argument args)
-                      state
-                      return
-                      continue)
-             (if (triady-argument? args)
-                 (M-state (third-argument args)
-                          state
-                          return
-                          continue)
-                 (success state))))))
+  (let ([condition-arg (first-argument args)])
+    (try (M-bool condition-arg state M-state)
+         (lambda (condition)
+           (try (M-state condition-arg state)
+                (lambda (state)
+                  (if condition
+                      (M-state (second-argument args)
+                               state
+                               return
+                               continue)
+                      (if (triady-argument? args)
+                          (M-state (third-argument args)
+                                   state
+                                   return
+                                   continue)
+                          (success state)))))))))

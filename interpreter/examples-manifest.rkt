@@ -53,7 +53,21 @@
                                (number->string (first p)))
                    (success (second p))))
         '(
-          
+          ;(1  20     )
+          ;(2  164    )
+          ;(3  32     )
+          ;(4  2      )
+          ;(6  25     )
+          ;(7  21     )
+          ;(8  6      )
+          ;(9  -1     )
+          ;(10 789    )
+          ;(14 12     )
+          ;(15 125    )
+          ;(16 110    )
+          ;(17 2000400)
+          ;(18 101    )
+          ;(20 21     )
           ))))
 
 (define provided-example-error-tests
@@ -78,7 +92,11 @@
                                (number->string (first p)))
                    (failure (second p))))
         '(
-          
+          ;(5  "Error")
+          ;(11 "Error")
+          ;(12 "Error")
+          ;(13 "Error")
+          ;(19 "Error")
           ))))
 
 (define examples-manifest

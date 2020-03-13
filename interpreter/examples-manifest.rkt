@@ -67,7 +67,7 @@
           ;(16 110    )
           ;(17 2000400)
           ;(18 101    )
-          ;(20 21     )
+          (20 21     )
           ))))
 
 (define provided-example-error-tests

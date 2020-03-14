@@ -11,7 +11,8 @@
          "continue.rkt"
          "int-side-effect.rkt"
          "bool-side-effect.rkt"
-         "comparison-side-effect.rkt")
+         "comparison-side-effect.rkt"
+         "throw.rkt")
 
 (define/provide-test-suite
   test-denotation
@@ -23,7 +24,8 @@
   test-continue
   test-int-side-effect
   test-bool-side-effect
-  test-comparison-side-effect)
+  test-comparison-side-effect
+  test-throw)
 
 (module+ main
   (require rackunit/text-ui)

@@ -13,6 +13,12 @@
 (define MAPPING-FALSE (success #f))
 (define MAPPING-ERROR (failure "unsupported"))
 
+; duplicate code
+(define (uncaught-throw cause)
+  (failure (format "uncaught exception: ~a"
+                   cause)))
+;
+
 (define/provide-test-suite 
   test-M-bool
   (test-suite
@@ -21,14 +27,14 @@
    (test-case
     "false"
     (check-equal?
-     (M-bool 'false null M-state)
+     (M-bool 'false null M-state uncaught-throw)
      MAPPING-FALSE
      "false maps to #f"))
    
    (test-case
     "true"
     (check-equal?
-     (M-bool 'true null M-state)
+     (M-bool 'true null M-state uncaught-throw)
      MAPPING-TRUE
      "true maps to #t")))
 
@@ -38,91 +44,91 @@
    (test-case
     "! true"
     (check-equal?
-     (M-bool '(! true) null M-state)
+     (M-bool '(! true) null M-state uncaught-throw)
      MAPPING-FALSE))
 
    (test-case
     "! false"
     (check-equal?
-     (M-bool '(! false) null M-state)
+     (M-bool '(! false) null M-state uncaught-throw)
      MAPPING-TRUE))
 
     (test-case
     "1 == 1"
     (check-equal?
-      (M-bool '(== 1 1) null M-state)
+      (M-bool '(== 1 1) null M-state uncaught-throw)
       MAPPING-TRUE))
 
     (test-case
     "1 == 0"
     (check-equal?
-      (M-bool '(== 1 0) null M-state)
+      (M-bool '(== 1 0) null M-state uncaught-throw)
       MAPPING-FALSE))  
 
     (test-case
     "1 != 0"
     (check-equal?
-      (M-bool '(!= 1 0) null M-state)
+      (M-bool '(!= 1 0) null M-state uncaught-throw)
       MAPPING-TRUE)) 
 
     (test-case
     "0 != 0"
     (check-equal?
-      (M-bool '(!= 0 0) null M-state)
+      (M-bool '(!= 0 0) null M-state uncaught-throw)
       MAPPING-FALSE))
       
     (test-case
     "true || false"
     (check-equal?
-      (M-bool '(|| true false) null M-state)
+      (M-bool '(|| true false) null M-state uncaught-throw)
       MAPPING-TRUE))
     
     (test-case
     "false || false"
     (check-equal?
-      (M-bool '(|| false false) null M-state)
+      (M-bool '(|| false false) null M-state uncaught-throw)
       MAPPING-FALSE))
 
     (test-case
     "true || true"
     (check-equal?
-      (M-bool '(|| true true) null M-state)
+      (M-bool '(|| true true) null M-state uncaught-throw)
       MAPPING-TRUE))
 
     (test-case
     "false || true"
     (check-equal?
-      (M-bool '(|| false true) null M-state)
+      (M-bool '(|| false true) null M-state uncaught-throw)
       MAPPING-TRUE))
 
     (test-case
     "1 > 0"
     (check-equal?
-      (M-bool '(> 1 0) null M-state)
+      (M-bool '(> 1 0) null M-state uncaught-throw)
       MAPPING-TRUE))
 
     (test-case
     "1 >= 0"
     (check-equal?
-      (M-bool '(>= 1 0) null M-state)
+      (M-bool '(>= 1 0) null M-state uncaught-throw)
       MAPPING-TRUE  ))
 
     (test-case
     "0 >= 0"
     (check-equal?
-      (M-bool '(>= 0 0) null M-state)
+      (M-bool '(>= 0 0) null M-state uncaught-throw)
       MAPPING-TRUE))
 
     (test-case
     "0 >= 1"
     (check-equal?
-      (M-bool '(>= 0 1) null M-state)
+      (M-bool '(>= 0 1) null M-state uncaught-throw)
       MAPPING-FALSE))
 
     (test-case
     "0 > 1"
     (check-equal? 
-      (M-bool '(>= 0 1) null M-state)
+      (M-bool '(>= 0 1) null M-state uncaught-throw)
       MAPPING-FALSE))
 
     
@@ -135,25 +141,25 @@
    (test-case
     "! ! true"
     (check-equal?
-     (M-bool '(! (! true)) null M-state)
+     (M-bool '(! (! true)) null M-state uncaught-throw)
      MAPPING-TRUE))
 
    (test-case
     "! ! false"
     (check-equal?
-     (M-bool '(! (! false)) null M-state)
+     (M-bool '(! (! false)) null M-state uncaught-throw)
      MAPPING-FALSE))  
 
     (test-case
     "!(1 == 1)"
     (check-equal?
-      (M-bool '(! (== 1 1)) null M-state)
+      (M-bool '(! (== 1 1)) null M-state uncaught-throw)
       MAPPING-FALSE))
 
     (test-case
     "((1 > 0) && (0 <= 1))"
     (check-equal?
-      (M-bool '(&& (> 1 0) (<= 0 1)) null M-state)
+      (M-bool '(&& (> 1 0) (<= 0 1)) null M-state uncaught-throw)
       MAPPING-TRUE))
      
      
@@ -162,7 +168,7 @@
      (test-suite
      "state operations"
      (let* ([state   (machine-bind-new (machine-new) 'x #t)]
-                    [mapping (M-bool 'x state M-state)])
+                    [mapping (M-bool 'x state M-state uncaught-throw)])
 
           
       (check-equal?
@@ -170,7 +176,7 @@
         MAPPING-TRUE))
 
       (let* ([state   (machine-bind-new (machine-new) 'x 3)]
-                    [mapping (M-bool 'x state M-state)])
+                    [mapping (M-bool 'x state M-state uncaught-throw)])
 
           
       (check-equal?
@@ -178,7 +184,7 @@
         (failure "variable not BOOL: x")))
         
       (check-equal?
-        (M-bool '(= x (= y true)) (machine-new) M-state)
+        (M-bool '(= x (= y true)) (machine-new) M-state uncaught-throw)
         MAPPING-TRUE
         )
         )

@@ -8,7 +8,10 @@
 (define (M-state-unary-arithmatic M-state
                                   args
                                   state
+                                  throw
                                   return
                                   continue)
-  (try (M-state (single-argument args) state)
+  (try (M-state (single-argument args)
+                state
+                throw)
        success))

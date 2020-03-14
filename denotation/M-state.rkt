@@ -31,15 +31,21 @@
 (define no-continue
   (thunk*failure "continue outside loop"))
 
+(define (uncaught-throw cause)
+  (failure (format "uncaught exception: ~a"
+                   cause)))
+
 (define (M-state
          exp
          state
-         (return no-return)
-         (continue no-continue))
+         (throw    uncaught-throw)
+         (return   no-return     )
+         (continue no-continue   ))
   (if (EXPRESSION? exp)
       (operate (operator  exp)
                (arguments exp)
                state
+               throw
                return
                continue)
       (success state)))
@@ -50,6 +56,7 @@
 (define (operate op
                  args
                  state
+                 throw
                  return
                  continue)
   ((hash-ref operations
@@ -57,6 +64,7 @@
              unrecognized-op) M-state
                               args
                               state
+                              throw
                               return
                               continue))
 

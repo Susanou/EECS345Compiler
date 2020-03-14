@@ -10,10 +10,14 @@
 
 (define/provide-test-suite 
   test-throw
-  (test-equal? "error result"
-               (M-state '(throw 0)
-                        (machine-new))
-               (failure "threw: 0")))
+  (let/cc c
+    (M-state '(throw 0)
+             (machine-new)
+             (lambda (cause state)
+               (c (test-equal? "threw"
+                               cause
+                               "threw: 0"))))
+    (fail "no throw")))
   
 (module+ main
   (require rackunit/text-ui)

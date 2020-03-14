@@ -17,6 +17,7 @@
   (let/cc c
     (on (M-state exp
                  state
+                 (thunk* (failure "legacy test: throw not supported"))
                  (lambda (v s)
                    (c (result-return v)
                       s)))

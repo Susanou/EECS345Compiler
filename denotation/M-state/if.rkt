@@ -9,21 +9,29 @@
 (define (M-state-if M-state
                     args
                     state
+                    throw
                     return
                     continue)
   (let ([condition-arg (first-argument args)])
-    (try (M-bool condition-arg state M-state)
+    (try (M-bool condition-arg
+                 state
+                 M-state
+                 throw)
          (lambda (condition)
-           (try (M-state condition-arg state)
+           (try (M-state condition-arg
+                         state
+                         throw)
                 (lambda (state)
                   (if condition
                       (M-state (second-argument args)
                                state
+                               throw
                                return
                                continue)
                       (if (triady-argument? args)
                           (M-state (third-argument args)
                                    state
+                                   throw
                                    return
                                    continue)
                           (success state)))))))))

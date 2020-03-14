@@ -16,7 +16,7 @@
              (lambda (cause state)
                (c (test-equal? "threw"
                                cause
-                               "threw: 0"))))
+                               0))))
     (fail "no throw")))
   
 (module+ main

@@ -18,6 +18,7 @@
          "M-state/continue.rkt"
          "M-state/block.rkt"
          "M-state/begin.rkt"
+         "M-state/throw.rkt"
          "M-state/unary-arithmatic.rkt"
          "M-state/binary-arithmatic.rkt"
          "M-state/unary-or-binary-arithmatic.rkt")
@@ -31,7 +32,7 @@
 (define no-continue
   (thunk*failure "continue outside loop"))
 
-(define (uncaught-throw cause)
+(define (uncaught-throw cause state)
   (failure (format "uncaught exception: ~a"
                    cause)))
 
@@ -74,6 +75,7 @@
    DECLARE          M-state-declare
    ASSIGN           M-state-assign
    CONTINUE         M-state-continue
+   THROW            M-state-throw
    IF               M-state-if
    WHILE            M-state-while
    BLOCK            M-state-block

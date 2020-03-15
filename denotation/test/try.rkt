@@ -168,7 +168,41 @@
          (test-equal? "finally ran"
                       (machine-ref state 'x)
                       5))
-       fail)))
+       fail))
+  (test-suite
+   "finally runs after continue"
+   (on (M-state '(block (var x)
+                        (var r true)
+                        (while r
+                               (block
+                                (= r false)
+                                (try (continue)
+                                     (finally (= x 5))))))
+                (machine-new))
+       (lambda (state)
+         (test-equal? "finally ran"
+                      (machine-ref state 'x)
+                      5))
+       fail))
+  
+  (test-suite
+   "finally runs after return"
+   (let/cc c
+     (M-state '(block (var x)
+                      (try (return 7)
+                           (finally (= x 5))))
+              (machine-new)
+              (lambda (cause state) (fail cause))
+              (lambda (value state)
+                (c (test-suite
+                    "returned"
+                    (test-equal? "return value"
+                                 value
+                                 7)
+                    (test-equal? "finally ran"
+                                 (machine-ref state 'x)
+                                 5)))))
+     (fail "never returned"))))
   
 (module+ main
   (require rackunit/text-ui)

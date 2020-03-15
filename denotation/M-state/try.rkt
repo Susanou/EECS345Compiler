@@ -23,7 +23,15 @@
                                     continue)
                            (success state))))
                   return
-                  continue))
+                  (lambda (state)
+                    (try (if (try-has-finally? args)
+                             (M-state (try-finally args)
+                                      state
+                                      throw
+                                      return
+                                      continue)
+                             (success state))
+                         continue))))
        (lambda (state)
          (if (try-has-finally? args)
              (M-state (try-finally args)

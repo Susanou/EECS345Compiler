@@ -153,6 +153,21 @@
          (test-equal? "finally ran"
                       (machine-ref state 'w)
                       9))
+       fail))
+  (test-suite
+   "finally runs after continue"
+   (on (M-state '(block (var x)
+                        (var r true)
+                        (while r
+                               (block
+                                (= r false)
+                                (try (continue)
+                                     (finally (= x 5))))))
+                (machine-new))
+       (lambda (state)
+         (test-equal? "finally ran"
+                      (machine-ref state 'x)
+                      5))
        fail)))
   
 (module+ main

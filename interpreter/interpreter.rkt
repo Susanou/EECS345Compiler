@@ -38,10 +38,17 @@
 (define (return value)
   (success (transform (type value) value)))
 
+(define (uncaught message)
+  (failure (format "uncaught exception: ~a"
+                   message)))
+
 (define (interpret filename)
-  (let/cc r
-    (on (M-state (single-expression BLOCK (parser filename))
-                 (machine-new)
-                 (lambda (value state)
-                   (r (return value))))
-        (thunk* (return null)))))
+  (let/cc t
+    (let/cc r
+      (on (M-state (single-expression BLOCK (parser filename))
+                   (machine-new)
+                   (lambda (message state)
+                     (t (uncaught message)))
+                   (lambda (value   state)
+                     (r (return value))))
+          (thunk* (return null))))))

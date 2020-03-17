@@ -8,9 +8,14 @@
 (define (M-state-binary-arithmatic M-state
                                    args
                                    state
+                                   throw
                                    return
                                    continue)
-  (try (M-state (first-argument args) state)
+  (try (M-state (first-argument args)
+                state
+                throw)
        (lambda (state)
-         (try (M-state (second-argument args) state)
+         (try (M-state (second-argument args)
+                       state
+                       throw)
               success))))

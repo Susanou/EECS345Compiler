@@ -18,10 +18,12 @@
 (define (M-state-unary-or-binary-arithmatic M-state
                                             args
                                             state
+                                            throw
                                             return
                                             continue)
   ((handler args) M-state
                   args
                   state
+                  throw
                   return
                   continue))

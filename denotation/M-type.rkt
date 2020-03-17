@@ -30,21 +30,23 @@
 (define TYPE-MAPPING-BOOL (success 'BOOL))
 (define TYPE-MAPPING-INT  (success 'INT))
 
-(define (type-of-expression op args state M-state)
+(define (type-of-expression op args state M-state throw)
   (cond [(BOOL-OPERATOR?       op) TYPE-MAPPING-BOOL]
         [(COMPARISON-OPERATOR? op) TYPE-MAPPING-BOOL]
         [(INT-OPERATOR?        op) TYPE-MAPPING-INT ]
         [(eq? ASSIGN           op) (M-type (right-argument args)
                                            state
-                                           M-state)]
+                                           M-state
+                                           throw)]
         [else                     (failure "operation not recognized")]))
 
-(define (M-type exp state M-state)
+(define (M-type exp state M-state throw)
   (cond [(BOOL?       exp) TYPE-MAPPING-BOOL]
         [(INT?        exp) TYPE-MAPPING-INT ]
         [(VARIABLE?   exp) (type-of-variable exp state)]
         [(EXPRESSION? exp) (type-of-expression (operator exp)
                                                (arguments exp)
                                                state
-                                               M-state)]
+                                               M-state
+                                               throw)]
         [else (failure "expression not recognized")]))

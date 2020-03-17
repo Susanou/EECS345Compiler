@@ -3,19 +3,22 @@
 (provide IF
          WHILE
          RETURN
-         CONTROL-OPERATOR?
-         CONTINUE)
+         CONTINUE
+         THROW
+         CONTROL-OPERATOR?)
 
 (define IF       'if      )
 (define WHILE    'while   )
 (define RETURN   'return  )
 (define CONTINUE 'continue)
+(define THROW    'throw)
 
 (define OPERATORS
   (set IF
        WHILE
        RETURN
-       CONTINUE))
+       CONTINUE
+       THROW))
 
 (define (CONTROL-OPERATOR? x)
   (set-member? OPERATORS x))

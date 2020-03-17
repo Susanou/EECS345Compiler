@@ -19,12 +19,12 @@
 (define (literal exp)
   (success (hash-ref literals exp)))
 
-(define (M-bool exp state M-state)
+(define (M-bool exp state M-state throw)
   (cond
-    [(BOOL?       exp) (literal                  exp              )]
-    [(VARIABLE?   exp) (map-variable 'BOOL       exp state        )]
-    [(EXPRESSION? exp) (map-operation operations exp state M-state)]
-    [else              (failure "not mappable to BOOL"            )]))
+    [(BOOL?       exp) (literal                  exp                    )]
+    [(VARIABLE?   exp) (map-variable 'BOOL       exp state              )]
+    [(EXPRESSION? exp) (map-operation operations exp state M-state throw)]
+    [else              (failure "not mappable to BOOL"                  )]))
 
 (define (2and a b)
   (and        a b))

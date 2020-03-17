@@ -60,9 +60,9 @@
           (6  25     )
           (7  21     )
           (8  6      )
-          ;(9  -1     )
-          ;(10 789    )
-          ;(14 12     )
+          (9  -1     )
+          (10 789    )
+          (14 12     )
           (15 125    )
           (16 110    )
           ;(17 2000400)
@@ -94,8 +94,8 @@
         '(
           (5  "use before declare: min")
           (11 "use before declare: y")
-          ;(12 "use before declare: a")
-          ;(13 "break outside while")
+          (12 "use before declare: a")
+          (13 "break outside loop")
           ;(19 "uncaught exception: 1")
           ))))
 

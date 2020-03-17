@@ -10,7 +10,8 @@
                                   state
                                   throw
                                   return
-                                  continue)
+                                  continue
+                                  break)
   (try (M-state (single-argument args)
                 state
                 throw)

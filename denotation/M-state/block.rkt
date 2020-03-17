@@ -11,17 +11,20 @@
                        state
                        throw
                        return
-                       continue)
+                       continue
+                       break)
   (if (null? args)
       (success state)
       (try (M-state (first args)
                     state
                     throw
                     return
-                    continue)
+                    continue
+                    break)
            (lambda (state)
              (M-state (single-expression BLOCK (rest args))
                       state
                       throw
                       return
-                      continue)))))
+                      continue
+                      break)))))

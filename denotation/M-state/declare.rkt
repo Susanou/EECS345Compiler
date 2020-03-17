@@ -12,7 +12,8 @@
                          state
                          throw
                          return
-                         continue)
+                         continue
+                         break)
   (let ([name (left-argument  args)])
     (if (machine-bound-top? state name)
         (failure (format "redefining: ~a" name))

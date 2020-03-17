@@ -12,7 +12,8 @@
                        state
                        throw
                        return
-                       continue)
+                       continue
+                       break)
   (let ([condition-arg (left-argument args)])
     (try (M-bool condition-arg
                  state
@@ -24,17 +25,21 @@
                          throw)
                 (lambda (state)
                   (if condition
-                      (try (let/cc c
-                             (M-state (right-argument args)
-                                      state
-                                      throw
-                                      return
-                                      (lambda (state)
-                                        (c (success state)))))
-                           (lambda (state)
-                             (M-state (single-expression WHILE args)
-                                      state
-                                      throw
-                                      return
-                                      continue)))
+                      (let/cc b
+                        (try (let/cc c
+                               (M-state (right-argument args)
+                                        state
+                                        throw
+                                        return
+                                        (lambda (state)
+                                          (c (success state)))
+                                        (lambda (state)
+                                          (b (success state)))))
+                             (lambda (state)
+                               (M-state (single-expression WHILE args)
+                                        state
+                                        throw
+                                        return
+                                        continue
+                                        break))))
                       (success state))))))))

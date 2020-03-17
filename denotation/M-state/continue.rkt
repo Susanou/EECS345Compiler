@@ -7,5 +7,6 @@
                           state
                           throw
                           return
-                          continue)
+                          continue
+                          break)
   (continue state))

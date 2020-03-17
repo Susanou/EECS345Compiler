@@ -20,10 +20,12 @@
                                             state
                                             throw
                                             return
-                                            continue)
+                                            continue
+                                            break)
   ((handler args) M-state
                   args
                   state
                   throw
                   return
-                  continue))
+                  continue
+                  break))

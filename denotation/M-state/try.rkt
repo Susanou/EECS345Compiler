@@ -16,7 +16,8 @@
                      state
                      throw
                      return
-                     continue)
+                     continue
+                     break)
   (try (let/cc c
          (M-state (try-body args)
                   state
@@ -31,11 +32,13 @@
                                                         state
                                                         throw
                                                         return
-                                                        continue)
+                                                        continue
+                                                        break)
                                                (success state))
                                            (lambda (state)
                                              (return value state))))
-                                    continue)
+                                    continue
+                                    break)
                            (success state))))
                   (lambda (value state)
                     (try (if (try-has-finally? args)
@@ -43,7 +46,8 @@
                                       state
                                       throw
                                       return
-                                      continue)
+                                      continue
+                                      break)
                              (success state))
                          (lambda (state)
                            (return value state))))
@@ -53,14 +57,17 @@
                                       state
                                       throw
                                       return
-                                      continue)
+                                      continue
+                                      break)
                              (success state))
-                         continue))))
+                         continue
+                         break))))
        (lambda (state)
          (if (try-has-finally? args)
              (M-state (try-finally args)
                       state
                       throw
                       return
-                      continue)
+                      continue
+                      break)
              (success state)))))

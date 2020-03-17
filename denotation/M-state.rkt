@@ -16,6 +16,7 @@
          "M-state/if.rkt"
          "M-state/while.rkt"
          "M-state/continue.rkt"
+         "M-state/break.rkt"
          "M-state/block.rkt"
          "M-state/begin.rkt"
          "M-state/try.rkt"
@@ -33,6 +34,9 @@
 (define no-continue
   (thunk*failure "continue outside loop"))
 
+(define no-break
+  (thunk*failure "break outside loop"))
+
 (define (uncaught-throw cause state)
   (failure (format "uncaught exception: ~a"
                    cause)))
@@ -42,14 +46,16 @@
          state
          (throw    uncaught-throw)
          (return   no-return     )
-         (continue no-continue   ))
+         (continue no-continue   )
+         (break    no-break      ))
   (if (EXPRESSION? exp)
       (operate (operator  exp)
                (arguments exp)
                state
                throw
                return
-               continue)
+               continue
+               break)
       (success state)))
 
 (define unrecognized-op
@@ -60,7 +66,8 @@
                  state
                  throw
                  return
-                 continue)
+                 continue
+                 break)
   ((hash-ref operations
              op
              unrecognized-op) M-state
@@ -68,7 +75,8 @@
                               state
                               throw
                               return
-                              continue))
+                              continue
+                              break))
 
 (define operations
   (hash
@@ -76,6 +84,7 @@
    DECLARE          M-state-declare
    ASSIGN           M-state-assign
    CONTINUE         M-state-continue
+   BREAK            M-state-break
    TRY              M-state-try
    THROW            M-state-throw
    IF               M-state-if

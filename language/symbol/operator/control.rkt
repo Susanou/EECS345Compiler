@@ -4,6 +4,7 @@
          WHILE
          RETURN
          CONTINUE
+         BREAK
          THROW
          TRY
          CONTROL-OPERATOR?)
@@ -12,6 +13,7 @@
 (define WHILE    'while   )
 (define RETURN   'return  )
 (define CONTINUE 'continue)
+(define BREAK    'break)
 (define THROW    'throw   )
 (define TRY      'try     )
 
@@ -20,6 +22,7 @@
        WHILE
        RETURN
        CONTINUE
+       BREAK
        THROW
        TRY))
 

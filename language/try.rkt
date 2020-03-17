@@ -5,9 +5,12 @@
          TRY-OPERATOR?
          try-body
          try-has-catch?
-         try-catch
+         try-catch-bind
+         try-catch-body
          try-has-finally?
          try-finally)
+
+(require "symbol/operator/block.rkt")
 
 (define CATCH   'catch  )
 (define FINALLY 'finally)
@@ -33,9 +36,15 @@
   (try-has-operator? FINALLY args))
 
 (define (try-catch args)
-  (second (if (try-has-finally? args)
-              (second args)
-              (last   args))))
+  (rest (if (try-has-finally? args)
+            (second args)
+            (last   args))))
+
+(define (try-catch-bind args)
+  (car (first (try-catch args))))
+  
+(define (try-catch-body args)
+  (cons BLOCK (rest (try-catch args))))
 
 (define (try-finally args)
   (second (last args)))

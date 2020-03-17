@@ -40,7 +40,7 @@
    (on (M-state '(block (var x)
                         (var y 2)
                         (try (= x 5)
-                             (catch (= y 6))))
+                             (catch (e) (= y 6))))
                 (machine-new))
        (lambda (state)
          (test-equal? "body"
@@ -56,7 +56,7 @@
                         (var y 2)
                         (var z)
                         (try (= x 5)
-                             (catch (= y 6))
+                             (catch (e) (= y 6))
                              (finally (= z 12))))
                 (machine-new))
        (lambda (state)
@@ -115,7 +115,7 @@
                         (try (block (= x 5)
                                     (throw 8)
                                     (= y 6))
-                             (catch (= z 7))))
+                             (catch (e) (= z 7))))
                 (machine-new))
        (lambda (state)
          (test-equal? "body ran before throw"
@@ -137,7 +137,7 @@
                         (try (block (= x 5)
                                     (throw 8)
                                     (= y 6))
-                             (catch (= z 7))
+                             (catch (e) (= z 7))
                              (finally (= w 9))))
                 (machine-new))
        (lambda (state)
@@ -210,7 +210,7 @@
                                (block
                                 (= r false)
                                 (try (throw 0)
-                                     (catch continue)
+                                     (catch (e) continue)
                                      (finally (= x 5))))))
                 (machine-new))
        (lambda (state)
@@ -223,7 +223,7 @@
    (let/cc c
      (M-state '(block (var x)
                       (try (throw 0)
-                           (catch (return 7))
+                           (catch (e) (return 7))
                            (finally (= x 5))))
               (machine-new)
               (lambda (cause state) (fail cause))
@@ -236,7 +236,37 @@
                     (test-equal? "finally ran"
                                  (machine-ref state 'x)
                                  5)))))
-     (fail "never returned"))))
+     (fail "never returned")))
+  (test-suite
+   "catch has cause bound"
+   (on (M-state '(block (var x)
+                        (try (throw 8)
+                             (catch (y)
+                               (= x y))))
+                (machine-new))
+       (lambda (state)
+         (test-equal? "x set"
+                      (machine-ref state 'x)
+                      8))
+       fail))
+  (test-suite
+   "catch has cause is evaluated"
+   (on (M-state '(block (var x)
+                        (var z)
+                        (try (throw (= z 4))
+                             (catch (y)
+                               (= x (* y 2)))))
+                (machine-new))
+       (lambda (state)
+         (test-suite
+          "both"
+          (test-equal? "x set"
+                       (machine-ref state 'x)
+                       8)
+          (test-equal? "z set"
+                       (machine-ref state 'z)
+                       4)))
+       fail)))
   
 (module+ main
   (require rackunit/text-ui)

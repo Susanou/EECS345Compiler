@@ -266,6 +266,21 @@
           (test-equal? "z set"
                        (machine-ref state 'z)
                        4)))
+       fail))
+  (test-suite
+   "try catch and finally occur within begin scopes"
+   (on (M-state '(block (var x)
+                        (try ((var x))
+                             (catch (e)
+                               ((var x)
+                                (throw 0)))
+                             (finally
+                              ((var x)))))
+                (machine-new))
+       (lambda (state)
+         (test-equal? "x not set"
+                      (machine-bound-any? state 'x)
+                      #f))
        fail)))
   
 (module+ main

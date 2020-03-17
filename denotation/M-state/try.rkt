@@ -22,22 +22,19 @@
                   state
                   (lambda (cause state)
                     (c (if (try-has-catch? args)
-                           (M-state (try-catch-body args)
-                                    (bind-in-begin (try-catch-bind args)
-                                                   cause
-                                                   state)
+                           (M-state (try-catch-body args cause)
+                                    state
                                     throw
                                     (lambda (value state)
-                                      (let ([state (machine-scope-pop state)])
-                                        (try (if (try-has-finally? args)
-                                                 (M-state (try-finally args)
-                                                          state
-                                                          throw
-                                                          return
-                                                          continue)
-                                                 (success state))
-                                             (lambda (state)
-                                               (return value state)))))
+                                      (try (if (try-has-finally? args)
+                                               (M-state (try-finally args)
+                                                        state
+                                                        throw
+                                                        return
+                                                        continue)
+                                               (success state))
+                                           (lambda (state)
+                                             (return value state))))
                                     continue)
                            (success state))))
                   (lambda (value state)

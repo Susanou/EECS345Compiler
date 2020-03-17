@@ -81,7 +81,7 @@
                    (failure (second p))))
         '((11 "assign before declare: y")
           (12 "use before declare: x")
-          ;(13 "use before assign")
+          (13 "variable not INT: x")
           (14 "redefining: x")
           ))
    (map (lambda (p)

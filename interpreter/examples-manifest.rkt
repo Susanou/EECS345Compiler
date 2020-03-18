@@ -65,8 +65,8 @@
           (14 12     )
           (15 125    )
           (16 110    )
-          ;(17 2000400)
-          ;(18 101    )
+          (17 2000400)
+          (18 101    )
           (20 21     )
           ))))
 
@@ -96,7 +96,7 @@
           (11 "use before declare: y")
           (12 "use before declare: a")
           (13 "break outside loop")
-          ;(19 "uncaught exception: 1")
+          (19 "uncaught exception: 1")
           ))))
 
 (define examples-manifest

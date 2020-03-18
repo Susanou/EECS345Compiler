@@ -1,35 +1,54 @@
 #lang racket
 
-(provide interpret
-         (struct-out interpreter-value)
-         (struct-out interpreter-error))
+(provide interpret)
 
-(require "../machine/machine.rkt"
-         "../machine/machine-update.rkt"
-         "../parser/simpleParser.rkt"
-         "../machine/binding.rkt"
-         "../denotation/M-state.rkt")
+(require "../functional/either.rkt"
+         "../language/type.rkt"
+         "../language/expression.rkt"
+         "../language/symbol/literal/null.rkt"
+         "../language/symbol/literal/bool.rkt"
+         "../language/symbol/operator/block.rkt"
+         "../machine/machine.rkt"
+         "../denotation/M-state.rkt"
+         "../parser/simpleParser.rkt")
 
-(struct interpreter-value (value)
-  #:transparent)
+(define null-thunk*
+  (thunk* NULL-VALUE))
 
-(struct interpreter-error (message)
-  #:transparent)
+(define (bool-token bool)
+  (if bool
+      TRUE
+      FALSE))
 
-(define interpreter-value-mapping
-  (hash 'BOOL (lambda (value) (if value 'true 'false))
-        'INT  values
-        'NULL (thunk* 'null)))
+(define transformers
+  (hash NULL-TYPE null-thunk*
+        BOOL      bool-token
+        INT       values))
 
-(define (interpreter-value-of-result result)
-  (let* ([binding (result-return-value result)]
-         [type    (binding-type        binding)]
-         [value   (binding-value       binding)])
-    (interpreter-value ((hash-ref interpreter-value-mapping type) value))))
+(define (transform type value)
+  ((hash-ref transformers type) value))
+
+; DUPLICATE CODE
+(define (type value)
+  (cond [(null?    value) NULL-TYPE]
+        [(boolean? value) BOOL     ]
+        [(integer? value) INT      ]))
+; ==============
+
+(define (return value)
+  (success (transform (type value) value)))
+
+(define (uncaught message)
+  (failure (format "uncaught exception: ~a"
+                   message)))
 
 (define (interpret filename)
-  (let-values ([(result state)
-                (machine-consume (machine-new)
-                                 (parser filename))])
-    (cond [(result-return? result) (interpreter-value-of-result result)]
-          [else                    (interpreter-error (result-error-message result))])))
+  (let/cc t
+    (let/cc r
+      (on (M-state (single-expression BLOCK (parser filename))
+                   (machine-new)
+                   (lambda (message state)
+                     (t (uncaught message)))
+                   (lambda (value   state)
+                     (r (return value))))
+          (thunk* (return null))))))

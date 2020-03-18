@@ -1,109 +1,107 @@
 #lang racket
 
-(provide (struct-out result-void)
-         (struct-out result-return)
-         (struct-out result-error)
-         M-state)
+(provide M-state)
 
-(require "../machine/binding.rkt"
-         "../machine/machine-scope.rkt"
-         "M-int.rkt"
-         "M-bool.rkt"
-         "M-type.rkt"
-         "mapping.rkt")
+(require "../functional/either.rkt"
+         "../language/expression.rkt"
+         "../language/symbol/operator/control.rkt"
+         "../language/symbol/operator/variable.rkt"
+         "../language/symbol/operator/block.rkt"
+         "../language/symbol/operator/int.rkt"
+         "../language/symbol/operator/bool.rkt"
+         "../language/symbol/operator/comparison.rkt"
+         "M-state/return.rkt"
+         "M-state/declare.rkt"
+         "M-state/assign.rkt"
+         "M-state/if.rkt"
+         "M-state/while.rkt"
+         "M-state/continue.rkt"
+         "M-state/break.rkt"
+         "M-state/block.rkt"
+         "M-state/begin.rkt"
+         "M-state/try.rkt"
+         "M-state/throw.rkt"
+         "M-state/unary-arithmatic.rkt"
+         "M-state/binary-arithmatic.rkt"
+         "M-state/unary-or-binary-arithmatic.rkt")
 
-(struct result-void ()
-  #:transparent)
+(define (thunk*failure message)
+  (thunk* (failure message)))
 
-(struct result-return (value)
-  #:transparent)
+(define no-return
+  (thunk*failure "unexpected return"))
 
-(struct result-error (message)
-  #:transparent)
+(define no-continue
+  (thunk*failure "continue outside loop"))
 
-(define type-mappers
-  (hash 'INT  M-int
-        'BOOL M-bool
-        'NULL (thunk* (mapping-value null))))
+(define no-break
+  (thunk*failure "break outside loop"))
 
-(define (auto-type-binding-mapping value state)
-  (let ([mapping (M-type value state)])
-    (if (mapping-value? mapping)
-        (mapping-value 
-         (let ([type (mapping-value-value mapping)])
-           (binding type
-                    (mapping-value-value
-                     ((hash-ref type-mappers type) value
-                                                   state)))))
-        mapping)))
+(define (uncaught-throw cause state)
+  (failure (format "uncaught exception: ~a"
+                   cause)))
+
+(define (M-state
+         exp
+         state
+         (throw    uncaught-throw)
+         (return   no-return     )
+         (continue no-continue   )
+         (break    no-break      ))
+  (if (EXPRESSION? exp)
+      (operate (operator  exp)
+               (arguments exp)
+               state
+               throw
+               return
+               continue
+               break)
+      (success state)))
+
+(define unrecognized-op
+  (thunk (thunk*failure "unrecognized operation")))
+
+(define (operate op
+                 args
+                 state
+                 throw
+                 return
+                 continue
+                 break)
+  ((hash-ref operations
+             op
+             unrecognized-op) M-state
+                              args
+                              state
+                              throw
+                              return
+                              continue
+                              break))
 
 (define operations
-  (hash 'return (lambda (args state)
-                  (let ([mapping (auto-type-binding-mapping (car args) state)])
-                    (if (mapping-value? mapping)
-                        (values (result-return
-                                 (mapping-value-value mapping))
-                                state)
-                        (values (result-error (mapping-error-message mapping))
-                                state))))
-        'var    (lambda (args state)
-                  (let ([name  (first  args)])
-                    (if (machine-scope-bound? state name)
-                        (values (result-error (format "redefining: ~a"
-                                                      name))
-                                state)
-                        (values
-                         (result-void)
-                         (machine-scope-bind state
-                                             name
-                                             (if (< (length args) 2)
-                                                 (binding 'NULL null)
-                                                 (mapping-value-value
-                                                  (auto-type-binding-mapping
-                                                   (second args)
-                                                   state))))))))
-        '=      (lambda (args state)
-                  (let ([name  (first  args)]
-                        [value (second args)])
-                    (if (machine-scope-bound? state name)
-                        (let ([mapping (auto-type-binding-mapping value state)])
-                          (if (mapping-value? mapping)
-                              (values
-                               (result-void)
-                               (machine-scope-bind state
-                                                   name
-                                                   (mapping-value-value
-                                                    mapping)))
-                              (values (result-error (mapping-error-message mapping))
-                                      state)))
-                        (values (result-error (format "assign before declare: ~s"
-                                                      name))
-                                state))))
-        'if     (lambda (args state)
-                  (if (mapping-value-value (M-bool (first args) state))
-                      (M-state (second args) state)
-                      (if (>= (length args) 3)
-                          (M-state (third args)  state)
-                          (values  (result-void) state))))
-        'while  (lambda (args state)
-                  (if (mapping-value-value (M-bool (first args) state))
-                      (let-values ([(body-result body-state)
-                                    (M-state (second args) state)])
-                        (if (result-void? body-result)
-                            (M-state (cons 'while args) body-state)
-                            (values body-result body-state)))
-                      (values (result-void) state)))))
-                      
-
-(define (operation? expression)
-  (and (pair? expression)
-       (hash-has-key? operations (car expression))))
-
-(define (operate expression state)
-  ((hash-ref operations (car expression)) (cdr expression)
-                                          state))
-
-(define (M-state expression state)
-  (if (operation? expression)
-      (operate expression state)
-      (values (result-void) state)))
+  (hash
+   RETURN           M-state-return
+   DECLARE          M-state-declare
+   ASSIGN           M-state-assign
+   CONTINUE         M-state-continue
+   BREAK            M-state-break
+   TRY              M-state-try
+   THROW            M-state-throw
+   IF               M-state-if
+   WHILE            M-state-while
+   BLOCK            M-state-block
+   BEGIN            M-state-begin
+   ADDITION         M-state-binary-arithmatic
+   MULTIPLICATION   M-state-binary-arithmatic
+   MODULO           M-state-binary-arithmatic
+   DIVISION         M-state-binary-arithmatic
+   SUBTRACTION      M-state-unary-or-binary-arithmatic
+   OR               M-state-binary-arithmatic
+   AND              M-state-binary-arithmatic
+   NOT              M-state-unary-arithmatic
+   EQUAL            M-state-binary-arithmatic
+   NOT-EQUAL        M-state-binary-arithmatic
+   LESS-OR-EQUAL    M-state-binary-arithmatic
+   GREATER-OR-EQUAL M-state-binary-arithmatic
+   LESS             M-state-binary-arithmatic
+   GREATER          M-state-binary-arithmatic))

@@ -3,14 +3,41 @@
 #lang racket
 
 (require rackunit
-         "../machine.rkt"
-         "../machine-update.rkt"
-         "../machine-scope.rkt"
-         "../binding.rkt"
-         "../../denotation/M-state.rkt")
+         "../../functional/either.rkt"
+         "../../language/symbol/operator/block.rkt"
+         "../../machine/machine.rkt"
+         "../../machine/machine-scope.rkt"
+         "../M-state.rkt")
+
+; duplicate code
+(struct result-void   ()        #:transparent)
+(struct result-return (value)   #:transparent)
+(struct result-error  (message) #:transparent)
+
+(define (M-state-legacy exp state)
+  (let/cc c
+    (on (M-state exp
+                 state
+                 (thunk* (failure "legacy test: throw not supported"))
+                 (lambda (v s)
+                   (c (result-return v)
+                      s)))
+        (lambda (s)
+          (values (result-void)
+                  s))
+        (lambda (m)
+          (values (result-error m)
+                  state)))))
+; duplicate code
+
+(define (machine-consume state statements)
+  (M-state-legacy (cons BLOCK statements) state))
+
+(define machine-scope-bound? machine-bound-any?)
+(define machine-scope-ref    machine-ref)
 
 (define/provide-test-suite
-  test-machine-update
+  test-machine-update-legacy
   (test-suite
    "consume"
    (test-suite
@@ -29,7 +56,7 @@
                   (machine-consume (machine-new) '((return 0)))])
       (test-equal? "result is return of zero"
                    result
-                   (result-return (binding 'INT 0)))
+                   (result-return 0))
       (test-equal? "state is unchanged"
                    state
                    (machine-new))))
@@ -49,7 +76,7 @@
                                                    (return 0)))])
       (test-equal? "result is return 0"
                    result
-                   (result-return (binding 'INT 0)))
+                   (result-return 0))
       (test-true "scope has x bound"
                  (machine-scope-bound? state 'x))))
    (test-suite
@@ -59,7 +86,7 @@
                                                    (var x)))])
       (test-equal? "result is return 0"
                    result
-                   (result-return (binding 'INT 0)))
+                   (result-return 0))
       (test-false "scope does not have x bound"
                   (machine-scope-bound? state 'x))))
    (test-suite
@@ -71,7 +98,7 @@
                    (result-void))
       (test-equal? "x is bound to 1"
                    (machine-scope-ref state 'x)
-                   (binding 'INT 1))))
+                   1)))
    (test-suite
     "(var x)(= x false)"
     (let-values ([(result state)
@@ -81,8 +108,8 @@
                    (result-void))
       (test-equal? "x is bound to false"
                    (machine-scope-ref state 'x)
-                   (binding 'BOOL #f))))))
+                   #f)))))
 
 (module+ main
   (require rackunit/text-ui)
-  (exit (run-tests test-machine-update)))
+  (exit (run-tests test-machine-update-legacy)))

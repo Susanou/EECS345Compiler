@@ -2,53 +2,48 @@
 
 (provide M-bool)
 
-(require  "mapping.rkt"
-          "M-int.rkt"
-          "mapping-utilities.rkt")
+(require  "../functional/either.rkt"
+          "../language/expression.rkt"
+          "../language/symbol/variable.rkt"
+          "../language/symbol/literal/bool.rkt"
+          "../language/symbol/operator/bool.rkt"
+          "../language/symbol/operator/variable.rkt"
+          "../language/symbol/operator/comparison.rkt"
+          "util.rkt"
+          "M-int.rkt")
 
-(define (M-bool expression state)
+(define literals
+  (hash TRUE  #t
+        FALSE #f))
+
+(define (literal exp)
+  (success (hash-ref literals exp)))
+
+(define (M-bool exp state M-state throw)
   (cond
-    [(constant? expression) (constant-mapping-value   expression)]
-    [(list?     expression) (map-operation operations expression state)]
-    [(symbol?   expression) (map-variable 'BOOL       expression state)]
-    [else                   (mapping-error "unsupported")]))
+    [(BOOL?       exp) (literal                  exp                    )]
+    [(VARIABLE?   exp) (map-variable 'BOOL       exp state              )]
+    [(EXPRESSION? exp) (map-operation operations exp state M-state throw)]
+    [else              (failure "not mappable to BOOL"                  )]))
 
-(define constants
-  (hash 'true #t
-        'false #f))
+(define (2and a b)
+  (and        a b))
 
-(define (constant? expression)
-  (hash-has-key? constants expression))
-
-(define (constant-mapping-value expression)
-  (mapping-value (hash-ref constants expression)))
-
-; define binary and and or procedures: since
-; (and ...) and (or ...) are both syntax, not procedures
-; so they can't be passed around like variables
-
-(define (andb a b)
-  (and a b))
-
-(define (orb a b)
-  (or a b))
-
-; define != procedure
+(define (2or a b)
+  (or        a b))
 
 (define (!= a b)
-  (not (= a b)))
+  (not (=   a b)))
 
 (define operations
   (hash
-   '=  (unary-operation-right-hand values M-bool)
-
-   '!  (unary-operation  not  M-bool       )
-   '&& (binary-operation andb M-bool M-bool)
-   '|| (binary-operation orb  M-bool M-bool)
-   
-   '== (binary-operation =    M-int  M-int )
-   '!= (binary-operation !=   M-int  M-int ) 
-   '>= (binary-operation >=   M-int  M-int )
-   '<= (binary-operation <=   M-int  M-int )
-   '>  (binary-operation >    M-int  M-int )
-   '<  (binary-operation <    M-int  M-int )))
+   ASSIGN           (unary-operation  values right-argument M-bool)
+   NOT              (unary-operation  not    left-argument  M-bool)
+   AND              (binary-operation 2and                  M-bool M-bool)
+   OR               (binary-operation 2or                   M-bool M-bool)
+   EQUAL            (binary-operation =                     M-int  M-int)
+   NOT-EQUAL        (binary-operation !=                    M-int  M-int) 
+   LESS-OR-EQUAL    (binary-operation <=                    M-int  M-int)
+   GREATER-OR-EQUAL (binary-operation >=                    M-int  M-int)
+   LESS             (binary-operation <                     M-int  M-int)
+   GREATER          (binary-operation >                     M-int  M-int)))

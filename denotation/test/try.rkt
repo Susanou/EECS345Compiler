@@ -13,7 +13,7 @@
   (test-suite
    "bare try"
    (on (M-state '(block (var x)
-                        (try ((= x 5))))
+                        (try ((= x 5)) () ()))
                 (machine-new))
        (lambda (state)
          (test-equal? "body"
@@ -25,6 +25,7 @@
    (on (M-state '(block (var x)
                         (var y)
                         (try ((= x 5))
+                             ()
                              (finally ((= y 6)))))
                 (machine-new))
        (lambda (state)
@@ -40,7 +41,8 @@
    (on (M-state '(block (var x)
                         (var y 2)
                         (try ((= x 5))
-                             (catch (e) ((= y 6)))))
+                             (catch (e) ((= y 6)))
+                             ()))
                 (machine-new))
        (lambda (state)
          (test-equal? "body"
@@ -76,7 +78,9 @@
                         (var y 2)
                         (try ((= x 5)
                               (throw 8)
-                              (= y 6))))
+                              (= y 6))
+                             ()
+                             ()))
                 (machine-new))
        (lambda (state)
          (test-equal? "body ran before throw"
@@ -94,6 +98,7 @@
                         (try ((= x 5)
                               (throw 8)
                               (= y 6))
+                             ()
                              (finally ((= z 7)))))
                 (machine-new))
        (lambda (state)
@@ -115,7 +120,8 @@
                         (try ((= x 5)
                               (throw 8)
                               (= y 6))
-                             (catch (e) ((= z 7)))))
+                             (catch (e) ((= z 7)))
+                             ()))
                 (machine-new))
        (lambda (state)
          (test-equal? "body ran before throw"
@@ -162,6 +168,7 @@
                                (block
                                 (= r false)
                                 (try ((continue))
+                                     ()
                                      (finally ((= x 5)))))))
                 (machine-new))
        (lambda (state)
@@ -177,6 +184,7 @@
                                (block
                                 (= r false)
                                 (try ((continue))
+                                     ()
                                      (finally ((= x 5)))))))
                 (machine-new))
        (lambda (state)
@@ -189,6 +197,7 @@
    (let/cc c
      (M-state '(block (var x)
                       (try ((return 7))
+                           ()
                            (finally ((= x 5)))))
               (machine-new)
               (lambda (cause state) (fail cause))
@@ -242,7 +251,8 @@
    (on (M-state '(block (var x)
                         (try ((throw 8))
                              (catch (y)
-                               ((= x y)))))
+                               ((= x y)))
+                             ()))
                 (machine-new))
        (lambda (state)
          (test-equal? "x set"
@@ -255,7 +265,8 @@
                         (var z)
                         (try ((throw (= z 4)))
                              (catch (y)
-                               ((= x (* y 2))))))
+                               ((= x (* y 2))))
+                             ()))
                 (machine-new))
        (lambda (state)
          (test-suite

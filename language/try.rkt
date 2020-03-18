@@ -25,21 +25,17 @@
 (define (try-body args)
   (cons BEGIN (first args)))
 
-(define (try-has-operator? operator args)
-  (ormap (lambda (x)
-           (eq? (first x) operator))
-         (rest args)))
+(define (has-arg getter args)
+  (not (null? (getter args))))
 
 (define (try-has-catch? args)
-  (try-has-operator? CATCH   args))
+  (has-arg second args))
 
 (define (try-has-finally? args)
-  (try-has-operator? FINALLY args))
+  (has-arg third args))
 
 (define (try-catch args)
-  (rest (if (try-has-finally? args)
-            (second args)
-            (last   args))))
+  (rest (second args)))
 
 (define (try-catch-bind args)
   (car (first (try-catch args))))
@@ -52,4 +48,4 @@
 
 (define (try-finally args)
   (cons BEGIN
-        (second (last args))))
+        (second (third args))))

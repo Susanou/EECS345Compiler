@@ -18,6 +18,7 @@
          "M-state/continue.rkt"
          "M-state/block.rkt"
          "M-state/begin.rkt"
+         "M-state/try.rkt"
          "M-state/throw.rkt"
          "M-state/unary-arithmatic.rkt"
          "M-state/binary-arithmatic.rkt"
@@ -75,6 +76,7 @@
    DECLARE          M-state-declare
    ASSIGN           M-state-assign
    CONTINUE         M-state-continue
+   TRY              M-state-try
    THROW            M-state-throw
    IF               M-state-if
    WHILE            M-state-while

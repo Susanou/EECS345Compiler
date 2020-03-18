@@ -11,7 +11,8 @@
                         state
                         throw
                         return
-                        continue)
+                        continue
+                        break)
   (try (M-value (single-argument args)
                 state
                 M-state

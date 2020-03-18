@@ -11,7 +11,8 @@
                     state
                     throw
                     return
-                    continue)
+                    continue
+                    break)
   (let ([condition-arg (first-argument args)])
     (try (M-bool condition-arg
                  state
@@ -27,11 +28,13 @@
                                state
                                throw
                                return
-                               continue)
+                               continue
+                               break)
                       (if (triady-argument? args)
                           (M-state (third-argument args)
                                    state
                                    throw
                                    return
-                                   continue)
+                                   continue
+                                   break)
                           (success state)))))))))

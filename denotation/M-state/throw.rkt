@@ -11,7 +11,8 @@
                        state
                        throw
                        return
-                       continue)
+                       continue
+                       break)
   (let ([exp (single-argument args)])
     (try (M-value exp
                   state

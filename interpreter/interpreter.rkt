@@ -10,7 +10,7 @@
          "../language/symbol/operator/block.rkt"
          "../machine/machine.rkt"
          "../denotation/M-state.rkt"
-         "../parser/simpleParser.rkt")
+         "../parser/parser.rkt")
 
 (define null-thunk*
   (thunk* NULL-VALUE))

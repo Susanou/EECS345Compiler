@@ -7,6 +7,7 @@
          BREAK
          THROW
          TRY
+         FUNCTION
          CONTROL-OPERATOR?)
 
 (define IF       'if      )
@@ -16,6 +17,7 @@
 (define BREAK    'break)
 (define THROW    'throw   )
 (define TRY      'try     )
+(define FUNCTION 'function)
 
 (define OPERATORS
   (set IF
@@ -24,7 +26,8 @@
        CONTINUE
        BREAK
        THROW
-       TRY))
+       TRY
+       FUNCTION))
 
 (define (CONTROL-OPERATOR? x)
   (set-member? OPERATORS x))

@@ -23,7 +23,8 @@
          "M-state/throw.rkt"
          "M-state/unary-arithmatic.rkt"
          "M-state/binary-arithmatic.rkt"
-         "M-state/unary-or-binary-arithmatic.rkt")
+         "M-state/unary-or-binary-arithmatic.rkt"
+         "M-state/function.rkt")
 
 (define (thunk*failure message)
   (thunk* (failure message)))
@@ -104,4 +105,5 @@
    LESS-OR-EQUAL    M-state-binary-arithmatic
    GREATER-OR-EQUAL M-state-binary-arithmatic
    LESS             M-state-binary-arithmatic
-   GREATER          M-state-binary-arithmatic))
+   GREATER          M-state-binary-arithmatic
+   FUNCTION         M-state-function))

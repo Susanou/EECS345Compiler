@@ -8,8 +8,10 @@
          "../language/symbol/literal/null.rkt"
          "../language/symbol/literal/bool.rkt"
          "../language/symbol/operator/block.rkt"
+         "../language/symbol/operator/function.rkt"
          "../machine/machine.rkt"
          "../denotation/M-state.rkt"
+         "../denotation/M-value.rkt"
          "../parser/parser.rkt")
 
 (define null-thunk*
@@ -35,20 +37,18 @@
         [(integer? value) INT      ]))
 ; ==============
 
-(define (return value)
-  (success (transform (type value) value)))
-
-(define (uncaught message)
-  (failure (format "uncaught exception: ~a"
-                   message)))
-
 (define (interpret filename)
   (let/cc t
-    (let/cc r
-      (on (M-state (single-expression BLOCK (parser filename))
-                   (machine-new)
-                   (lambda (message state)
-                     (t (uncaught message)))
-                   (lambda (value   state)
-                     (r (return value))))
-          (thunk* (return null))))))
+    (let ([uncaught
+           (lambda (message state)
+             (t (failure (format "uncaught exception: ~a"
+                                 message))))])
+      (try (M-state (single-expression BLOCK (parser filename))
+                    (machine-new)
+                    uncaught)
+           (lambda (state)
+             (try (M-value (single-expression FUNCTION-CALL ENTRY-FUNCTION)
+                           state
+                           uncaught)
+                  (lambda (value)
+                    (success (transform (type value) value)))))))))

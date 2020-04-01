@@ -16,12 +16,10 @@
   (check-equal? (parse (string-append
                         "var x;"
                         "var y = 3;"
-                        "var z = 1;"
-                        "x = y + z;"))
+                        "var z = 1;"))
                 '((var x)
                   (var y 3)
-                  (var z 1)
-                  (= x (+ y z)))
+                  (var z 1))
                 (string-append
                  "declare x, y, and z, "
                  "assign values, "

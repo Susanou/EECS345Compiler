@@ -1,2 +1,6 @@
+function main(){
+
 var x;
 return x;
+
+}

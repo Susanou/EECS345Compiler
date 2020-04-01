@@ -15,7 +15,7 @@
          "throw.rkt"
          "try.rkt"
          "break.rkt"
-         "M-state-func.rkt")
+         "M-state-function-declare.rkt")
 
 (define/provide-test-suite
   test-denotation
@@ -31,7 +31,7 @@
   test-throw
   test-try
   test-break
-  test-M-function)
+  test-M-function-declare)
 
 (module+ main
   (require rackunit/text-ui)

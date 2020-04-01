@@ -1,16 +1,16 @@
 #lang racket
 
-(provide FUNCTION-DECLARATION
+(provide FUNCTION-DECLARE
          FUNCTION-CALL
          ENTRY-FUNCTION
          FUNCTION-OPERATOR?)
 
-(define FUNCTION-DECLARATION 'function)
+(define FUNCTION-DECLARE 'function)
 (define FUNCTION-CALL        'funcall)
 (define ENTRY-FUNCTION       'main)
 
 (define OPERATORS
-  (set FUNCTION-DECLARATION
+  (set FUNCTION-DECLARE
        FUNCTION-CALL))
 
 (define (FUNCTION-OPERATOR? x)

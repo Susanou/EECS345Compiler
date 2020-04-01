@@ -5,6 +5,7 @@
 (require "../functional/either.rkt"
          "../language/expression.rkt"
          "../language/symbol/operator/control.rkt"
+         "../language/symbol/operator/function.rkt"
          "../language/symbol/operator/variable.rkt"
          "../language/symbol/operator/block.rkt"
          "../language/symbol/operator/int.rkt"
@@ -24,7 +25,8 @@
          "M-state/unary-arithmatic.rkt"
          "M-state/binary-arithmatic.rkt"
          "M-state/unary-or-binary-arithmatic.rkt"
-         "M-state/function.rkt")
+         "M-state/function-declare.rkt"
+         "M-state/function-call.rkt")
 
 (define (thunk*failure message)
   (thunk* (failure message)))
@@ -106,4 +108,5 @@
    GREATER-OR-EQUAL M-state-binary-arithmatic
    LESS             M-state-binary-arithmatic
    GREATER          M-state-binary-arithmatic
-   FUNCTION         M-state-function))
+   FUNCTION-DECLARE M-state-function-declare
+   FUNCTION-CALL    M-state-function-call))

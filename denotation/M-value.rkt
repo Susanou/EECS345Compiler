@@ -4,6 +4,7 @@
 
 (require "../functional/either.rkt"
          "../language/type.rkt"
+         "../language/expression.rkt"
          "M-int.rkt"
          "M-bool.rkt"
          "M-type.rkt")
@@ -28,6 +29,8 @@
          (success value))))
 
 (define (M-value    exp state M-state throw)
-  (try (M-type      exp state M-state throw)
-       (lambda (type)
-         (bind type exp state M-state throw))))
+  (if (FUNCTION-CALL-EXPRESSION? exp)
+      -1
+      (try (M-type      exp state M-state throw)
+           (lambda (type)
+             (bind type exp state M-state throw)))))

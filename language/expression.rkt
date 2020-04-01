@@ -1,6 +1,7 @@
 #lang racket
 
 (provide EXPRESSION?
+         FUNCTION-CALL-EXPRESSION?
          single-expression
          operator
          arguments
@@ -15,10 +16,15 @@
          third-argument)
 
 (require "symbol/operator.rkt")
+(require "symbol/operator/function.rkt")
 
 (define (EXPRESSION? x)
   (and (pair?               x)
        (OPERATOR? (operator x))))
+
+(define (FUNCTION-CALL-EXPRESSION? x)
+  (and (EXPRESSION? x)
+       (eq? (operator x) FUNCTION-CALL)))
 
 (define single-expression cons)
 

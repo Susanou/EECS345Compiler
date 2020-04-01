@@ -7,7 +7,8 @@
          "operator/control.rkt"
          "operator/int.rkt"
          "operator/variable.rkt"
-         "operator/block.rkt")
+         "operator/block.rkt"
+         "operator/function.rkt")
 
 (define OPERATORS
   (set BOOL-OPERATOR?
@@ -15,7 +16,8 @@
        CONTROL-OPERATOR?
        INT-OPERATOR?
        VARIABLE-OPERATOR?
-       BLOCK-OPERATOR?))
+       BLOCK-OPERATOR?
+       FUNCTION-OPERATOR?))
 
 (define (OPERATOR? x)
   (ormap (lambda (p) (p x))

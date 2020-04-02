@@ -5,7 +5,8 @@
 (require "../../functional/either.rkt"
          "../../language/expression.rkt"
          "../../machine/machine-scope.rkt"
-         "../M-value.rkt")
+         "../M-value.rkt"
+         "../closure.rkt")
 
 (define (M-state-function-declare M-state
                                   args
@@ -14,9 +15,11 @@
                                   return
                                   continue
                                   break)
-  (let ([name (first args)])
+  (let ([name (first-argument args)])
     (if (machine-bound-top? state name)
         (failure (format "redefining: ~a" name))
         (success (machine-bind-new state
                                    name
-                                   0)))))
+                                   (closure (second-argument args)
+                                            (third-argument args)
+                                            state))))))

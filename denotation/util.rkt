@@ -9,12 +9,14 @@
 (require "../functional/either.rkt"
          "../language/type.rkt"
          "../language/expression.rkt"
-         "../machine/machine-scope.rkt")
+         "../machine/machine-scope.rkt"
+         "closure.rkt")
 
 (define type-checkers
   (hash NULL-TYPE null?
         BOOL      boolean?
-        INT       integer?))
+        INT       integer?
+        CLOSURE   closure?))
 
 (define (is value          type)
   ((hash-ref type-checkers type) value))

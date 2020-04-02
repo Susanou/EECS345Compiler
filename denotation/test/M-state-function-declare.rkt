@@ -6,7 +6,8 @@
          "../../functional/either.rkt"
          "../M-state.rkt"
          "../../machine/machine.rkt"
-         "../../machine/machine-scope.rkt")
+         "../../machine/machine-scope.rkt"
+         "../../denotation/closure.rkt")
 
 (define/provide-test-suite 
   test-M-function-declare
@@ -20,10 +21,9 @@
                 mstate)
      (on mstate
          (lambda (state)
-           (test-equal? "loop ran 5 times"
-                        (machine-ref state 'a)
-                        0)
-           )))))
+           (test-pred "loop ran 5 times"
+                      closure?
+                      (machine-ref state 'a)))))))
 
 (module+ main
   (require rackunit/text-ui)

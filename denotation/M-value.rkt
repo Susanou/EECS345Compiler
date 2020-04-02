@@ -28,9 +28,16 @@
        (lambda (value)
          (success value))))
 
-(define (M-value    exp state M-state throw)
+(define (M-value exp state M-state throw)
   (if (FUNCTION-CALL-EXPRESSION? exp)
-      -1
+      (let/cc r
+        (try (M-state exp
+                      state
+                      throw
+                      (lambda (value state)
+                        (r (success value))))
+             (lambda (state)
+               (success null))))     
       (try (M-type      exp state M-state throw)
            (lambda (type)
              (bind type exp state M-state throw)))))

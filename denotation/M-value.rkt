@@ -7,7 +7,11 @@
          "../language/expression.rkt"
          "M-int.rkt"
          "M-bool.rkt"
-         "M-type.rkt")
+         "M-type.rkt"
+         "../functional/either.rkt"
+         "../language/expression.rkt"
+         "../language/type.rkt"
+         "call.rkt")
 
 (define M-null
   (thunk* (success null)))
@@ -30,14 +34,12 @@
 
 (define (M-value exp state M-state throw)
   (if (FUNCTION-CALL-EXPRESSION? exp)
-      (let/cc r
-        (try (M-state exp
-                      state
-                      throw
-                      (lambda (value state)
-                        (r (success value))))
-             (lambda (state)
-               (success null))))     
+      (call M-state
+            (arguments exp)
+            state
+            throw
+            (lambda (value state) (success value))
+            (thunk* (success null)))
       (try (M-type      exp state M-state throw)
            (lambda (type)
              (bind type exp state M-state throw)))))

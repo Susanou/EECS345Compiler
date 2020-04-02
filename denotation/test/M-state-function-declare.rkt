@@ -21,7 +21,7 @@
                 mstate)
      (on mstate
          (lambda (state)
-           (test-pred "loop ran 5 times"
+           (test-pred "bound closure to name"
                       closure?
                       (machine-ref state 'a)))))))
 

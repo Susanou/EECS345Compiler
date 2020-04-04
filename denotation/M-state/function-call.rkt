@@ -3,7 +3,8 @@
 (provide M-state-function-call)
 
 (require "../../functional/either.rkt"
-         "../call.rkt")
+         "../call.rkt"
+         "../M-value.rkt")
 
 (define (M-state-function-call M-state
                                args

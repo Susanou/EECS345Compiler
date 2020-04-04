@@ -10,7 +10,8 @@
           "../language/symbol/operator/variable.rkt"
           "../language/symbol/operator/comparison.rkt"
           "util.rkt"
-          "M-int.rkt")
+          "M-int.rkt"
+         "call.rkt")
 
 (define literals
   (hash TRUE  #t
@@ -23,6 +24,12 @@
   (cond
     [(BOOL?       exp) (literal                  exp                    )]
     [(VARIABLE?   exp) (map-variable 'BOOL       exp state              )]
+    [(FUNCTION-CALL-EXPRESSION? exp) (call M-state
+                                           (arguments exp)
+                                           state
+                                           throw
+                                           (lambda (value state) (success value))
+                                           (thunk* (success null)))]
     [(EXPRESSION? exp) (map-operation operations exp state M-state throw)]
     [else              (failure "not mappable to BOOL"                  )]))
 

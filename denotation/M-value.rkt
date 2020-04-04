@@ -27,8 +27,8 @@
 (define (value type exp state M-state throw)
   ((mapper type)    exp state M-state throw))
 
-(define (bind type exp state M-state throw)
-  (try (value type exp state M-state throw)
+(define (bind  type exp state M-state throw)
+  (try (value  type exp state M-state throw)
        (lambda (value)
          (success value))))
 

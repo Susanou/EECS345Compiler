@@ -5,7 +5,7 @@
 ; takes filename as argument
 ; prints parse tree to standard output
 
-(require "simpleParser.rkt")
+(require "parser.rkt")
 
 (define filename
   (command-line #:args(filename) filename))

@@ -10,11 +10,7 @@
          "util.rkt"
          "closure.rkt")
 
-(define (M-parameter-state-and-values M-state
-                                      M-value
-                                      expressions
-                                      state
-                                      throw)
+(define (M-parameter-state-and-values M-state M-value expressions state throw)
   (if (null? expressions)
       (success (list state null))
       (try (M-value (first expressions) state M-state throw)
@@ -28,12 +24,12 @@
 (define (execution-state closure parameter-values state)
   (foldl (lambda (name value state)
            (machine-bind-new state name value))
-         (machine-scope-push state)
+         (machine-scope-push (machine-plane state (closure-level closure)))
          (closure-parameters closure)
          parameter-values))
 
-(define (return-state state)
-  (machine-scope-pop state))
+(define (return-state caller yeild)
+  (machine-rebase (machine-scope-pop yeild) caller))
 
 (define (call M-state
               M-value
@@ -52,7 +48,7 @@
                     (try (M-state (single-expression BLOCK (closure-body closure))
                                   (execution-state closure parameter-values state)
                                   throw
-                                  (lambda (value state)
+                                  (lambda (value yeild-state)
                                     (r (return value
-                                               (return-state state)))))
+                                               (return-state parameter-state yeild-state)))))
                          fallthrough))))))))

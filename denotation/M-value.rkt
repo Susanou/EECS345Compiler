@@ -24,17 +24,18 @@
 (define (mapper     type)
   (hash-ref mappers type))
 
-(define (value type exp state M-state throw)
-  ((mapper type)    exp state M-state throw))
+(define (value type exp state M-state M-value throw)
+  ((mapper type)    exp state M-state M-value throw))
 
-(define (bind  type exp state M-state throw)
-  (try (value  type exp state M-state throw)
+(define (bind  type exp state M-state M-value throw)
+  (try (value  type exp state M-state M-value throw)
        (lambda (value)
          (success value))))
 
 (define (M-value exp state M-state throw)
   (if (FUNCTION-CALL-EXPRESSION? exp)
       (call M-state
+            M-value
             (arguments exp)
             state
             throw
@@ -42,4 +43,4 @@
             (thunk* (success null)))
       (try (M-type      exp state M-state throw)
            (lambda (type)
-             (bind type exp state M-state throw)))))
+             (bind type exp state M-state M-value throw)))))

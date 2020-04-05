@@ -2,5 +2,5 @@
 
 (provide (struct-out closure))
 
-(struct closure (parameters body state)
+(struct closure (parameters body level)
   #:transparent)

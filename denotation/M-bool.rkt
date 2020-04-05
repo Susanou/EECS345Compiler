@@ -20,17 +20,18 @@
 (define (literal exp)
   (success (hash-ref literals exp)))
 
-(define (M-bool exp state M-state throw)
+(define (M-bool exp state M-state M-value throw)
   (cond
     [(BOOL?       exp) (literal                  exp                    )]
     [(VARIABLE?   exp) (map-variable 'BOOL       exp state              )]
     [(FUNCTION-CALL-EXPRESSION? exp) (call M-state
+                                           M-value
                                            (arguments exp)
                                            state
                                            throw
                                            (lambda (value state) (success value))
                                            (thunk* (success null)))]
-    [(EXPRESSION? exp) (map-operation operations exp state M-state throw)]
+    [(EXPRESSION? exp) (map-operation operations exp state M-state M-value throw)]
     [else              (failure "not mappable to BOOL"                  )]))
 
 (define (2and a b)

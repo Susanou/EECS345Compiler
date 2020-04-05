@@ -4,7 +4,8 @@
 
 (require "../../functional/either.rkt"
          "../../language/expression.rkt"
-         "../M-bool.rkt")
+         "../M-bool.rkt"
+         "../M-value.rkt")
 
 (define (M-state-if M-state
                     args
@@ -17,6 +18,7 @@
     (try (M-bool condition-arg
                  state
                  M-state
+                 M-value
                  throw)
          (lambda (condition)
            (try (M-state condition-arg

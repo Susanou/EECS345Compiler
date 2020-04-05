@@ -5,39 +5,38 @@
 (require "../functional/either.rkt"
          "../language/expression.rkt"
          "../language/symbol/operator/block.rkt"
-         "../language/symbol/operator/variable.rkt"
          "../language/type.rkt"
          "../machine/machine-scope.rkt"
          "util.rkt"
          "closure.rkt")
 
-(define (curry-arguments M-state
-                         parameter-names
-                         parameter-expressions
-                         state)
-  (if (null? parameter-names)
-      (success state)
-      (try (M-state (list DECLARE (first parameter-names) (first parameter-expressions))
-                    state)
-           (lambda (state)
-             (curry-arguments M-state
-                              (rest parameter-names)
-                              (rest parameter-expressions)
-                              state)))))
+(define (M-parameter-state-and-values M-state
+                                      M-value
+                                      expressions
+                                      state
+                                      throw)
+  (if (null? expressions)
+      (success (list state null))
+      (try (M-value (first expressions) state M-state throw)
+           (lambda (value)
+             (try (M-state (first expressions) state)
+                  (lambda (state)
+                    (try (M-parameter-state-and-values M-state M-value (rest expressions) state throw)
+                         (lambda (recursed)
+                           (success (list (first recursed) (cons value (second recursed))))))))))))
 
-(define (M-call-state M-state
-                      closure
-                      state
-                      parameter-expressions)
-  (curry-arguments M-state
-                   (closure-parameters closure)
-                   parameter-expressions
-                   (machine-scope-push state)))
+(define (execution-state closure parameter-values state)
+  (foldl (lambda (name value state)
+           (machine-bind-new state name value))
+         (machine-scope-push state)
+         (closure-parameters closure)
+         parameter-values))
 
 (define (return-state state)
   (machine-scope-pop state))
 
 (define (call M-state
+              M-value
               args
               state
               throw
@@ -45,16 +44,15 @@
               fallthrough)
   (try (map-variable CLOSURE (first args) state)
        (lambda (closure)
-         (let/cc r
-           (try (M-call-state M-state
-                              closure
-                              state
-                              (rest args))
-                (lambda (call-state)
-                  (try (M-state (single-expression BLOCK (closure-body closure))
-                                call-state
-                                throw
-                                (lambda (value state)
-                                  (r (return value
-                                             (return-state state)))))
-                       fallthrough)))))))
+         (try (M-parameter-state-and-values M-state M-value (rest args) state return)
+              (lambda (state-and-values)
+                (let ([parameter-state  (first  state-and-values)]
+                      [parameter-values (second state-and-values)])
+                  (let/cc r
+                    (try (M-state (single-expression BLOCK (closure-body closure))
+                                  (execution-state closure parameter-values state)
+                                  throw
+                                  (lambda (value state)
+                                    (r (return value
+                                               (return-state state)))))
+                         fallthrough))))))))

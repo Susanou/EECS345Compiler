@@ -3,6 +3,9 @@
 (provide machine-scope-push
          machine-scope-pop
          machine-scope-has?
+         machine-level
+         machine-plane
+         machine-rebase
          machine-bound-top?
          machine-bound-any?
          machine-bind-new
@@ -24,6 +27,22 @@
 
 (define (machine-scope-has? state)
   (not (null? (machine-scopes state))))
+
+(define (machine-level state)
+  (length (machine-scopes state)))
+
+(define (machine-plane state level)
+  (struct-copy machine
+               state
+               (scopes (take-right (machine-scopes state)
+                                   level))))
+
+(define (machine-rebase base new)
+  (struct-copy machine
+               new
+               (scopes (append (drop-right (machine-scopes new)
+                                           (machine-level base))
+                               (machine-scopes base)))))
 
 (define (scope-bound? scope name)
   (hash-has-key? scope name))

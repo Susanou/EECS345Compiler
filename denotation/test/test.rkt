@@ -14,7 +14,9 @@
          "comparison-side-effect.rkt"
          "throw.rkt"
          "try.rkt"
-         "break.rkt")
+         "break.rkt"
+         "M-state-function-declare.rkt"
+         "M-state-function-call.rkt")
 
 (define/provide-test-suite
   test-denotation
@@ -29,7 +31,9 @@
   test-comparison-side-effect
   test-throw
   test-try
-  test-break)
+  test-break
+  test-M-function-declare
+  test-M-function-call)
 
 (module+ main
   (require rackunit/text-ui)

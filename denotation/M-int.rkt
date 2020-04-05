@@ -8,12 +8,20 @@
          "../language/symbol/literal/int.rkt"
          "../language/symbol/operator/int.rkt"
          "../language/symbol/operator/variable.rkt"
-         "util.rkt")
+         "util.rkt"
+         "call.rkt")
 
-(define (M-int exp state M-state throw)
+(define (M-int exp state M-state M-value throw)
   (cond [(INT?        exp) (success                  exp                    )]
         [(VARIABLE?   exp) (map-variable  'INT       exp state              )]
-        [(EXPRESSION? exp) (map-operation operations exp state M-state throw)]
+        [(FUNCTION-CALL-EXPRESSION? exp) (call M-state
+                                               M-value
+                                               (arguments exp)
+                                               state
+                                               throw
+                                               (lambda (value state) (success value))
+                                               (thunk* (success null)))]
+        [(EXPRESSION? exp) (map-operation operations exp state M-state M-value throw)]
         [else              (failure "not mappable to INT"                   )]))
 
 (define operations

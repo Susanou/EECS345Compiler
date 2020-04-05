@@ -2,8 +2,10 @@
 
 (provide NULL-TYPE
          BOOL
-         INT)
+         INT
+         CLOSURE)
 
-(define NULL-TYPE 'NULL)
-(define BOOL      'BOOL)
-(define INT       'INT )
+(define NULL-TYPE 'NULL    )
+(define BOOL      'BOOL    )
+(define INT       'INT     )
+(define CLOSURE   'CLOSURE )

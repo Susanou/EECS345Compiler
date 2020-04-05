@@ -5,7 +5,8 @@
 (require "../../functional/either.rkt"
          "../../language/expression.rkt"
          "../../language/symbol/operator/control.rkt"
-         "../M-bool.rkt")
+         "../M-bool.rkt"
+         "../M-value.rkt")
 
 (define (M-state-while M-state
                        args
@@ -18,6 +19,7 @@
     (try (M-bool condition-arg
                  state
                  M-state
+                 M-value
                  throw)
          (lambda (condition)
            (try (M-state condition-arg

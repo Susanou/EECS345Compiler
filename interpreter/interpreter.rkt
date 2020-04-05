@@ -47,8 +47,9 @@
                     (machine-new)
                     uncaught)
            (lambda (state)
-             (try (M-value (single-expression FUNCTION-CALL ENTRY-FUNCTION)
+             (try (M-value (list FUNCTION-CALL ENTRY-FUNCTION)
                            state
+                           M-state
                            uncaught)
                   (lambda (value)
                     (success (transform (type value) value)))))))))

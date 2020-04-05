@@ -68,6 +68,35 @@
           (17 2000400)
           (18 101    )
           (20 21     )
+          ))
+   (map (lambda (p)
+          (example (format "provided example (3) #~s" (first p))
+                   (build-path EXAMPLES-DIR
+                               "provided"
+                               "3"
+                               (number->string (first p)))
+                   (success (second p))))
+        '(
+          ( 1      10)
+          ( 2      14)
+          ( 3      45)
+          ( 4      55)
+          ( 5       1)
+          ( 6     115)
+          ( 7      true)
+          ( 8      20)
+          ( 9      24)
+          (10       2)
+          (11      35)
+          ;;(12   error)
+          (13      90)
+          (14      69)
+          (15      87)
+          (16      64)
+          ;;(17   error)
+          (18     125)
+          (19     100)
+          (20 2000400)
           ))))
 
 (define provided-example-error-tests

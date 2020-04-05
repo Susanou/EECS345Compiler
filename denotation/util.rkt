@@ -9,12 +9,14 @@
 (require "../functional/either.rkt"
          "../language/type.rkt"
          "../language/expression.rkt"
-         "../machine/machine-scope.rkt")
+         "../machine/machine-scope.rkt"
+         "closure.rkt")
 
 (define type-checkers
   (hash NULL-TYPE null?
         BOOL      boolean?
-        INT       integer?))
+        INT       integer?
+        CLOSURE   closure?))
 
 (define (is value          type)
   ((hash-ref type-checkers type) value))
@@ -31,10 +33,11 @@
                        name))))
 
 (define (binary-operation operator M-left M-right)
-  (lambda (args state M-state throw)
+  (lambda (args state M-state M-value throw)
     (try (M-left  (left-argument args)
                   state
                   M-state
+                  M-value
                   throw)
          (lambda (left)
            (try (M-state (left-argument args)
@@ -44,25 +47,28 @@
                   (try (M-right (right-argument args)
                                 state
                                 M-state
+                                M-value
                                 throw)
                        (lambda (right)
                          (success (operator left right))))))))))
 
-(define (unary-operation operator hand M-value)
-  (lambda (args state M-state throw)
-    (try (M-value (hand args)
+(define (unary-operation operator hand M-single)
+  (lambda (args state M-state M-value throw)
+    (try (M-single (hand args)
                   state
                   M-state
+                  M-value
                   throw)
          (lambda (value)
            (success (operator value))))))
 
 (define (unary-binary-operator unary binary)
-  (lambda (args state M-state throw)
+  (lambda (args state M-state M-value throw)
     ((cond [(single-argument? args) unary]
            [(binary-argument? args) binary]) args
                                              state
                                              M-state
+                                             M-value
                                              throw)))
 
 (define (map-operator operations expression)
@@ -74,8 +80,10 @@
                        expression
                        state
                        M-state
+                       M-value
                        throw)
   ((map-operator operations expression) (arguments expression)
                                         state
                                         M-state
+                                        M-value
                                         throw))

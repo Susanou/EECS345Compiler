@@ -47,7 +47,8 @@
                   (let/cc r
                     (try (M-state (single-expression BLOCK (closure-body closure))
                                   (execution-state closure parameter-values state)
-                                  throw
+                                  (lambda (cause yeild-state)
+                                    (throw cause (return-state parameter-state yeild-state)))
                                   (lambda (value yeild-state)
                                     (r (return value
                                                (return-state parameter-state yeild-state)))))

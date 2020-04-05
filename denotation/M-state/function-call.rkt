@@ -19,4 +19,4 @@
         state
         throw
         (lambda (value state) (success state))
-        (thunk (success state))))
+        (lambda (      state) (success state))))

@@ -40,7 +40,7 @@
             state
             throw
             (lambda (value state) (success value))
-            (thunk* (success null)))
+            (lambda (      state) (success null)))
       (try (M-type      exp state M-state throw)
            (lambda (type)
              (bind type exp state M-state M-value throw)))))

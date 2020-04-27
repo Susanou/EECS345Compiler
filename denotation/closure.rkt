@@ -2,5 +2,5 @@
 
 (provide (struct-out closure))
 
-(struct closure (parameters body level funct)
+(struct closure (parameters body level functclass)
   #:transparent)

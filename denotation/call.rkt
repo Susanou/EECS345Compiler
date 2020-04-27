@@ -39,14 +39,14 @@
               return
               fallthrough)
   (try (map-variable CLOSURE (first args) state)
-       (lambda (closure)
+       (lambda (fclosure)
          (try (M-parameter-state-and-values M-state M-value (rest args) state return)
               (lambda (state-and-values)
                 (let ([parameter-state  (first  state-and-values)]
                       [parameter-values (second state-and-values)])
                   (let/cc r
-                    (try (M-state (single-expression BLOCK (closure-body closure))
-                                  (execution-state closure parameter-values state)
+                    (try (M-state (single-expression BLOCK (closure-body fclosure))
+                                  (execution-state fclosure parameter-values state)
                                   (lambda (cause yeild-state)
                                     (throw cause (return-state parameter-state yeild-state funct-state)))
                                   (lambda (value yeild-state)

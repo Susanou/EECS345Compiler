@@ -48,9 +48,9 @@
                     (try (M-state (single-expression BLOCK (closure-body closure))
                                   (execution-state closure parameter-values state)
                                   (lambda (cause yeild-state)
-                                    (throw cause (return-state parameter-state yeild-state)))
+                                    (throw cause (return-state parameter-state yeild-state funct-state)))
                                   (lambda (value yeild-state)
                                     (r (return value
-                                               (return-state parameter-state yeild-state)))))
+                                               (return-state parameter-state yeild-state funct-state)))))
                          (lambda (yeild-state)
-                           (fallthrough (return-state parameter-state yeild-state)))))))))))
+                           (fallthrough (return-state parameter-state yeild-state funct-state)))))))))))

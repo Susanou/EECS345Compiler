@@ -12,7 +12,7 @@
          "../machine/machine.rkt"
          "../denotation/M-state.rkt"
          "../denotation/M-value.rkt"
-         "../parser/parser.rkt")
+         "../parser/classparser.rkt")
 
 (define null-thunk*
   (thunk* NULL-VALUE))

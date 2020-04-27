@@ -8,7 +8,8 @@
          "operator/int.rkt"
          "operator/variable.rkt"
          "operator/block.rkt"
-         "operator/function.rkt")
+         "operator/function.rkt"
+         "operator/class.rkt")
 
 (define OPERATORS
   (set BOOL-OPERATOR?
